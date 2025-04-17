@@ -5,10 +5,6 @@ import Image from "next/image";
 import { NavigationMenuDemo } from './NavbarLists';
 import NavbarMainLeft from './NavbarMainLeft';
 
-import { usePathname } from 'next/navigation'
-import clsx from 'clsx'
-import NavLink from './NavLink';
-
 const Navbar: React.FC = () => {
 
     return (
