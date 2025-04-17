@@ -1,4 +1,5 @@
 'use client'
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 
 const Hero = () => {
@@ -19,15 +20,15 @@ const Hero = () => {
     if (!showHeroImage) return null;
 
     return (
-        <div className="mt-15 hidden md:block transition-all duration-500 ease-in-out"
-            style={{
-                backgroundImage: `url('/hero-${routes[pathname]}.jpg')`,
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-                height: "300px",
-            }}
-        >
-
+        <div className="w-full mt-15 hidden md:block transition-all duration-500 ease-in-out">
+            <Image 
+                src={`/hero-${routes[pathname]}.jpg`}
+                alt='hero image'
+                width={1200} 
+                height={320}
+                objectFit="cover"
+                quality={100}
+            />
         </div>
     );
 };

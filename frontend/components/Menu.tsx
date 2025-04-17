@@ -70,23 +70,25 @@ export default function Menu() {
     const pathname = usePathname();
 
     return (
-        <div className="w-full">
-            <ul className="container mx-auto flex justify-between gap-6 pt-5 border-b-1 border-gray-200">
-                {navItems.map((item) => (
-                    <li key={item.path} className={`border-b-${pathname === item.path ? 4 : 0} flex-1 border-b-blue-500`}>
-                        <Link
-                            href={item.path}
-                            className={cn(
-                                "text-gray-600 flex flex-col items-center justify-center",
-                                pathname === item.path && "text-blue-500 font-semibold"
-                            )}
-                        >
-                            {item.icon}
-                            <span className="pb-2">{item.name}</span>
-                        </Link>
-                    </li>
-                ))}
-            </ul>
+        <div className="px-12 md:px-18 lg:px-26 xl:px-42 -mt-24">
+            <div className="w-full border-1 border-gray-200 mx-auto">
+                <ul className="container mx-auto flex justify-between pt-5 border-b-1 border-gray-200">
+                    {navItems.map((item) => (
+                        <li key={item.path} className={`border-b-${pathname === item.path ? 4 : 0} flex-1 border-b-blue-500 pt-4 bg-white`}>
+                            <Link
+                                href={item.path}
+                                className={cn(
+                                    "text-gray-600 flex flex-col items-center justify-center",
+                                    pathname === item.path && "text-blue-500 font-semibold"
+                                )}
+                            >
+                                {item.icon}
+                                <span className="pb-2">{item.name}</span>
+                            </Link>
+                        </li>
+                    ))}
+                </ul>
+            </div>
         </div>
     );
 }
