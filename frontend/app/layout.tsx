@@ -36,7 +36,7 @@ export default function RootLayout({
 
                 <Hero />
 
-                <Menu />
+                {/* <Menu /> */}
 
 
                 {children}
