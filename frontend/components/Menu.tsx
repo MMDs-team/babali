@@ -70,11 +70,12 @@ export default function Menu() {
     const pathname = usePathname();
 
     return (
-        <div className="px-12 md:px-18 lg:px-26 xl:px-42 -mt-24">
-            <div className="w-full border-1 border-gray-200 mx-auto">
-                <ul className="container mx-auto flex justify-between pt-5 border-b-1 border-gray-200">
+        <div className="px-12 md:px-18 lg:px-26 xl:px-42 w-full absolute bottom-0">
+            <div className="border-1 border-gray-200 mx-auto bg-white rounded">
+                <ul className="mx-auto flex justify-between border-b-1 border-gray-200 px-12">
                     {navItems.map((item) => (
-                        <li key={item.path} className={`border-b-${pathname === item.path ? 4 : 0} flex-1 border-b-blue-500 pt-4 bg-white`}>
+                        <li key={item.path} 
+                            className={`px-8 pt-2 border-b-3 border-${pathname === item.path ? 'blue-500' : 'white'} transition-all duration-150 ease-in-out`}>
                             <Link
                                 href={item.path}
                                 className={cn(

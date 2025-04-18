@@ -36,9 +36,6 @@ export default function RootLayout({
 
                 <Hero />
 
-                <Menu />
-
-
                 {children}
                 <NavMobile />
             </body>
