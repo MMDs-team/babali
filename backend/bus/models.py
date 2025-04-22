@@ -1,5 +1,22 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.validators import RegexValidator
+
+class UserProfile(models.Model):
+
+    phone_number_validator = RegexValidator(
+        regex=r'^0\d{10}$',
+    )
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    phone_number = models.CharField(
+        min_length=11,
+        max_length=11,
+        validators=[phone_number_validator],
+    )
+
+    def __str__(self):
+        return f"{self.user.username} - {self.phone_number}"
 
 class Cooperative(models.Model):
      
