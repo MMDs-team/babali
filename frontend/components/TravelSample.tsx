@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import React from 'react';
 
 type TravelSampleProps = {
@@ -81,9 +82,9 @@ const TravelSample: React.FC<TravelSampleProps> = ({
                 <p className="text-xl font-bold text-blue-600">
                     {price.toLocaleString()} {currency}
                 </p>
-                <button className="bg-blue-600 text-white rounded-md px-6 py-2 hover:bg-blue-700 transition">
+                <Link href={'/bus/THE-IFN/14322'} className="bg-blue-600 text-white rounded-md px-6 py-2 hover:bg-blue-700 transition">
                     انتخاب بلیط
-                </button>
+                </Link>
                 <p className="text-sm text-gray-500">{remainingSeats} صندلی باقی مانده</p>
             </div>
         </div>
