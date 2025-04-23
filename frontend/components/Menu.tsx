@@ -75,7 +75,7 @@ export default function Menu() {
                 <ul className="mx-auto flex justify-between border-b-1 border-gray-200 px-12">
                     {navItems.map((item) => (
                         <li key={item.path} 
-                            className={`px-8 pt-2 border-b-3 border-${pathname === item.path ? 'blue-500' : 'white'} transition-all duration-150 ease-in-out`}>
+                            className={`px-8 pt-2 border-b-3 ${pathname === item.path ? 'border-blue-500' : 'border-white'} transition-all duration-150 ease-in-out`}>
                             <Link
                                 href={item.path}
                                 className={cn(

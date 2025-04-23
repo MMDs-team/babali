@@ -35,7 +35,7 @@ const iranianCities = [
     'رشت',
 ];
 
-export default function SourceTargetCity() {
+export default function SourceTargetCity({className} : {className: String}) {
     const [sourceCity, setSourceCity] = useState('');
     const [targetCity, setTargetCity] = useState('');
 
@@ -46,9 +46,9 @@ export default function SourceTargetCity() {
     }
 
     return (
-        <div className="flex relative mt-5">
+        <div className={`flex relative ${className}`}>
             <InputWithSuggestions
-                label="مبدا"
+                label="مبداء"
                 suggestions={iranianCities}
                 value={sourceCity}
                 onChange={setSourceCity}
