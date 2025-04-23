@@ -32,7 +32,7 @@ const ProgressStepSection = ({ step }: { step: number }) => {
     }
 
     return (
-        <ul className={`flex px-12 md:px-18 lg:px-26 xl:px-42 py-8 bg-white text-gray-400 text-xs ${positionStyle} ${baseStyle}`}>
+        <ul className={`flex px-12 md:px-18 lg:px-26 xl:px-42 py-8 bg-white text-gray-400 text-xs shadow-sm ${positionStyle} ${baseStyle}`}>
             <li className={`pr-4 flex-1 flex flex-col items-center relative after:content-[''] after:absolute after:right-1/2 after:top-[11px] after:z-[-1] after:h-px after:w-full after:border-b after:${step > 0 ? 'border-green-600' : 'border-gray-200'}`}>
                 <span className="flex bg-white md:pb-1 md:px-1">
                     <svg viewBox="0 0 24 24" width="26px" height="26px" fill="currentColor" className={step >= 0 ? 'text-green-600' : 'text-gray-200'}>

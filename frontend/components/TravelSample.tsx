@@ -35,7 +35,7 @@ const TravelSample: React.FC<TravelSampleProps> = ({
                     <div className='flex items-center'>
                         <Image
                             src={`/HMSFR.jpg`}
-                            alt='hero image'
+                            alt='company image'
                             width={50}
                             height={50}
                             objectFit="cover"
