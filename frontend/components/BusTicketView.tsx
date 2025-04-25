@@ -5,7 +5,7 @@ import Image from 'next/image'
 const BusTicketView = () => {
     return (
         <div className='px-12 md:px-18 lg:px-26 xl:px-42 py-8'>
-            <div className="flex w-full border-1 shadow">
+            <div className="flex w-full border-1 shadow bg-white">
                 <div className='flex flex-3 p-4'>
                     <div className='flex flex-col px-4'>
                         <span className='py-2'>
