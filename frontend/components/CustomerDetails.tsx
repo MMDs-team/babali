@@ -10,6 +10,9 @@ const CustomerDetails = () => {
     const [lastName, setLastName] = useState("");
     const [gender, setGender] = useState("M");
     const [SSR, setSSR] = useState('');
+    const [birthDate, setBirthDate] = useState('');
+    const [phone, setPhone] = useState('');
+
     return (
         <div className='px-12 md:px-18 lg:px-26 xl:px-42 py-8'>
             <div className='w-full border-1 shadow-xs p-4 md:px-6 px-4 bg-white'>
@@ -40,9 +43,15 @@ const CustomerDetails = () => {
                         onChange={(e) => setSSR(e.target.value)}
                     />
                 </form>
-                <form>
+                <form className='flex pt-4'>
                     <BirthDateInput />
-                
+                    <FloatingInput
+                        id="ssr"
+                        label="کدملی"
+                        value={phone}
+                        patern="^\d{10}$"
+                        onChange={(e) => setPhone(e.target.value)}
+                    />
                 </form>
             </div>
         </div>
