@@ -40,17 +40,17 @@ const ProgressStepSection = ({ step }: { step: number }) => {
                         </path>
                     </svg>
                 </span>
-                <span className={step === 0 ? 'text-green-700' : step < 0 ? 'text-gray-400' : 'text-gray-800'}>انتخاب اتوبوس</span>
+                <span className={`font-bold ${step === 0 ? 'text-green-700' : step < 0 ? 'text-gray-400' : 'text-gray-800'}`}>انتخاب اتوبوس</span>
 
             </li>
-            <li className={`flex-1 flex flex-col items-center relative after:content-[''] after:absolute after:right-1/2 after:top-[11px] after:z-[-1] after:h-px after:w-full after:border-b after:${step > 0 ? 'border-green-600' : 'border-gray-200'}`}>
+            <li className={`flex-1 flex flex-col items-center relative after:content-[''] after:absolute after:right-1/2 after:top-[11px] after:z-[-1] after:h-px after:w-full after:border-b after:${step > 1 ? 'border-green-600' : 'border-gray-200'}`}>
                 <span className="flex bg-white md:pb-1 md:px-2">
                     <svg viewBox="0 0 24 24" width="26px" height="26px" fill="currentColor" className={step >= 1 ? 'text-green-600' : 'text-gray-200'}>
                         <path d="M12.75 8.25A3.754 3.754 0 0 0 16.5 12a3.754 3.754 0 0 0 3.75-3.75A3.754 3.754 0 0 0 16.5 4.5a3.754 3.754 0 0 0-3.75 3.75ZM10.5 19.5h11.25a.75.75 0 0 0 .75-.75V16.5a3.754 3.754 0 0 0-3.75-3.75H13.5a3.754 3.754 0 0 0-3.75 3.75v2.25c0 .415.335.75.75.75ZM6.375 12A2.628 2.628 0 0 1 3.75 9.375 2.628 2.628 0 0 1 6.375 6.75 2.628 2.628 0 0 1 9 9.375 2.628 2.628 0 0 1 6.375 12ZM2.25 18.75H7.5a.75.75 0 0 0 .75-.75v-1.5c0-.349.078-.683.23-.993a1.934 1.934 0 0 0-.082-1.89 1.838 1.838 0 0 0-1.57-.867H5.25A3.754 3.754 0 0 0 1.5 16.5V18c0 .415.335.75.75.75Z" fillRule="evenodd">
                         </path>
                     </svg>
                 </span>
-                <span className={step === 1 ? 'text-green-700' : step < 1 ? 'text-gray-400' : 'text-gray-800'}
+                <span className={`font-bold ${step === 1 ? 'text-green-700' : step < 1 ? 'text-gray-400' : 'text-gray-800'}`}
                 >مشخصات مسافران</span>
 
             </li>
@@ -61,7 +61,7 @@ const ProgressStepSection = ({ step }: { step: number }) => {
                         </path>
                     </svg>
                 </span>
-                <span className={step === 2 ? 'text-green-700' : step < 2 ? 'text-gray-400' : 'text-gray-800'}>تایید اطلاعات</span>
+                <span className={`font-bold ${step === 2 ? 'text-green-700' : step < 2 ? 'text-gray-400' : 'text-gray-800'}`}>تایید اطلاعات</span>
 
             </li>
             <li className={`flex-1 flex flex-col items-center relative after:content-[''] after:absolute after:right-1/2 after:top-[11px] after:z-[-1] after:h-px after:w-full after:border-b after:${step > 3 ? 'border-green-600' : 'border-gray-200'}`}>
@@ -71,7 +71,7 @@ const ProgressStepSection = ({ step }: { step: number }) => {
                         </path>
                     </svg>
                 </span>
-                <span className={step === 3 ? 'text-green-700' : step < 3 ? 'text-gray-400' : 'text-gray-800'}>پرداخت</span>
+                <span className={`font-bold ${step === 3 ? 'text-green-700' : step < 3 ? 'text-gray-400' : 'text-gray-800'}`}>پرداخت</span>
 
             </li>
             <li className="pl-4 flex-1 flex flex-col items-center">
@@ -81,7 +81,7 @@ const ProgressStepSection = ({ step }: { step: number }) => {
                         </path>
                     </svg>
                 </span>
-                <span className={step === 4 ? 'text-green-700' : step < 4 ? 'text-gray-400' : 'text-gray-800'}>صدور بلیط</span>
+                <span className={`font-bold ${step === 4 ? 'text-green-700' : step < 4 ? 'text-gray-400' : 'text-gray-800'}`}>صدور بلیط</span>
 
             </li>
         </ul>

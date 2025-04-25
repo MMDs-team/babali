@@ -1,5 +1,6 @@
 import BusSeatChose from "@/components/BusSeatChose";
 import BusTicketView from "@/components/BusTicketView";
+import CustomerDetails from "@/components/CustomerDetails";
 import ProgressStepSection from "@/components/ProgressStepSection";
 
 export default function BusTicketPage() {
@@ -10,6 +11,7 @@ export default function BusTicketPage() {
                 <ProgressStepSection step={2} />
                 <BusTicketView />
                 <BusSeatChose />
+                <CustomerDetails />
             </div>
 
         </main>
