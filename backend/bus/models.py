@@ -79,8 +79,8 @@ class Travel(models.Model):
     capacity = models.IntegerField(blank=True, null=True)
     
     # nullable!
-    seat_stat = models.BooleanField(blank=True, null=True)
-
+    seat_stat = models.JSONField(default=list)
+    
     def __str__(self):
         return f"Travel ID: {self.travel_id}, Origin: {self.origin}, Destination: {self.dest}"
 
