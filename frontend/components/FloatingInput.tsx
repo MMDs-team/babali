@@ -1,15 +1,18 @@
+import { cn } from "@/lib/utils";
+
 interface FloatingInputProps {
     id: string;
     label: string;
     value: string;
     type?: string;
     patern? : string;
+    className? : string;
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-export default function FloatingInput({ id, label, value, type='text', patern, onChange }: FloatingInputProps) {
+export default function FloatingInput({ id, label, value, type='text', patern, className, onChange }: FloatingInputProps) {
     return (
-        <div className={`relative z-0 w-full group p-1`}>
+        <div className={cn(`relative z-0 w-full group p-1`, className)}>
             <input
                 type={type}
                 name={id}
@@ -20,7 +23,7 @@ export default function FloatingInput({ id, label, value, type='text', patern, o
                     px-2 rounded-md"
                 placeholder=" "
                 value={value}
-                pattern={"^\d{10}$"}
+                pattern={patern}
                 onChange={onChange}
             />
             <label

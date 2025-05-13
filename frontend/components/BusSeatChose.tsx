@@ -5,10 +5,13 @@ import BusSeatChoseDetails from './BusSeatChoseDetails'
 type SeatType = 'M' | 'F' | 'E' | 'S';
 type Seat = { id: number; type: SeatType } | { id: null };
 
+type BusSeatChoseProps = {
+    selectedSeats: number[];
+    setSelectedSeats: React.Dispatch<React.SetStateAction<number[]>>;
+};
 
 
-
-const BusSeatChose = () => {
+const BusSeatChose: React.FC<BusSeatChoseProps> = ({ selectedSeats, setSelectedSeats }) => {
 
     const BUS_MAP: Seat[][] =
         [
@@ -50,12 +53,10 @@ const BusSeatChose = () => {
             ]
         ]
 
-    const [selected, setSelected] = useState<number[]>([]);
-
     const selectSeatHandler = (place: Seat) => {
         if (place.id === null) return;
         if (place.type === 'F' || place.type === 'M') return;
-        setSelected(prev =>
+        setSelectedSeats(prev =>
             prev.includes(place.id) ?
                 prev.filter(item => item !== place.id)
                 : [...prev, place.id]
@@ -65,7 +66,7 @@ const BusSeatChose = () => {
 
 
     return (
-        <div className='px-12 md:px-18 lg:px-26 xl:px-42 py-8'>
+        <div className='px-12 md:px-18 lg:px-26 xl:px-42 py-6'>
             <div className='w-full border-1 shadow-xs p-4 md:px-6 px-4 bg-white'>
 
                 <div className="flex items-center">
@@ -80,7 +81,7 @@ const BusSeatChose = () => {
                     </div>
                 </div>
                 <div className="flex-1 flex w-full justify-between flex-wrap px-4 py-5 md:px-0">
-                    <BusSeatChoseDetails selectedCnt={selected.length}/>
+                    <BusSeatChoseDetails selectedCnt={selectedSeats.length} />
 
                     <div className="flex-1 border-1">
                         <div className="flex flex-col md:flex-row-reverse rounded-xl p-1 max-w-[44rem]">
@@ -97,7 +98,7 @@ const BusSeatChose = () => {
                                                             aspect-square flex items-center justify-center
                                                             ${place.type === 'M' && 'bg-blue-100 border-blue-200 text-gray-400 cursor-not-allowed'}           
                                                             ${place.type === 'F' && 'bg-red-100 border-red-200 text-gray-400 cursor-not-allowed'}           
-                                                            ${selected.includes(place.id) ?
+                                                            ${selectedSeats.includes(place.id) ?
                                                                 'bg-green-300 border-green-500 text-gray-700 cursor-pointer hover:border-green-700'
                                                                 : place.type === 'E' && 'bg-gray-100 border-gray-200 text-gray-700 cursor-pointer hover:bg-gray-200 hover:border-gray-300'
                                                             }
