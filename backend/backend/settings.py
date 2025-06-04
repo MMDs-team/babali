@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     
     'bus',
     'flight',
+    'train',
 ]
 
 MIDDLEWARE = [

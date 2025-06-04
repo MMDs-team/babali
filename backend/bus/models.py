@@ -18,7 +18,7 @@ class UserProfile(AbstractUser):
         return f"{self.user.username} - {self.phone_number}"
 
 
-class Cooperative(models.Model):
+class BusCooperative(models.Model):
     cooperative_id = models.AutoField(primary_key=True, editable=False)
     name = models.CharField(max_length=50)
     phone = models.CharField(
@@ -38,7 +38,7 @@ class Cooperative(models.Model):
         return self.name
 
 
-class Terminal(models.Model):
+class BusTerminal(models.Model):
     terminal_id = models.AutoField(primary_key=True, editable=False)
     name = models.CharField(max_length=50)
     city = models.CharField(max_length=25)
@@ -61,15 +61,15 @@ class Bus(models.Model):
     seat_count = models.PositiveIntegerField(blank=True, null=True)
 
     def __str__(self):
-        return f"{self.type} - {self.seat_count} seats";
+        return f"{self.type} - {self.seat_count} seats"
 
 
-class Travel(models.Model):
+class BusTravel(models.Model):
     travel_id = models.AutoField(primary_key=True, editable=False)
 
     bus = models.ForeignKey(Bus, on_delete=models.CASCADE, related_name="travels")
-    terminal = models.ForeignKey(Terminal, on_delete=models.CASCADE, related_name="travels")
-    cooperative = models.ForeignKey(Cooperative, on_delete=models.CASCADE, related_name="travels")
+    terminal = models.ForeignKey(BusTerminal, on_delete=models.CASCADE, related_name="travels")
+    cooperative = models.ForeignKey(BusCooperative, on_delete=models.CASCADE, related_name="travels")
 
     origin = models.CharField(max_length=25, blank=True, null=True)
     dest = models.CharField(max_length=25, blank=True, null=True)
@@ -85,11 +85,11 @@ class Travel(models.Model):
         return f"Travel ID: {self.travel_id}, Origin: {self.origin}, Destination: {self.dest}"
 
 
-class Ticket(models.Model):
+class BusTicket(models.Model):
     ticket_id = models.AutoField(primary_key=True, editable=False)
     
     user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name="tickets")
-    travel = models.ForeignKey(Travel, on_delete=models.CASCADE, related_name="tickets")
+    travel = models.ForeignKey(BusTravel, on_delete=models.CASCADE, related_name="tickets")
 
     serial = models.IntegerField(blank=True, null=True)
     ssn = models.CharField(max_length=10, blank=True, null=True)
