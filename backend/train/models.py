@@ -7,26 +7,57 @@ phone_number_validator = RegexValidator(
 )
 
 class TrainCooperative(models.Model):
-    pass
+    cooperative_id = models.AutoField(primary_key=True, editable=False)
+
+    name = models.CharField(max_length=50, blank=True, null=True)
+    phone = models.CharField(
+        max_length=11,
+        blank=True, 
+        null=True
+    )
+    logo = models.ImageField(
+        upload_to='logos/', 
+        blank=True, 
+        null=True
+    )
+
+    def __str__(self):
+        return self.name or f"Cooperative ID: {self.cooperative_id}"
 
 
 class Train(models.Model):
-    pass
+    train_id = models.AutoField(primary_key=True, editable=False)
+
+    stars = models.PositiveSmallIntegerField(blank=True, null=True)
+    compartment_capacity = models.PositiveIntegerField(blank=True, null=True)
+    compartment_count = models.PositiveIntegerField(blank=True, null=True)
+
+    def __str__(self):
+        return f"Train ID: {self.train_id}"
 
 
 class TrainRoute(models.Model):
-    pass
+    route_id = models.AutoField(primary_key=True, editable=False)
+
+    origin_city = models.CharField(max_length=25, blank=True, null=True)
+    dest_city = models.CharField(max_length=25, blank=True, null=True)
+    edge_identifiers = models.JSONField(default=list, blank=True, null=True)
+
+    def __str__(self):
+        if self.origin_city and self.dest_city:
+            return f"Route from {self.origin_city} to {self.dest_city}"
+        return f"Route ID: {self.route_id}"
 
 
 class TrainRouteEdge(models.Model):
     route_edge_id = models.AutoField(primary_key=True, editable=False)
     
-    destination_city = models.CharField(max_length=25, blank=True, null=True)
     origin_city = models.CharField(max_length=25, blank=True, null=True)
-    duration  = duration = models.DurationField()
+    dest_city = models.CharField(max_length=25, blank=True, null=True)
+    duration = models.DurationField()
 
     def __str__(self):
-        return f"Edge ID: {self.edge_id}, Origin: {self.origin_city}, Destination: {self.dest_city}"
+        return f"Edge ID: {self.route_edge_id}, Origin: {self.origin_city}, Destination: {self.dest_city}"
 
 
 class TrainTravel(models.Model):
