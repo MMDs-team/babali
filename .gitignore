@@ -89,5 +89,3 @@ local_settings.py
 db.sqlite3
 
 credentials.py
-diagram.drawio
-requirements.txt
