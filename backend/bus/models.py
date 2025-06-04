@@ -15,7 +15,7 @@ class UserProfile(AbstractUser):
     )
 
     def __str__(self):
-        return f"{self.user.username} - {self.phone_number}"
+        return f"{self.username} - {self.phone_number}"
 
 
 class BusCooperative(models.Model):
