@@ -23,6 +23,20 @@ const CustomerDetails: React.FC<CustomerDetailsProps> = ({
     const [birthDate, setBirthDate] = useState('');
     const [phone, setPhone] = useState('');
 
+    const handleSSR = (e: React.ChangeEvent<HTMLInputElement>) => {
+        let inputValue = e.target.value;
+        const filteredValue = inputValue.replace(/\D/g, '');
+        const limitedValue = filteredValue.substring(0, 10);
+        setSSR(limitedValue);
+    };
+
+    const handlePhone = (e: React.ChangeEvent<HTMLInputElement>) => {
+        let inputValue = e.target.value;
+        const filteredValue = inputValue.replace(/\D/g, '');
+        const limitedValue = filteredValue.substring(0, 12);
+        setPhone(limitedValue);
+    };
+
     return (
         <div className='w-full border-1 p-4 px-2 bg-white border-x-0 border-gray-200'>
             <div className='flex justify-between'>
@@ -68,19 +82,20 @@ const CustomerDetails: React.FC<CustomerDetailsProps> = ({
                     id="ssr"
                     label="کدملی"
                     value={SSR}
-                    patern="^\d{10}$"
-                    onChange={(e) => setSSR(e.target.value)}
+                    patern='^\d{0,10}$'
+                    onChange={handleSSR}
                 />
             </form>
             <form className='flex pt-4 gap-2 items-center'>
                 <BirthDateInput />
+                
                 {isMain && <FloatingInput
-                    id="ssr"
+                    id="phone"
                     label="تلفن همراه"
                     value={phone}
                     patern="^0?9\d{9}$"
                     className='w-70'
-                    onChange={(e) => setPhone(e.target.value)}
+                    onChange={handlePhone}
                 />}
             </form>
         </div>
