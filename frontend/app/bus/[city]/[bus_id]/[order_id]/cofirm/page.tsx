@@ -3,6 +3,12 @@ import React from 'react';
 import { useParams } from 'next/navigation';
 import ProgressStepSection from '@/components/ProgressStepSection';
 
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { PencilIcon } from 'lucide-react'; 
+
+
 
 interface ConfirmPageProps {
     params: {
@@ -25,9 +31,16 @@ export default function OrderConfirmationPage({ params }: ConfirmPageProps) {
         { label: "مبلغ کل", value: "468,000 تومان" },
     ];
 
+    const passengers = [
+        { name: 'محمد قادری', gender: 'مرد', dob: '2025/12/12', phone: '091234567' },
+        { name: 'محمد قادری2', gender: 'مرد', dob: '2025/12/12', phone: '' },
+        { name: 'محمد قادری3', gender: 'مرد', dob: '2025/12/12', phone: '' },
+    ];
+
+
     return (
         <div>
-            <ProgressStepSection step={2}/>
+            <ProgressStepSection step={2} />
             <div className="px-12 md:px-18 lg:px-26 xl:px-42 py-2 mt-4 bg-accent pt-20">
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
@@ -53,23 +66,60 @@ export default function OrderConfirmationPage({ params }: ConfirmPageProps) {
                         </div>
 
 
-                        <div className="py-2 bg-white mt-4">
-                            <div className="w-full overflow-hidden flex flex-col md:flex-row justify-between items-center p-4">
-                                <div className="flex items-center mb-4 md:mb-0">
-                                    <UserIcon />
-                                    <h2 className="text-lg font-bold text-gray-800">مشخصات سرپرست مسافران</h2>
+
+                        {/* Passenger Details Card */}
+                        <Card className="w-full rounded-xl shadow-md px-2 mt-4">
+                            <CardHeader className="bg-gray-white p-4 rounded-t-xl flex flex-row items-center justify-between">
+                                <CardTitle className="text-right text-xl font-bold text-gray-800">
+                                    مشخصات سرپرست مسافران
+                                </CardTitle>
+                                <Button variant="outline" className="flex items-center space-x-2 text-blue-600 border-blue-600 hover:bg-blue-50 hover:text-blue-700 rounded-lg transition-colors duration-200">
+                                    <PencilIcon className="h-4 w-4" />
+                                    <span>ویرایش مسافران</span>
+                                </Button>
+                            </CardHeader>
+                            <CardContent className="px-4">
+                                <div className="overflow-x-auto">
+                                    <Table className="min-w-full divide-y divide-gray-200">
+                                        <TableHeader>
+                                            <TableRow className="bg-gray-50">
+                                                <TableHead className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    نام و نام خانوادگی
+                                                </TableHead>
+                                                <TableHead className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    جنسیت
+                                                </TableHead>
+                                                <TableHead className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    تاریخ تولد
+                                                </TableHead>
+                                                <TableHead className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    شماره همراه
+                                                </TableHead>
+                                            </TableRow>
+                                        </TableHeader>
+                                        <TableBody className="bg-white divide-y divide-gray-200">
+                                            {passengers.map((passenger, index) => (
+                                                <TableRow key={index} className="hover:bg-gray-50">
+                                                    <TableCell className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 text-right">
+                                                        {passenger.name}
+                                                    </TableCell>
+                                                    <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
+                                                        {passenger.gender}
+                                                    </TableCell>
+                                                    <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
+                                                        {passenger.dob}
+                                                    </TableCell>
+                                                    <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
+                                                        {passenger.phone}
+                                                    </TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
                                 </div>
-                                <button className="flex items-center justify-center px-6 py-2 bg-white border border-blue-600 text-blue-600 rounded-md hover:bg-blue-50 transition-colors font-semibold w-full md:w-auto">
-                                    <EditIcon />
-                                    ویرایش مسافران
-                                </button>
+                            </CardContent>
+                        </Card>
 
-                            </div>
-                            <div className="p-6 grid grid-cols-[1fr_3fr] text-sm">
-                                {/* passanger would be added to here */}
-                            </div>
-
-                        </div>
                     </div>
                     <div className="md:col-span-1 bg-white border border-gray-200 rounded-lg p-6 shadow-sm fixed left-20">
                         <div className="flex justify-between items-center mb-4">
