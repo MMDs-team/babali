@@ -89,3 +89,5 @@ env/
 db.sqlite3
 
 credentials.py
+
+.vscode/

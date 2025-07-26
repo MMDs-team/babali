@@ -4,7 +4,7 @@ from bus.models import *
 class TravelSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = BusTravel
+        model = Travel
         fields = [
             'travel_id',
             'bus',

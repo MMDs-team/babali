@@ -4,7 +4,7 @@ from rest_framework import status
 
 
 from bus.models import *
-from bus.serializers import *
+from bus.serializers.travel_serializers import *
 
 @api_view(['GET'])
 def get_available_travels(request):
