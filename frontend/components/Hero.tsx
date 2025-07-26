@@ -6,6 +6,7 @@ import Menu from "./Menu";
 
 const Hero = () => {
     const pathname = usePathname();
+    const [allImagesLoaded, setAllImagesLoaded] = useState(false);
 
     const routes : Record<string, string> = {
         '/': 'plain-in',
@@ -18,11 +19,9 @@ const Hero = () => {
     }
 
     const showHeroImage = pathname in routes;
-    if (!showHeroImage) return null;
-
+    
     const currentImageSrc = `/hero-${routes[pathname]}.jpg`;
-    const [allImagesLoaded, setAllImagesLoaded] = useState(false);
-
+    
     useEffect(() => {
         const imagePromises = Object.values(routes).map((routeSuffix) => {
             return new Promise((resolve) => {
@@ -37,7 +36,8 @@ const Hero = () => {
             setAllImagesLoaded(true);
         });
     }, []);
-
+    
+    if (!showHeroImage) return null;
 
     return (
          <div className="w-full mt-15 relative hidden md:block transition-all duration-500 ease-in-out">

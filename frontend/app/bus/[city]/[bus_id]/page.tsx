@@ -4,7 +4,7 @@ import BusTicketView from "@/components/BusTicketView";
 import CustomerDetails from "@/components/CustomerDetails";
 import ProgressStepSection from "@/components/ProgressStepSection";
 import { useTravel } from "@/contexts/TravelContext";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export type BusPassenger = {
@@ -20,6 +20,7 @@ export type BusPassenger = {
 export default function BusTicketPage() {
 
     const router = useRouter();
+    const pathname = usePathname();
 
     const [seats, setSeats] = useState<number[]>([]);
     const { travelType, setTravelType, setTravelDetails } = useTravel();
@@ -39,19 +40,22 @@ export default function BusTicketPage() {
                 )
                 : [...prev, newPassenger];
 
-            setTravelDetails((prev: any) => ({
-                ...prev,
-                passengers: updated,
-            }));
-
             return updated;
         });
     };
 
 
-    const goToConfirm = (id: string) => {
-        router.push(`/${id}/confirm`);// i should change here
+
+    const goToConfirm = () => {
+        router.push(`${pathname}/confirm`);
     };
+
+    useEffect(() => {
+        setTravelDetails((prev: any) => ({
+            ...prev,
+            passengers: passengers,
+        }));
+    }, [passengers, setTravelDetails]);
 
 
 

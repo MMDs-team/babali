@@ -1,12 +1,12 @@
 'use client';
-import React from 'react';
-import { useParams } from 'next/navigation';
+import React, { useEffect } from 'react';
+import { useParams, useRouter } from 'next/navigation';
 import ProgressStepSection from '@/components/ProgressStepSection';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { PencilIcon } from 'lucide-react'; 
+import { PencilIcon } from 'lucide-react';
 import { useTravel } from '@/contexts/TravelContext';
 
 interface Passenger {
@@ -21,11 +21,12 @@ interface ConfirmPageProps {
         order_id: string;
     };
 
-    passengers: Passenger[]; 
+    passengers: Passenger[];
 }
 
 export default function OrderConfirmationPage({ params, passengers }: ConfirmPageProps) {
-    const { order_id } = useParams();
+
+    const router = useRouter();
 
     const ticketInfo = [
         { label: "مبدا", value: "تهران پایانه بیهقی" },
@@ -39,7 +40,14 @@ export default function OrderConfirmationPage({ params, passengers }: ConfirmPag
         { label: "مبلغ کل", value: "468,000 تومان" },
     ];
 
-    const {travelDetails} = useTravel();
+    const { travelType, travelDetails } = useTravel();
+
+    useEffect(() => {
+        console.log(travelDetails)
+        if (travelType !== 'bus') {
+            router.push(`/bus-ticket`);
+        }
+    }, [])
 
     return (
         <div>
@@ -101,16 +109,16 @@ export default function OrderConfirmationPage({ params, passengers }: ConfirmPag
                                             </TableRow>
                                         </TableHeader>
                                         <TableBody className="bg-white divide-y divide-gray-200">
-                                            {travelDetails?.passengers.map((passenger:any, index:any) => (
+                                            {travelDetails?.passengers.map((passenger: any, index: any) => (
                                                 <TableRow key={index} className="hover:bg-gray-50">
                                                     <TableCell className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 text-right">
-                                                        {passenger.name}
+                                                        {`${passenger.firstName} ${passenger.lastNAme}`}
                                                     </TableCell>
                                                     <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
                                                         {passenger.gender}
                                                     </TableCell>
                                                     <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
-                                                        {passenger.dob}
+                                                        {passenger.birthDate}
                                                     </TableCell>
                                                     <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
                                                         {passenger.phone}
