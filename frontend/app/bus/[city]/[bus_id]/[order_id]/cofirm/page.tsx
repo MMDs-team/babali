@@ -7,16 +7,24 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { PencilIcon } from 'lucide-react'; 
+import { useTravel } from '@/contexts/TravelContext';
 
-
+interface Passenger {
+    name: string;
+    gender: string;
+    dob: string;
+    phone: string;
+}
 
 interface ConfirmPageProps {
     params: {
         order_id: string;
     };
+
+    passengers: Passenger[]; 
 }
 
-export default function OrderConfirmationPage({ params }: ConfirmPageProps) {
+export default function OrderConfirmationPage({ params, passengers }: ConfirmPageProps) {
     const { order_id } = useParams();
 
     const ticketInfo = [
@@ -31,12 +39,7 @@ export default function OrderConfirmationPage({ params }: ConfirmPageProps) {
         { label: "مبلغ کل", value: "468,000 تومان" },
     ];
 
-    const passengers = [
-        { name: 'محمد قادری', gender: 'مرد', dob: '2025/12/12', phone: '091234567' },
-        { name: 'محمد قادری2', gender: 'مرد', dob: '2025/12/12', phone: '' },
-        { name: 'محمد قادری3', gender: 'مرد', dob: '2025/12/12', phone: '' },
-    ];
-
+    const {travelDetails} = useTravel();
 
     return (
         <div>
@@ -98,7 +101,7 @@ export default function OrderConfirmationPage({ params }: ConfirmPageProps) {
                                             </TableRow>
                                         </TableHeader>
                                         <TableBody className="bg-white divide-y divide-gray-200">
-                                            {passengers.map((passenger, index) => (
+                                            {travelDetails?.passengers.map((passenger:any, index:any) => (
                                                 <TableRow key={index} className="hover:bg-gray-50">
                                                     <TableCell className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 text-right">
                                                         {passenger.name}

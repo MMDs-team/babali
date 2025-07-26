@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import FloatingInput from './FloatingInput'
 import GendarSelectInput from './GendarSelectInput';
 import BirthDateInput from './BirthDateInput';
@@ -7,13 +7,15 @@ import BirthDateInput from './BirthDateInput';
 type CustomerDetailsProps = {
     isMain?: boolean;
     seatNmb: number | null;
-    deleteHandler: (seatNmb: number|null) => void;
+    deleteHandler: (seatNmb: number | null) => void;
+    handler: (newPassenger: any) => void;
 };
 
 const CustomerDetails: React.FC<CustomerDetailsProps> = ({
     isMain = false,
     seatNmb,
     deleteHandler,
+    handler
 }) => {
 
     const [firstName, setFirstName] = useState("");
@@ -31,11 +33,16 @@ const CustomerDetails: React.FC<CustomerDetailsProps> = ({
     };
 
     const handlePhone = (e: React.ChangeEvent<HTMLInputElement>) => {
+        e.preventDefault()
         let inputValue = e.target.value;
         const filteredValue = inputValue.replace(/\D/g, '');
         const limitedValue = filteredValue.substring(0, 12);
         setPhone(limitedValue);
     };
+
+    useEffect(() => {
+        handler({ firstName, lastName, gender, SSR, birthDate, phone, seatNumber: seatNmb });
+    }, [firstName, lastName, gender, SSR, birthDate, phone])
 
     return (
         <div className='w-full border-1 p-4 px-2 bg-white border-x-0 border-gray-200'>
@@ -59,7 +66,7 @@ const CustomerDetails: React.FC<CustomerDetailsProps> = ({
                     </div>
                 }
             </div>
-            <form className="flex gap-2">
+            <div className="flex gap-2">
                 <FloatingInput
                     id="firstName"
                     label="نام"
@@ -85,10 +92,10 @@ const CustomerDetails: React.FC<CustomerDetailsProps> = ({
                     patern='^\d{0,10}$'
                     onChange={handleSSR}
                 />
-            </form>
-            <form className='flex pt-4 gap-2 items-center'>
+            </div>
+            <div className='flex pt-4 gap-2 items-center'>
                 <BirthDateInput />
-                
+
                 {isMain && <FloatingInput
                     id="phone"
                     label="تلفن همراه"
@@ -97,7 +104,7 @@ const CustomerDetails: React.FC<CustomerDetailsProps> = ({
                     className='w-70'
                     onChange={handlePhone}
                 />}
-            </form>
+            </div>
         </div>
     )
 }

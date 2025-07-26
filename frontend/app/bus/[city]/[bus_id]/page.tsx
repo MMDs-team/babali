@@ -3,16 +3,63 @@ import BusSeatChose from "@/components/BusSeatChose";
 import BusTicketView from "@/components/BusTicketView";
 import CustomerDetails from "@/components/CustomerDetails";
 import ProgressStepSection from "@/components/ProgressStepSection";
-import { useState } from "react";
+import { useTravel } from "@/contexts/TravelContext";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+
+export type BusPassenger = {
+    firstName: string,
+    lastNAme: string,
+    gender: 'M' | 'F',
+    SSR: string,
+    birthDate: Date,
+    phone: string | null
+    seatNumber: number
+}
 
 export default function BusTicketPage() {
 
-    const [seats, setSeats] = useState<number[]>([]);
+    const router = useRouter();
 
-    const deleteHandler = (seatNmb: number | null) => {
-        setSeats(prevSeats => prevSeats.filter(seat => seat !== seatNmb));
+    const [seats, setSeats] = useState<number[]>([]);
+    const { travelType, setTravelType, setTravelDetails } = useTravel();
+    const [passengers, setPassengers] = useState<BusPassenger[]>([])
+
+    const deleteHandler = (seatNumber: number | null) => {
+        if (seatNumber === null) return;
+        setSeats(prev => prev.filter(seat => seat !== seatNumber));
+        setPassengers(prev => prev.filter(p => p.seatNumber !== seatNumber));
     };
 
+    const addPassenger = (newPassenger: BusPassenger) => {
+        setPassengers(prev => {
+            const updated = prev.some(p => p.seatNumber === newPassenger.seatNumber)
+                ? prev.map(p =>
+                    p.seatNumber === newPassenger.seatNumber ? newPassenger : p
+                )
+                : [...prev, newPassenger];
+
+            setTravelDetails((prev: any) => ({
+                ...prev,
+                passengers: updated,
+            }));
+
+            return updated;
+        });
+    };
+
+
+    const goToConfirm = (id: string) => {
+        router.push(`/${id}/confirm`);// i should change here
+    };
+
+
+
+    useEffect(() => {
+        if (travelType === 'bus') return;
+        setTravelType('bus');
+        setTravelDetails({})
+    }, []);
 
     return (
         <main className="mt-15 w-full bg-gray-100">
@@ -22,12 +69,18 @@ export default function BusTicketPage() {
                 <BusSeatChose selectedSeats={seats} setSelectedSeats={setSeats} />
                 <div className="px-12 md:px-18 lg:px-26 xl:px-42 py-2">
                     <div className="bg-white px-8 border-1 shadow-xs">
-                        <CustomerDetails seatNmb={seats.length > 0 ? seats[0] : null} deleteHandler={deleteHandler} isMain={true} />
+                        <CustomerDetails
+                            seatNmb={seats.length > 0 ? seats[0] : null}
+                            deleteHandler={deleteHandler}
+                            isMain={true}
+                            handler={addPassenger}
+                        />
                         {seats.slice(1).map((seatNumber, index) => (
                             <CustomerDetails
                                 key={index}
                                 seatNmb={seatNumber}
                                 deleteHandler={deleteHandler}
+                                handler={addPassenger}
                             />
                         ))}
                     </div>
@@ -43,6 +96,7 @@ export default function BusTicketPage() {
                         </span>
                         <button
                             className="px-8 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                            onClick={() => goToConfirm()}
                         >
                             تایید و ادامه خرید
                         </button>
