@@ -112,16 +112,16 @@ export default function OrderConfirmationPage({ params, passengers }: ConfirmPag
                                             {travelDetails?.passengers.map((passenger: any, index: any) => (
                                                 <TableRow key={index} className="hover:bg-gray-50">
                                                     <TableCell className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 text-right">
-                                                        {`${passenger.firstName} ${passenger.lastNAme}`}
+                                                        {`${passenger.firstName} ${passenger.lastName}`}
                                                     </TableCell>
                                                     <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
-                                                        {passenger.gender}
+                                                        {passenger.gender === 'M' ? 'مرد' : 'زن'}
                                                     </TableCell>
                                                     <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
-                                                        {passenger.birthDate}
+                                                        {(passenger.birthDate)}
                                                     </TableCell>
                                                     <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
-                                                        {passenger.phone}
+                                                        {passenger.phone ? passenger.phone : '-'}
                                                     </TableCell>
                                                 </TableRow>
                                             ))}

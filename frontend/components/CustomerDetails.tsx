@@ -22,7 +22,7 @@ const CustomerDetails: React.FC<CustomerDetailsProps> = ({
     const [lastName, setLastName] = useState("");
     const [gender, setGender] = useState("M");
     const [SSR, setSSR] = useState('');
-    const [birthDate, setBirthDate] = useState('');
+    const [birthDate, setBirthDate] = useState({});
     const [phone, setPhone] = useState('');
 
     const handleSSR = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -39,6 +39,10 @@ const CustomerDetails: React.FC<CustomerDetailsProps> = ({
         const limitedValue = filteredValue.substring(0, 12);
         setPhone(limitedValue);
     };
+
+    const handleBirth = (date: { day: string; month: string; year: string }) => {
+        setBirthDate(date);
+    }
 
     useEffect(() => {
         handler({ firstName, lastName, gender, SSR, birthDate, phone, seatNumber: seatNmb });
@@ -94,7 +98,7 @@ const CustomerDetails: React.FC<CustomerDetailsProps> = ({
                 />
             </div>
             <div className='flex pt-4 gap-2 items-center'>
-                <BirthDateInput />
+                <BirthDateInput onChange={handleBirth} />
 
                 {isMain && <FloatingInput
                     id="phone"
