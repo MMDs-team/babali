@@ -6,7 +6,6 @@ from bus.views import ticket_views, travel_views
 
 router = DefaultRouter()
 router.register('tickets', ticket_views.TicketViewSet)
+router.register('travels', travel_views.TravelViewSet)
 
-urlpatterns = [
-    path('available/', travel_views.get_available_travels, name='get_available_travels'),
-] + router.urls
+urlpatterns = router.urls
