@@ -1,5 +1,7 @@
 from rest_framework import serializers
-from bus.models import *
+
+from bus.models import Travel
+
 
 class TravelSerializer(serializers.ModelSerializer):
 

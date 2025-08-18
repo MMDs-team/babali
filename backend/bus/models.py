@@ -1,29 +1,15 @@
+from django.conf import settings
 from django.db import models
-from django.contrib.auth.models import AbstractUser
-from django.core.validators import RegexValidator
 
-phone_number_validator = RegexValidator(
-    regex=r'^0\d{10}$',
-)
-
-
-class UserProfile(AbstractUser):
-    phone_number = models.CharField(
-        max_length=11,
-        validators=[phone_number_validator],
-        primary_key=True
-    )
-
-    def __str__(self):
-        return f"{self.user.username} - {self.phone_number}"
+import consts
 
 
 class Cooperative(models.Model):
     cooperative_id = models.AutoField(primary_key=True, editable=False)
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=consts.STR_LEN)
     phone = models.CharField(
-        max_length=11,
-        validators=[phone_number_validator],
+        max_length=consts.PHONE_NUMBER_LEN,
+        validators=[consts.PHONE_NUMBER_VALIDATOR],
         blank=True,
         null=True
     )
@@ -40,13 +26,13 @@ class Cooperative(models.Model):
 
 class Terminal(models.Model):
     terminal_id = models.AutoField(primary_key=True, editable=False)
-    name = models.CharField(max_length=50)
-    city = models.CharField(max_length=25)
+    name = models.CharField(max_length=consts.STR_LEN)
+    city = models.CharField(max_length=consts.SHORT_STR_LEN)
 
-    address = models.TextField(max_length=250, blank=True, null=True)
+    address = models.TextField(max_length=consts.LONG_STR_LEN, blank=True, null=True)
     phone = models.CharField(
-        max_length=11,
-        validators=[phone_number_validator],
+        max_length=consts.PHONE_NUMBER_LEN,
+        validators=[consts.PHONE_NUMBER_VALIDATOR],
         blank=True,
         null=True
     )
@@ -57,11 +43,11 @@ class Terminal(models.Model):
 
 class Bus(models.Model):
     bus_id = models.AutoField(primary_key=True, editable=False)
-    type = models.CharField(max_length=50)
+    type = models.CharField(max_length=consts.STR_LEN)
     seat_count = models.PositiveIntegerField(blank=True, null=True)
 
     def __str__(self):
-        return f"{self.type} - {self.seat_count} seats";
+        return f"{self.type} - {self.seat_count} seats"
 
 
 class Travel(models.Model):
@@ -71,30 +57,46 @@ class Travel(models.Model):
     terminal = models.ForeignKey(Terminal, on_delete=models.CASCADE, related_name="travels")
     cooperative = models.ForeignKey(Cooperative, on_delete=models.CASCADE, related_name="travels")
 
-    origin = models.CharField(max_length=25, blank=True, null=True)
-    dest = models.CharField(max_length=25, blank=True, null=True)
+    origin = models.CharField(max_length=consts.SHORT_STR_LEN, blank=True, null=True)
+    dest = models.CharField(max_length=consts.SHORT_STR_LEN, blank=True, null=True)
     date_time = models.DateTimeField(blank=True, null=True)
     price = models.PositiveIntegerField(blank=True, null=True)
-    description = models.TextField(max_length=250, blank=True, null=True)
+    description = models.TextField(max_length=consts.LONG_STR_LEN, blank=True, null=True)
     capacity = models.IntegerField(blank=True, null=True)
     
-    # nullable!
-    seat_stat = models.JSONField(default=list)
+    seat_stat = models.JSONField(default=list, blank=True, null=True)
     
     def __str__(self):
         return f"Travel ID: {self.travel_id}, Origin: {self.origin}, Destination: {self.dest}"
 
 
 class Ticket(models.Model):
+    STATUS_PENDING = 'P'
+    STATUS_ACCEPTED = 'A'
+    STATUS_REJECTED = 'R'
+
+    STATUS_CHOICES = [
+        (STATUS_PENDING, 'Pending'),
+        (STATUS_ACCEPTED, 'Accepted'),
+        (STATUS_REJECTED, 'Rejected'),
+    ]
+
     ticket_id = models.AutoField(primary_key=True, editable=False)
     
-    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name="tickets")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="tickets")
     travel = models.ForeignKey(Travel, on_delete=models.CASCADE, related_name="tickets")
 
-    serial = models.IntegerField(blank=True, null=True)
-    ssn = models.CharField(max_length=10, blank=True, null=True)
-    seat_no = models.PositiveIntegerField(blank=True, null=True)
+    first_name = models.CharField(max_length=consts.SHORT_STR_LEN, blank=True, null=True)
+    last_name = models.CharField(max_length=consts.SHORT_STR_LEN, blank=True, null=True)
+    ssn = models.CharField(max_length=consts.SSN_LEN, blank=True, null=True)
+    birth_date = models.DateField(blank=True, null=True)
     gender = models.BooleanField(blank=True, null=True)
+
+    serial = models.IntegerField(blank=True, null=True)
+    seat_no = models.PositiveIntegerField(blank=True, null=True)
+    status = models.CharField(max_length=1, choices=STATUS_CHOICES, default=STATUS_PENDING, blank=True, null=True)
+    payment_due_datetime = models.DateTimeField(blank=True, null=True)
+
 
     def __str__(self):
         return f"Ticket ID: {self.ticket_id}, User: {self.user.username}, Travel ID: {self.travel.travel_id}"

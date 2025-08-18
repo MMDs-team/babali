@@ -85,9 +85,10 @@ target/
 __pycache__/
 local_settings.py
 
-.env
+env/
 db.sqlite3
 
 credentials.py
-diagram.drawio
-requirements.txt
+
+.vscode/
+delete-database.py
