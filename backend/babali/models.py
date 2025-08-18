@@ -11,5 +11,7 @@ class User(AbstractUser):
         primary_key=True
     )
 
+    REQUIRED_FIELDS = ["phone"]
+
     def __str__(self):
         return f"{self.username} - {self.phone}"
