@@ -92,3 +92,5 @@ credentials.py
 
 .vscode/
 delete-database.py
+
+static/

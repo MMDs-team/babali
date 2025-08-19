@@ -6,10 +6,32 @@ from rest_framework.mixins import ListModelMixin, CreateModelMixin, RetrieveMode
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
-from bus.models import Ticket
+from babali.utils.tickets import generate_tickets_pdf
+from bus.models import Ticket, Travel
 from bus.serializers.ticket_serializers import TicketSerializer
 from consts import PENDING_TICKET_MINS
 
+
+BUS_TEMPLATE_NAME = 'bus.docx'
+BUS_TICKET_TYPE = 'bus'
+BUS_PLACEHOLDER_MAP = {
+    '<1>': 'cooperative',
+    '<2>': 'serial',
+    '<3>': 'date_time',
+    '<4>': 'origin',
+    '<5>': 'dest',
+    '<6>': 'terminal',
+    '<7>': 'seat_no',
+    '<8>': 'price',
+    '<9>': 'first_name',
+    '<10>': 'last_name',
+    '<11>': 'ssn',
+    '<12>': 'birth_date',
+    '<13>': 'gender',
+    '<14>': 'user_id',
+    '<15>': 'capacity',
+    '<16>': 'description'
+}
 
 class TicketViewSet(ListModelMixin,
                     RetrieveModelMixin,
@@ -50,3 +72,47 @@ class TicketViewSet(ListModelMixin,
             return Response(response_serializer.data, status=status.HTTP_201_CREATED)
 
         return Response({'error': "Transaction failed."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+    @action(detail=False, methods=['patch'])
+    def verify(self, request):
+        serial = self.request.query_params.get('Serial')
+        status = self.request.query_params.get('Status')
+        if status == 'OK':
+            Ticket.objects.filter(serial=serial).update(status=Ticket.STATUS_ACCEPTED)
+            return Response({'serial': serial}, status=status.HTTP_200_OK)
+
+        return Response({'error': 'Payment is not verified.'}, status=status.HTTP_406_NOT_ACCEPTABLE)
+
+
+    @action(detail=False, methods=['get'])
+    def print(self, request):
+        serial = request.data['serial']
+        tickets = Ticket.objects.filter(serial=serial, status='P').only('first_name',
+                                                                        'last_name',
+                                                                        'serial',
+                                                                        'ssn',
+                                                                        'birth_date',
+                                                                        'gender',
+                                                                        'user',
+                                                                        'seat_no').values()
+        tickets = list(tickets)
+
+        if len(tickets):
+            travel_id = tickets[0]['travel_id']
+            travel = Travel.objects.filter(pk=travel_id).only('date_time',
+                                                              'origin',
+                                                              'dest',
+                                                              'terminal',
+                                                              'cooperative',
+                                                              'capacity',
+                                                              'price',
+                                                              'description').values()[0]
+
+            tickets = [{**ticket, **travel} for ticket in tickets]
+            tickets_pdf = generate_tickets_pdf(template_name=BUS_TEMPLATE_NAME, ticket_type=BUS_TICKET_TYPE, 
+                                               output_name=serial, tickets_data=tickets, placeholder_map=BUS_PLACEHOLDER_MAP)
+
+            return Response({'tickets_pdf': tickets_pdf}, status=status.HTTP_201_CREATED)
+        
+        return Response({'error': "There is no valid ticket to print."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
