@@ -73,16 +73,33 @@ class Travel(models.Model):
 
 
 class Ticket(models.Model):
+    STATUS_PENDING = 'P'
+    STATUS_ACCEPTED = 'A'
+    STATUS_REJECTED = 'R'
+
+    STATUS_CHOICES = [
+        (STATUS_PENDING, 'Pending'),
+        (STATUS_ACCEPTED, 'Accepted'),
+        (STATUS_REJECTED, 'Rejected'),
+    ]
+
     ticket_id = models.AutoField(primary_key=True, editable=False)
     
     travel = models.ForeignKey(Travel, on_delete=models.CASCADE, related_name="flight_tickets")
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="flight_tickets")
 
-    return_ticket = models.BooleanField(default=False)
-    gender = models.BooleanField(blank=True, null=True)
-    serial = models.IntegerField(blank=True, null=True)
+    first_name = models.CharField(max_length=consts.SHORT_STR_LEN, blank=True, null=True)
+    last_name = models.CharField(max_length=consts.SHORT_STR_LEN, blank=True, null=True)
     ssn = models.CharField(max_length=consts.SSN_LEN, blank=True, null=True)
+    birth_date = models.DateField(blank=True, null=True)
+    gender = models.BooleanField(blank=True, null=True)
+
+    return_ticket = models.BooleanField(default=False)
+    serial = models.IntegerField(blank=True, null=True)
     seat_no = models.PositiveIntegerField(blank=True, null=True)
+
+    status = models.CharField(max_length=1, choices=STATUS_CHOICES, default=STATUS_PENDING, blank=True, null=True)
+    payment_due_datetime = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
         return f"Ticket ID: {self.ticket_id}, User: {self.user.username}, Travel ID: {self.travel.travel_id}"

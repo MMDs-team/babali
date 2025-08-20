@@ -18,14 +18,14 @@ BUS_PLACEHOLDER_MAP = {
     '<1>': 'first_name',
     '<2>': 'last_name',
     '<3>': 'ssn',
-    '<6>': 'date_time',
-    '<7>': 'price',
-    '<8>': 'origin',
-    '<9>': 'dest',
-    '<10>': 'seat_no',
-    '<11>': 'terminal__name',
-    '<12>': 'cooperative__name',
-    '<13>': 'serial'
+    '<4>': 'date_time',
+    '<5>': 'price',
+    '<6>': 'origin',
+    '<7>': 'dest',
+    '<8>': 'seat_no',
+    '<9>': 'terminal__name',
+    '<10>': 'cooperative__name',
+    '<11>': 'serial'
 }
 
 class TicketViewSet(ListModelMixin,

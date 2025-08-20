@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     'bus',
     'flight',
     'train',
-    'babali.apps.BabaliConfig', 
+    'babali',
 ]
 
 MIDDLEWARE = [
