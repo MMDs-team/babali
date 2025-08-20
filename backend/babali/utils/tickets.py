@@ -4,6 +4,7 @@ import logging
 from playwright.sync_api import sync_playwright
 from threading import Thread
 from queue import Queue, Empty
+from pathlib import Path
 
 from babali.consts import TEMPLATES_ROOT, TICKETS_ROOT
 
@@ -48,7 +49,11 @@ class TicketGenerator:
                 try:
                     context = browser.new_context(viewport={"width": 1920, "height": 1080})
                     page = context.new_page()
-                    page.goto(f'file://{os.path.abspath(html_path)}', wait_until='networkidle')
+                    
+                    file_uri = Path(os.path.abspath(html_path)).as_uri()
+                    page.goto(file_uri, wait_until='networkidle')
+                    # --- END OF MODIFICATION ---
+                    
                     page.pdf(path=pdf_path, format='A4', print_background=True, landscape=True, scale=1.1)
                     context.close()
                     result_queue.put(pdf_path)
