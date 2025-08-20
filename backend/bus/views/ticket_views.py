@@ -23,8 +23,8 @@ BUS_PLACEHOLDER_MAP = {
     '<8>': 'origin',
     '<9>': 'dest',
     '<10>': 'seat_no',
-    '<11>': 'terminal',
-    '<12>': 'cooperative',
+    '<11>': 'terminal__name',
+    '<12>': 'cooperative__name',
     '<13>': 'serial'
 }
 
@@ -84,25 +84,28 @@ class TicketViewSet(ListModelMixin,
     @action(detail=False, methods=['get'])
     def print(self, request):
         serial = request.data['serial']
-        tickets = Ticket.objects.filter(serial=serial, status='A').only('first_name',
-                                                                        'last_name',
-                                                                        'serial',
-                                                                        'ssn',
-                                                                        'birth_date',
-                                                                        'gender',
-                                                                        'user',
-                                                                        'seat_no').values()
+        tickets = Ticket.objects.filter(serial=serial, status='A').select_related('travel') \
+                                                                  .values('first_name',
+                                                                          'last_name',
+                                                                          'serial',
+                                                                          'ssn',
+                                                                          'birth_date',
+                                                                          'gender',
+                                                                          'user',
+                                                                          'travel_id',
+                                                                          'seat_no')
         tickets = list(tickets)
 
         if len(tickets):
             travel_id = tickets[0]['travel_id']
-            travel = Travel.objects.filter(pk=travel_id).only('date_time',
-                                                              'origin',
-                                                              'dest',
-                                                              'cooperative',
-                                                              'capacity',
-                                                              'price',
-                                                              'description').values()[0]
+            travel = Travel.objects.filter(pk=travel_id).select_related('terminal').select_related('cooperative') \
+                                                                                   .values('date_time',
+                                                                                           'origin',
+                                                                                           'dest',
+                                                                                           'terminal__name',
+                                                                                           'cooperative__name',
+                                                                                           'price',
+                                                                                           'description')[0]
 
             tickets = [{**ticket, **travel} for ticket in tickets]
             tickets_pdf = GENERATOR.generate_tickets_pdf(ticket_template_name=BUS_TEMPLATE_NAME, placeholders_map=BUS_PLACEHOLDER_MAP,

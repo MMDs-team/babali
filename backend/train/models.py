@@ -109,7 +109,7 @@ class Ticket(models.Model):
 
     serial = models.IntegerField(blank=True, null=True)
     seat_no = models.PositiveIntegerField(blank=True, null=True)
-    campartment_no = models.PositiveIntegerField(blank=True, null=True)
+    compartment_no = models.PositiveIntegerField(blank=True, null=True)
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, default=STATUS_PENDING, blank=True, null=True)
     payment_due_datetime = models.DateTimeField(blank=True, null=True)
 

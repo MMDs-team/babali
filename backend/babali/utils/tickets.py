@@ -119,7 +119,7 @@ class TicketGenerator:
                 format='A4',
                 print_background=True,
                 landscape=True,
-                scale=1.2
+                scale=1.1
             )
 
             logger.info("PDF generated: %s", pdf_path)
