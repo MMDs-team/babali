@@ -42,9 +42,28 @@ class Terminal(models.Model):
 
 
 class Bus(models.Model):
+
+    TYPE_CHOICES = [
+        ('vip', 'VIP'),
+        ('man-vip', 'MAN-VIP'),
+        ('classic', 'CLASSIC')
+    ]
+
     bus_id = models.AutoField(primary_key=True, editable=False)
-    type = models.CharField(max_length=consts.STR_LEN)
-    seat_count = models.PositiveIntegerField(blank=True, null=True)
+    type = models.CharField(max_length=consts.STR_LEN, choices=TYPE_CHOICES, default='VIP')
+    seat_count = models.PositiveIntegerField(blank=True, null=True,
+        help_text="If left empty, it will be set to the bus's type capacity.")
+
+    def save(self, *args, **kwargs):
+        if self.type == 'vip':
+            self.seat_count = 25
+        elif self.type == 'man-vip':
+            self.seat_count = 26
+        else:
+            self.seat_count = 36
+
+        super().save(*args, **kwargs)
+            
 
     def __str__(self):
         return f"{self.type} - {self.seat_count} seats"
@@ -62,10 +81,17 @@ class Travel(models.Model):
     date_time = models.DateTimeField(blank=True, null=True)
     price = models.PositiveIntegerField(blank=True, null=True)
     description = models.TextField(max_length=consts.LONG_STR_LEN, blank=True, null=True)
-    capacity = models.IntegerField(blank=True, null=True)
+    capacity = models.IntegerField(blank=True, null=True,
+        help_text="If left empty, it will be set to the bus's type capacity.")
     
-    seat_stat = models.JSONField(default=list, blank=True, null=True)
-    
+    seat_stat = models.JSONField(default=dict,  blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        if self._state.adding:
+            self.capacity = self.bus.seat_count
+
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f"Travel ID: {self.travel_id}, Origin: {self.origin}, Destination: {self.dest}"
 
@@ -96,7 +122,6 @@ class Ticket(models.Model):
     seat_no = models.PositiveIntegerField(blank=True, null=True)
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, default=STATUS_PENDING, blank=True, null=True)
     payment_due_datetime = models.DateTimeField(blank=True, null=True)
-
 
     def __str__(self):
         return f"Ticket ID: {self.ticket_id}, User: {self.user.username}, Travel ID: {self.travel.travel_id}"
