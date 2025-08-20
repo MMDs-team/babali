@@ -7,13 +7,13 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
 from babali.utils.tickets import GENERATOR
+from babali.consts import TRAIN_TICKET_TYPE
 from train.models import Ticket, Travel
 from train.serializers.ticket_serializers import TicketSerializer
 from consts import PENDING_TICKET_MINS
 
 
 TRAIN_TEMPLATE_NAME = 'train.html'
-TRAIN_TICKET_TYPE = 'train'
 TRAIN_PLACEHOLDER_MAP = {
     '<1>': 'first_name',
     '<2>': 'last_name',
@@ -133,7 +133,7 @@ class TicketViewSet(ListModelMixin,
 
             tickets = [{**ticket, **travel} for ticket in tickets]
             tickets_pdf = GENERATOR.generate_tickets_pdf(ticket_template_name=TRAIN_TEMPLATE_NAME, placeholders_map=TRAIN_PLACEHOLDER_MAP,
-                                                         data_list=tickets, ticket_type="train", output_name=str(serial))
+                                                         data_list=tickets, ticket_type=TRAIN_TICKET_TYPE, output_name=str(serial))
             if tickets_pdf is not None:
                 return Response({'tickets_pdf': tickets_pdf}, status=status.HTTP_201_CREATED)
             else: 

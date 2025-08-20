@@ -5,10 +5,10 @@ from playwright.sync_api import sync_playwright
 from threading import Thread
 from queue import Queue, Empty
 
+from babali.consts import TEMPLATES_ROOT, TICKETS_ROOT
+
 logger = logging.getLogger(__name__)
 
-TEMPLATES_ROOT = 'static/tickets/templates/'
-TICKETS_ROOT = 'static/tickets/'
 DOCUMENT_WRAPPER_NAME = '_document_wrapper.html'
 SHUTDOWN_SENTINEL = None
 
