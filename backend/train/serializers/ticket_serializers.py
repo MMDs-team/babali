@@ -18,7 +18,7 @@ class TicketSerializer(serializers.ModelSerializer):
             'gender',
             'serial',
             'seat_no',
-            'campartment_no',
+            'compartment_no',
             'status',
             'payment_due_datetime',
         ]

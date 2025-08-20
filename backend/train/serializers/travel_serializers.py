@@ -6,6 +6,7 @@ from train.models import Travel, RouteEdge
 class TravelSerializer(serializers.ModelSerializer):
     route = serializers.SerializerMethodField() 
     leave_time = serializers.SerializerMethodField() 
+    empty_compartment = serializers.SerializerMethodField() 
 
     class Meta:
         model = Travel
@@ -17,7 +18,8 @@ class TravelSerializer(serializers.ModelSerializer):
             'capacity',
             'description',
             'price',
-            'leave_time'
+            'leave_time',
+            'empty_compartment'
         ]
 
     def get_route(self, obj):
@@ -48,3 +50,11 @@ class TravelSerializer(serializers.ModelSerializer):
             return arrival.isoformat() if arrival else None
         
         return obj.date_time.isoformat()
+
+    def get_empty_compartment(self, obj):
+        next_seat = obj.get_next_seat(full_compartment=True)
+
+        if next_seat == None:
+            return False 
+        
+        return True

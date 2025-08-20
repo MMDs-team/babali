@@ -67,9 +67,58 @@ class Travel(models.Model):
     cooperative = models.ForeignKey(Cooperative, on_delete=models.CASCADE, related_name="train_travels")
 
     date_time = models.DateTimeField(blank=True, null=True)
-    capacity = models.IntegerField(blank=True, null=True)
     description = models.TextField(max_length=consts.LONG_STR_LEN, blank=True, null=True)
     price = models.PositiveIntegerField(blank=True, null=True)
+
+    capacity = models.IntegerField(blank=True, null=True,
+        help_text="If left empty, it will be set to the train's capacity automatically."
+    )
+    seat_stat = models.JSONField(default=dict, blank=True, null=True)
+
+    def get_next_seat(self, full_compartment=False):
+        compartment_capacity = self.train.compartment_capacity
+        train_capacity = compartment_capacity * self.train.compartment_count
+
+        seat = train_capacity if full_compartment else 1
+        
+        while seat >= 1 and seat <= train_capacity:
+
+            if full_compartment:
+                is_empty_com = True
+
+                for i in range(0, compartment_capacity):
+                    seat_info =  self.seat_stat.get(str(seat - i))
+
+                    if seat_info != None:
+                        is_empty_com = False
+                        
+                if is_empty_com:
+                    return seat - compartment_capacity + 1 
+                
+                seat -= compartment_capacity
+
+            else:
+                seat_info = self.seat_stat.get(str(seat))
+
+                if seat_info == None:
+                    return seat
+                elif seat_info.get('full_com') == True:
+                    seat += compartment_capacity
+                else:
+                    for i in range(1, compartment_capacity):
+                        seat_info =  self.seat_stat.get(str(seat + i))
+
+                        if seat_info == None:
+                            return seat + i
+
+                    seat += compartment_capacity
+
+        return None
+
+    def save(self, *args, **kwargs):
+        if self.capacity is None and self.train:
+            self.capacity = self.train.compartment_capacity * self.train.compartment_count
+        super().save(*args, **kwargs)
 
     def __str__(self):
         route_edges = []
@@ -109,7 +158,8 @@ class Ticket(models.Model):
 
     serial = models.IntegerField(blank=True, null=True)
     seat_no = models.PositiveIntegerField(blank=True, null=True)
-    campartment_no = models.PositiveIntegerField(blank=True, null=True)
+    compartment_no = models.PositiveIntegerField(blank=True, null=True)
+    get_full_compartment = models.BooleanField(default=False)
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, default=STATUS_PENDING, blank=True, null=True)
     payment_due_datetime = models.DateTimeField(blank=True, null=True)
 
