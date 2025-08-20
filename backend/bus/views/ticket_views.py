@@ -2,35 +2,30 @@ import datetime
 from django.db import connection, transaction
 from rest_framework import status
 from rest_framework.decorators import action
-from rest_framework.mixins import ListModelMixin, CreateModelMixin, RetrieveModelMixin
+from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
-from babali.utils.tickets import generate_tickets_pdf
+from babali.utils.tickets import GENERATOR
 from bus.models import Ticket, Travel
 from bus.serializers.ticket_serializers import TicketSerializer
 from consts import PENDING_TICKET_MINS
 
 
-BUS_TEMPLATE_NAME = 'bus.docx'
+BUS_TEMPLATE_NAME = 'bus.html'
 BUS_TICKET_TYPE = 'bus'
 BUS_PLACEHOLDER_MAP = {
-    '<1>': 'cooperative',
-    '<2>': 'serial',
-    '<3>': 'date_time',
-    '<4>': 'origin',
-    '<5>': 'dest',
-    '<6>': 'terminal',
-    '<7>': 'seat_no',
-    '<8>': 'price',
-    '<9>': 'first_name',
-    '<10>': 'last_name',
-    '<11>': 'ssn',
-    '<12>': 'birth_date',
-    '<13>': 'gender',
-    '<14>': 'user_id',
-    '<15>': 'capacity',
-    '<16>': 'description'
+    '<1>': 'first_name',
+    '<2>': 'last_name',
+    '<3>': 'ssn',
+    '<6>': 'date_time',
+    '<7>': 'price',
+    '<8>': 'origin',
+    '<9>': 'dest',
+    '<10>': 'seat_no',
+    '<11>': 'terminal__name',
+    '<12>': 'cooperative__name',
+    '<13>': 'serial'
 }
 
 class TicketViewSet(ListModelMixin,
@@ -38,6 +33,7 @@ class TicketViewSet(ListModelMixin,
                     GenericViewSet):
     queryset = Ticket.objects.all()
     serializer_class = TicketSerializer
+
 
 
     @action(detail=False, methods=['post'])
@@ -88,31 +84,35 @@ class TicketViewSet(ListModelMixin,
     @action(detail=False, methods=['get'])
     def print(self, request):
         serial = request.data['serial']
-        tickets = Ticket.objects.filter(serial=serial, status='P').only('first_name',
-                                                                        'last_name',
-                                                                        'serial',
-                                                                        'ssn',
-                                                                        'birth_date',
-                                                                        'gender',
-                                                                        'user',
-                                                                        'seat_no').values()
+        tickets = Ticket.objects.filter(serial=serial, status='A').select_related('travel') \
+                                                                  .values('first_name',
+                                                                          'last_name',
+                                                                          'serial',
+                                                                          'ssn',
+                                                                          'birth_date',
+                                                                          'gender',
+                                                                          'user',
+                                                                          'travel_id',
+                                                                          'seat_no')
         tickets = list(tickets)
 
         if len(tickets):
             travel_id = tickets[0]['travel_id']
-            travel = Travel.objects.filter(pk=travel_id).only('date_time',
-                                                              'origin',
-                                                              'dest',
-                                                              'terminal',
-                                                              'cooperative',
-                                                              'capacity',
-                                                              'price',
-                                                              'description').values()[0]
+            travel = Travel.objects.filter(pk=travel_id).select_related('terminal').select_related('cooperative') \
+                                                                                   .values('date_time',
+                                                                                           'origin',
+                                                                                           'dest',
+                                                                                           'terminal__name',
+                                                                                           'cooperative__name',
+                                                                                           'price',
+                                                                                           'description')[0]
 
             tickets = [{**ticket, **travel} for ticket in tickets]
-            tickets_pdf = generate_tickets_pdf(template_name=BUS_TEMPLATE_NAME, ticket_type=BUS_TICKET_TYPE, 
-                                               output_name=serial, tickets_data=tickets, placeholder_map=BUS_PLACEHOLDER_MAP)
-
-            return Response({'tickets_pdf': tickets_pdf}, status=status.HTTP_201_CREATED)
+            tickets_pdf = GENERATOR.generate_tickets_pdf(ticket_template_name=BUS_TEMPLATE_NAME, placeholders_map=BUS_PLACEHOLDER_MAP,
+                                                         data_list=tickets, ticket_type="bus", output_name=str(serial))
+            if tickets_pdf is not None:
+                return Response({'tickets_pdf': tickets_pdf}, status=status.HTTP_201_CREATED)
+            else: 
+                return Response({'error': "There was a problem in pdf generation task."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
         return Response({'error': "There is no valid ticket to print."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
