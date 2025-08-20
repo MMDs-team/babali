@@ -2,6 +2,7 @@ from django.conf import settings
 import os
 import logging
 from playwright.sync_api import sync_playwright
+from threading import Timer
 
 
 logger = logging.getLogger(__name__)
@@ -9,6 +10,14 @@ logger = logging.getLogger(__name__)
 TEMPLATES_ROOT = 'static/tickets/templates/'
 TICKETS_ROOT = 'static/tickets/'
 DOCUMENT_WRAPPER_NAME = '_document_wrapper.html'
+BUS_TICKET_TYPE = 'bus'
+TRAIN_TICKET_TYPE = 'train'
+TICKET_TYPES = {
+    'bus': BUS_TICKET_TYPE,
+    'train': TRAIN_TICKET_TYPE
+}
+TICKET_PDFS_DELETE_INTERVAL = 30
+
 
 class TicketGenerator:
     """
@@ -20,10 +29,13 @@ class TicketGenerator:
         self.output_dir_root = os.path.join(settings.BASE_DIR, output_base_path)
         self.browser = None
         self.playwright = None
+        self.timer = Timer(TICKET_PDFS_DELETE_INTERVAL, self._delete_ticket_pdfs)
+
 
     def _sanitize_filename(self, name):
         """Remove unsafe characters from filenames."""
         return "".join(c for c in name if c.isalnum() or c in "_-.")
+
 
     def _read_template(self, template_name):
         """Read template file synchronously."""
@@ -35,12 +47,14 @@ class TicketGenerator:
             logger.error("Template not found: %s", template_path)
             return None
 
+
     def _substitute_data(self, template_content, placeholder_map, data):
         """Replace placeholders in template."""
         for placeholder, data_key in placeholder_map.items():
             value = str(data.get(data_key, ''))
             template_content = template_content.replace(placeholder, value)
         return template_content
+
 
     def _generate_temp_html(self, ticket_template_name, placeholders_map, data_list, ticket_type, output_name):
         """Generate a temporary HTML file with all tickets."""
@@ -72,6 +86,16 @@ class TicketGenerator:
         except OSError as e:
             logger.error("Failed to write HTML: %s", e)
             return None
+
+
+    def _delete_ticket_pdfs(self):
+        for ticket_type in TICKET_TYPES.values():
+            dir_path = os.path.join(self.output_dir_root, ticket_type)
+            for filename in os.listdir(dir_path):
+                if filename.lower().endswith(".pdf"):
+                    file_path = os.path.join(dir_path, filename)
+                    os.remove(file_path)
+
 
     def generate_tickets_pdf(self, ticket_template_name, placeholders_map, data_list, ticket_type, output_name):
         """
@@ -123,6 +147,7 @@ class TicketGenerator:
             )
 
             logger.info("PDF generated: %s", pdf_path)
+
             return pdf_path
 
         except Exception as e:
@@ -137,6 +162,11 @@ class TicketGenerator:
                 self.playwright.stop()
             if os.path.exists(html_path):
                 os.remove(html_path)
+
+            self.timer.cancel()
+            self.timer = Timer(TICKET_PDFS_DELETE_INTERVAL, self._delete_ticket_pdfs)
+            self.timer.start()
+
 
 # Instantiate generator
 GENERATOR = TicketGenerator()

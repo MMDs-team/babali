@@ -106,7 +106,6 @@ class TicketViewSet(ListModelMixin,
                                                                                         'cooperative__name',
                                                                                         'price',
                                                                                         'description')[0]
-            print(travel)
 
             tickets = [{**ticket, **travel} for ticket in tickets]
             tickets_pdf = GENERATOR.generate_tickets_pdf(ticket_template_name=TRAIN_TEMPLATE_NAME, placeholders_map=TRAIN_PLACEHOLDER_MAP,
