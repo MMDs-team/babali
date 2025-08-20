@@ -2,54 +2,116 @@ from django.conf import settings
 import os
 import logging
 from playwright.sync_api import sync_playwright
-from threading import Timer
-
+from threading import Thread
+from queue import Queue, Empty
 
 logger = logging.getLogger(__name__)
 
 TEMPLATES_ROOT = 'static/tickets/templates/'
 TICKETS_ROOT = 'static/tickets/'
 DOCUMENT_WRAPPER_NAME = '_document_wrapper.html'
-BUS_TICKET_TYPE = 'bus'
-TRAIN_TICKET_TYPE = 'train'
-TICKET_TYPES = {
-    'bus': BUS_TICKET_TYPE,
-    'train': TRAIN_TICKET_TYPE
-}
-TICKET_PDFS_DELETE_INTERVAL = 30
+SHUTDOWN_SENTINEL = None
 
 
 class TicketGenerator:
     """
-    Synchronous ticket PDF generator using Playwright (Chromium).
-    No async required.
+    Synchronous, thread-safe ticket PDF generator.
+    Uses a dedicated worker thread to manage a single, long-lived Playwright browser instance.
     """
     def __init__(self, templates_base_path=TEMPLATES_ROOT, output_base_path=TICKETS_ROOT):
         self.templates_dir = os.path.join(settings.BASE_DIR, templates_base_path)
         self.output_dir_root = os.path.join(settings.BASE_DIR, output_base_path)
-        self.browser = None
-        self.playwright = None
-        self.timer = Timer(TICKET_PDFS_DELETE_INTERVAL, self._delete_ticket_pdfs)
+        self.job_queue = Queue()
+        self.worker_thread = None
 
 
-    def _sanitize_filename(self, name):
-        """Remove unsafe characters from filenames."""
-        return "".join(c for c in name if c.isalnum() or c in "_-.")
+    def _playwright_worker(self):
+        """The target function for the worker thread."""
+        with sync_playwright() as p:
+            # Check for a user-defined browser executable path
+            executable_path = os.getenv("PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH")
+            if executable_path:
+                logger.info(f"Using user-provided browser at: {executable_path}")
+
+            browser = p.chromium.launch(
+                executable_path=executable_path, # This will be None if env var is not set
+                headless=True,
+                args=["--no-sandbox", "--disable-setuid-sandbox", "--disable-gpu"]
+            )
+            logger.info("Playwright worker thread started and browser launched.")
+
+            while True:
+                job = self.job_queue.get()
+                if job is SHUTDOWN_SENTINEL:
+                    break
+                result_queue, html_path, pdf_path = job["result_queue"], job["html_path"], job["pdf_path"]
+                try:
+                    context = browser.new_context(viewport={"width": 1920, "height": 1080})
+                    page = context.new_page()
+                    page.goto(f'file://{os.path.abspath(html_path)}', wait_until='networkidle')
+                    page.pdf(path=pdf_path, format='A4', print_background=True, landscape=True, scale=1.1)
+                    context.close()
+                    result_queue.put(pdf_path)
+                except Exception as e:
+                    logger.error("PDF generation failed in worker: %s", e, exc_info=True)
+                    result_queue.put(e)
+                finally:
+                    if os.path.exists(html_path):
+                        os.remove(html_path)
+            browser.close()
+            logger.info("Playwright browser closed.")
 
 
-    def _read_template(self, template_name):
-        """Read template file synchronously."""
-        template_path = os.path.join(self.templates_dir, template_name)
+    def startup(self):
+        """Starts the dedicated worker thread."""
+        if self.worker_thread is None or not self.worker_thread.is_alive():
+            self.worker_thread = Thread(target=self._playwright_worker)
+            self.worker_thread.start()
+
+
+    def shutdown(self):
+        """Signals the worker thread to shut down gracefully."""
+        if self.worker_thread and self.worker_thread.is_alive():
+            self.job_queue.put(SHUTDOWN_SENTINEL)
+            self.worker_thread.join()
+
+
+    def generate_tickets_pdf(self, ticket_template_name, placeholders_map, data_list, ticket_type, output_name):
+        """Public method to generate a PDF."""
+        if not self.worker_thread or not self.worker_thread.is_alive():
+            return None
+        safe_output_name = self._sanitize_filename(output_name)
+        safe_ticket_type = self._sanitize_filename(ticket_type)
+        html_path = self._generate_temp_html(ticket_template_name, placeholders_map, data_list, safe_ticket_type, safe_output_name)
+        if not html_path:
+            return None
+        pdf_path = html_path.replace('.html', '.pdf')
+        result_queue = Queue(maxsize=1)
+        job = {"html_path": html_path, "pdf_path": pdf_path, "result_queue": result_queue}
+        self.job_queue.put(job)
         try:
-            with open(template_path, 'r', encoding='utf-8') as f:
-                return f.read()
-        except FileNotFoundError:
-            logger.error("Template not found: %s", template_path)
+            result = result_queue.get(timeout=30)
+            if isinstance(result, Exception):
+                raise result
+            return result
+        except Empty:
+            return None
+        except Exception:
             return None
 
 
+    def _sanitize_filename(self, name):
+        return "".join(c for c in name if c.isalnum() or c in "_-.")
+    
+
+    def _read_template(self, template_name):
+        template_path = os.path.join(self.templates_dir, template_name)
+        try:
+            with open(template_path, 'r', encoding='utf-8') as f: return f.read()
+        except FileNotFoundError:
+            return None
+
     def _substitute_data(self, template_content, placeholder_map, data):
-        """Replace placeholders in template."""
         for placeholder, data_key in placeholder_map.items():
             value = str(data.get(data_key, ''))
             template_content = template_content.replace(placeholder, value)
@@ -57,116 +119,20 @@ class TicketGenerator:
 
 
     def _generate_temp_html(self, ticket_template_name, placeholders_map, data_list, ticket_type, output_name):
-        """Generate a temporary HTML file with all tickets."""
         ticket_template_content = self._read_template(ticket_template_name)
-        if not ticket_template_content:
-            return None
-
-        all_tickets_html = [
-            self._substitute_data(ticket_template_content, placeholders_map, {key: value for key, value in data.items() if value is not None})
-            for data in data_list
-        ]
-
+        if not ticket_template_content: return None
+        all_tickets_html = [self._substitute_data(ticket_template_content, placeholders_map, {k: v for k, v in data.items() if v is not None}) for data in data_list]
         wrapper_content = self._read_template(DOCUMENT_WRAPPER_NAME)
-        if not wrapper_content:
-            return None
-
+        if not wrapper_content: return None
         final_html = wrapper_content.replace('{{TICKETS_CONTENT}}', ''.join(all_tickets_html))
         final_html = final_html.replace('{{DOCUMENT_TITLE}}', output_name)
-
         output_dir = os.path.join(self.output_dir_root, ticket_type)
         os.makedirs(output_dir, exist_ok=True)
-
         html_path = os.path.join(output_dir, f'{output_name}.html')
-
         try:
-            with open(html_path, 'w', encoding='utf-8') as f:
-                f.write(final_html)
+            with open(html_path, 'w', encoding='utf-8') as f: f.write(final_html)
             return html_path
-        except OSError as e:
-            logger.error("Failed to write HTML: %s", e)
+        except OSError:
             return None
 
-
-    def _delete_ticket_pdfs(self):
-        for ticket_type in TICKET_TYPES.values():
-            dir_path = os.path.join(self.output_dir_root, ticket_type)
-            for filename in os.listdir(dir_path):
-                if filename.lower().endswith(".pdf"):
-                    file_path = os.path.join(dir_path, filename)
-                    os.remove(file_path)
-
-
-    def generate_tickets_pdf(self, ticket_template_name, placeholders_map, data_list, ticket_type, output_name):
-        """
-        Main method: Generate HTML → PDF (synchronously).
-        Returns path to PDF or None on failure.
-        """
-        # Sanitize inputs
-        safe_output_name = self._sanitize_filename(output_name)
-        safe_ticket_type = self._sanitize_filename(ticket_type)
-
-        html_path = self._generate_temp_html(
-            ticket_template_name, placeholders_map, data_list,
-            safe_ticket_type, safe_output_name
-        )
-        if not html_path:
-            return None
-
-        pdf_path = html_path.replace('.html', '.pdf')
-
-        try:
-            self.playwright = sync_playwright().start()
-
-            # Use system Chromium if desired
-            executable_path = os.getenv("CHROMIUM_PATH")
-
-            self.browser = self.playwright.chromium.launch(
-                executable_path=executable_path,
-                headless=True,
-                args=["--no-sandbox", "--disable-setuid-sandbox", "--disable-gpu"]
-            )
-
-            context = self.browser.new_context(
-                viewport={"width": 1920, "height": 1080},
-                # Optional: emulate media for print
-                # color_scheme="light"
-            )
-            page = context.new_page()
-
-            # Serve file:// URL
-            page.goto(f'file://{os.path.abspath(html_path)}', wait_until='networkidle')
-
-            # Generate PDF
-            page.pdf(
-                path=pdf_path,
-                format='A4',
-                print_background=True,
-                landscape=True,
-                scale=1.1
-            )
-
-            logger.info("PDF generated: %s", pdf_path)
-
-            return pdf_path
-
-        except Exception as e:
-            logger.error("PDF generation failed: %s", str(e))
-            return None
-
-        finally:
-            # Cleanup
-            if self.browser:
-                self.browser.close()
-            if self.playwright:
-                self.playwright.stop()
-            if os.path.exists(html_path):
-                os.remove(html_path)
-
-            self.timer.cancel()
-            self.timer = Timer(TICKET_PDFS_DELETE_INTERVAL, self._delete_ticket_pdfs)
-            self.timer.start()
-
-
-# Instantiate generator
 GENERATOR = TicketGenerator()
