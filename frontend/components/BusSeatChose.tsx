@@ -8,12 +8,13 @@ type Seat = { id: number; type: SeatType } | { id: null };
 type BusSeatChoseProps = {
     selectedSeats: number[];
     setSelectedSeats: React.Dispatch<React.SetStateAction<number[]>>;
+    busSeat: any
 };
 
 
-const BusSeatChose: React.FC<BusSeatChoseProps> = ({ selectedSeats, setSelectedSeats }) => {
+const BusSeatChose: React.FC<BusSeatChoseProps> = ({ selectedSeats, setSelectedSeats, busSeat }) => {
 
-    const BUS_MAP: Seat[][] =
+    const BUS_MAP: Seat[][] = busSeat ? busSeat : 
         [
             [
                 { id: 1, type: 'M' },

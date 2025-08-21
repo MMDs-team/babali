@@ -19,16 +19,6 @@ export default function BusTicketPage() {
     const [travelDate, setTravelDate] = useState<string>("");
     const [travels, setTravels] = useState<any[]>([]);
 
-    function countTypeE(data: Array<Array<{ id: number | null; type?: string }>>): number {
-        let count = 0;
-        for (const subArray of data) {
-            for (const item of subArray) {
-                if (item.type === 'E') count++;
-            }
-        }
-        return count;
-    }
-
 
     useEffect(() => {
         if (!pathname) return;
@@ -78,15 +68,7 @@ export default function BusTicketPage() {
                     travels.map((each, index) => (
                         <TravelSample
                             key={index}
-                            price={each.price || 0}
-                            origin={each.origin}
-                            destination={each.dest}
-                            company={each.cooperative || "ـ"}
-                            remainingSeats={countTypeE(each.seat_stat) || 0}
-                            departureTime={each.date_time.split("T")[1].substring(0, 5) || "00:00"}
-                            originTerminal={each.originTerminal || ""}
-                            destinationTerminal={each.destinationTerminal || ""}
-                            busType={each.busType || "Standard"}
+                            travel={each}
                         />
                     ))
                 ) : (
