@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, usePathname, useRouter } from 'next/navigation';
 import ProgressStepSection from '@/components/ProgressStepSection';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,10 +10,13 @@ import { PencilIcon } from 'lucide-react';
 import { useTravel } from '@/contexts/TravelContext';
 
 interface Passenger {
-    name: string;
-    gender: string;
-    dob: string;
-    phone: string;
+    firstName: string,
+    lastNAme: string,
+    gender: 'M' | 'F',
+    SSR: string,
+    birthDate: Date,
+    phone: string | null
+    seatNumber: number
 }
 
 interface ConfirmPageProps {
@@ -27,23 +30,44 @@ interface ConfirmPageProps {
 export default function OrderConfirmationPage({ params, passengers }: ConfirmPageProps) {
 
     const router = useRouter();
+    const pathname = usePathname()
+    const { travelType, travelDetails, busDetails } = useTravel();
+
+    const date = new Date(busDetails.date_time);
+    const persianDate = date.toLocaleDateString("fa-IR", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+    });
+
+    function extractSeats(passengers: Passenger[]): number[] {
+        return passengers.map(p => p.seatNumber);
+    }
+
+    const totalPrice = busDetails.price * travelDetails.passengers.length;
 
     const ticketInfo = [
-        { label: "مبدا", value: "تهران پایانه بیهقی" },
-        { label: "مقصد", value: "اصفهان پایانه کاوه" },
-        { label: "تاریخ و ساعت حرکت", value: "یکشنبه 05 مرداد - 00:30" },
+        { label: "مبدا", value: busDetails.origin },
+        { label: "مقصد", value: busDetails.dest },
+        { label: "تاریخ و ساعت حرکت", value: `${persianDate} ${busDetails.date_time.split("T")[1].substring(0, 5)}` },
         { label: "شرکت مسافربری", value: "همسفر جاکسواران بیهقی" },
         { label: "نوع اتوبوس", value: "مان VIP (کاوه)" },
-        { label: "تعداد صندلی", value: "1" },
-        { label: "شماره صندلی(ها)", value: "14" },
-        { label: "قیمت هر صندلی", value: "468,000 تومان" },
-        { label: "مبلغ کل", value: "468,000 تومان" },
+        { label: "تعداد صندلی", value: travelDetails.passengers.length },
+        { label: "شماره صندلی(ها)", value: extractSeats(travelDetails.passengers).join(", ") },
+        { label: "قیمت هر صندلی", value: `${busDetails.price} تومان` },
+        { label: "مبلغ کل", value: `${totalPrice} تومان` },
     ];
 
-    const { travelType, travelDetails } = useTravel();
+    const editPassengers = () => {
+        const newPath = pathname.slice(0, -"/confirm".length);
+        router.push(newPath);
+    }
+
 
     useEffect(() => {
         console.log(travelDetails)
+        console.log('busDetails')
+        console.log(busDetails)
         if (travelType !== 'bus') {
             router.push(`/bus-ticket`);
         }
@@ -84,7 +108,11 @@ export default function OrderConfirmationPage({ params, passengers }: ConfirmPag
                                 <CardTitle className="text-right text-xl font-bold text-gray-800">
                                     مشخصات سرپرست مسافران
                                 </CardTitle>
-                                <Button variant="outline" className="flex items-center space-x-2 text-blue-600 border-blue-600 hover:bg-blue-50 hover:text-blue-700 rounded-lg transition-colors duration-200">
+                                <Button 
+                                    variant="outline" 
+                                    className="flex items-center space-x-2 text-blue-600 border-blue-600 hover:bg-blue-50 hover:text-blue-700 rounded-lg transition-colors duration-200"
+                                    onClick={() => editPassengers()}    
+                                >
                                     <PencilIcon className="h-4 w-4" />
                                     <span>ویرایش مسافران</span>
                                 </Button>
@@ -118,7 +146,7 @@ export default function OrderConfirmationPage({ params, passengers }: ConfirmPag
                                                         {passenger.gender === 'M' ? 'مرد' : 'زن'}
                                                     </TableCell>
                                                     <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
-                                                        {(passenger.birthDate)}
+                                                        {passenger.birthDate.year}-{passenger.birthDate.month}-{passenger.birthDate.day}
                                                     </TableCell>
                                                     <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
                                                         {passenger.phone ? passenger.phone : '-'}
@@ -135,7 +163,7 @@ export default function OrderConfirmationPage({ params, passengers }: ConfirmPag
                     <div className="md:col-span-1 bg-white border border-gray-200 rounded-lg p-6 shadow-sm fixed left-20">
                         <div className="flex justify-between items-center mb-4">
                             <span className="text-gray-600 text-sm">مبلغ قابل پرداخت</span>
-                            <span className="text-blue-600 text-xl font-bold whitespace-nowrap">468,000 تومان</span>
+                            <span className="text-blue-600 text-xl font-bold whitespace-nowrap">{totalPrice} تومان</span>
                         </div>
                         <button className="w-full bg-blue-600 text-white py-3 rounded-md text-lg font-semibold hover:bg-blue-700 transition-colors">
                             پرداخت آنلاین

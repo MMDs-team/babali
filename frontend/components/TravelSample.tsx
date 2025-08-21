@@ -1,32 +1,48 @@
+import { useTravel } from '@/contexts/TravelContext';
 import Image from 'next/image';
-import Link from 'next/link';
+import { usePathname, useRouter } from "next/navigation";
 import React from 'react';
 
 type TravelSampleProps = {
-    price: number;
-    currency?: string;
-    remainingSeats: number;
-    departureTime: string;
-    origin: string;
-    originTerminal: string;
-    destination: string;
-    destinationTerminal: string;
-    company: string;
-    busType: string;
+    travel: any
 };
 
-const TravelSample: React.FC<TravelSampleProps> = ({
-    price,
-    currency = 'تومان',
-    remainingSeats,
-    departureTime,
-    origin,
-    originTerminal,
-    destination,
-    destinationTerminal,
-    company,
-    busType,
-}) => {
+const TravelSample: React.FC<TravelSampleProps> = ({ travel }) => {
+
+    const { busDetails, setBusDetails } = useTravel();
+    const router = useRouter();
+    const pathname = usePathname();
+
+    function countTypeE(data: Array<Array<{ id: number | null; type?: string }>>): number {
+        let count = 0;
+        for (const subArray of data) {
+            for (const item of subArray) {
+                if (item.type === 'E') count++;
+            }
+        }
+        return count;
+    }
+
+    const travelID = travel.travel_id;
+    const price = travel.price || 0;
+    const origin = travel.origin;
+    const destination = travel.dest;
+    const company = travel.cooperative || "ـ";
+    const remainingSeats = countTypeE(travel.seat_stat) || 0;
+    const departureTime = travel.date_time.split("T")[1].substring(0, 5) || "--:--";
+    const originTerminal = travel.originTerminal || "پایانه مبدا نامشخص";
+    const destinationTerminal = travel.destinationTerminal || "پایانه مقصد نامشخص";
+    const busType = travel.busType || "Standard";
+    const currency = 'تومان'
+
+    const handleClick = () => {
+        setBusDetails(travel)
+
+        router.push(`${pathname}/${travelID}`);
+    };
+
+
+
     return (
         <div className="flex flex-col md:flex-row border rounded-xl shadow-sm overflow-hidden bg-white w-full max-w-5xl mx-auto text-right">
 
@@ -41,7 +57,7 @@ const TravelSample: React.FC<TravelSampleProps> = ({
                             objectFit="cover"
                             quality={100}
                         />
-                        <h2 className="pr-4 text-sm text-gray-800 font-semibold">{company}</h2>
+                        <h2 className="pr-4 text-sm text-gray-800 font-semibold">تعاونی {company}</h2>
                     </div>
                     <span className="text-sm bg-gray-100 text-gray-700 px-3 py-1 rounded-full">
                         {busType}
@@ -82,9 +98,9 @@ const TravelSample: React.FC<TravelSampleProps> = ({
                 <p className="text-xl font-bold text-blue-600">
                     {price.toLocaleString()} {currency}
                 </p>
-                <Link href={'/bus/THE-IFN/14322'} className="bg-blue-600 text-white rounded-md px-6 py-2 hover:bg-blue-700 transition">
+                <button onClick={() => handleClick()} className="bg-blue-600 text-white rounded-md px-6 py-2 hover:bg-blue-700 transition">
                     انتخاب بلیط
-                </Link>
+                </button>
                 <p className="text-sm text-gray-500">{remainingSeats} صندلی باقی مانده</p>
             </div>
         </div>

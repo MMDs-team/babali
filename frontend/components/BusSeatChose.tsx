@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import BusSeatChoseDetails from './BusSeatChoseDetails'
 
 type SeatType = 'M' | 'F' | 'E' | 'S';
@@ -8,50 +8,18 @@ type Seat = { id: number; type: SeatType } | { id: null };
 type BusSeatChoseProps = {
     selectedSeats: number[];
     setSelectedSeats: React.Dispatch<React.SetStateAction<number[]>>;
+    busSeat: any
 };
 
 
-const BusSeatChose: React.FC<BusSeatChoseProps> = ({ selectedSeats, setSelectedSeats }) => {
+const BusSeatChose: React.FC<BusSeatChoseProps> = ({ selectedSeats, setSelectedSeats, busSeat }) => {
 
-    const BUS_MAP: Seat[][] =
-        [
-            [
-                { id: 1, type: 'M' },
-                { id: 2, type: 'M' },
-                { id: 3, type: 'E' },
-                { id: 4, type: 'E' },
-                { id: null },
-                { id: 5, type: 'F' },
-                { id: 6, type: 'E' },
-                { id: 7, type: 'E' },
-                { id: 8, type: 'E' }
-            ],
-            [
-                { id: 9, type: 'M' },
-                { id: 10, type: 'M' },
-                { id: 11, type: 'E' },
-                { id: 12, type: 'E' },
-                { id: null },
-                { id: 13, type: 'F' },
-                { id: 14, type: 'E' },
-                { id: 15, type: 'E' },
-                { id: 16, type: 'E' }
-            ],
-            [
-                { id: null },
-            ],
-            [
-                { id: 17, type: 'M' },
-                { id: 18, type: 'M' },
-                { id: 19, type: 'M' },
-                { id: 20, type: 'E' },
-                { id: 21, type: 'E' },
-                { id: 22, type: 'E' },
-                { id: 23, type: 'E' },
-                { id: 24, type: 'E' },
-                { id: 25, type: 'E' }
-            ]
-        ]
+    const BUS_MAP: Seat[][] = busSeat;
+    const [timeLeft, setTimeLeft] = useState(10 * 60); // 10 minutes in seconds
+
+    const minutes = Math.floor(timeLeft / 60).toString().padStart(2, "0");
+    const seconds = (timeLeft % 60).toString().padStart(2, "0");
+
 
     const selectSeatHandler = (place: Seat) => {
         if (place.id === null) return;
@@ -62,6 +30,16 @@ const BusSeatChose: React.FC<BusSeatChoseProps> = ({ selectedSeats, setSelectedS
                 : [...prev, place.id]
         );
     }
+
+    useEffect(() => {
+        if (timeLeft <= 0) return;
+
+        const interval = setInterval(() => {
+            setTimeLeft((prev) => prev - 1);
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, [timeLeft]);
 
 
 
@@ -77,7 +55,7 @@ const BusSeatChose: React.FC<BusSeatChoseProps> = ({ selectedSeats, setSelectedS
                     <span className="ml-auto text-gray-600 font-bold">انتخاب صندلی</span>
                     <div className="flex items-center justify-between font-medium text-grays-600 text-4">
                         <span className="ml-2 text-gray-800"> زمان باقیمانده: </span>
-                        <strong className="text-red-600">08:55</strong>
+                        <strong className="text-red-600">{minutes}:{seconds}</strong>
                     </div>
                 </div>
                 <div className="flex-1 flex w-full justify-between flex-wrap px-4 py-5 md:px-0">

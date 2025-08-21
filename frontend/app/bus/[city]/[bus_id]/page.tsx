@@ -23,25 +23,63 @@ export default function BusTicketPage() {
     const pathname = usePathname();
 
     const [seats, setSeats] = useState<number[]>([]);
-    const { travelType, setTravelType, setTravelDetails } = useTravel();
-    const [passengers, setPassengers] = useState<BusPassenger[]>([])
+    const { travelType, setTravelType, setTravelDetails, busDetails } = useTravel();
+    const [passengers, setPassengers] = useState<BusPassenger[]>([]);
 
     const deleteHandler = (seatNumber: number | null) => {
         if (seatNumber === null) return;
-        setSeats(prev => prev.filter(seat => seat !== seatNumber));
-        setPassengers(prev => prev.filter(p => p.seatNumber !== seatNumber));
+
+        setSeats(prev => {
+            const updatedSeats = prev.filter(seat => seat !== seatNumber);
+            console.log('updatedSeats', updatedSeats);
+
+            // Reassign passengers to remaining seats
+            setPassengers(prevPassengers => {
+                if (updatedSeats.length === 0) return prevPassengers; // keep passengers if no seats
+
+                console.log('seatNumber', seatNumber)
+                // Remove passenger for the deleted seat
+                const newPassengers = prevPassengers.filter(p => p.seatNumber !== seatNumber);
+                console.log('newPassengers', newPassengers)
+
+                // Reassign seat numbers based on updatedSeats
+                for (let i = 0; i < newPassengers.length; i++) {
+                    newPassengers[i] = { ...newPassengers[i], seatNumber: updatedSeats[i] };
+                }
+
+                return newPassengers;
+            });
+
+            console.log('passengers', passengers)
+
+            return updatedSeats;
+        });
+
+
+        console.log('passengers11: ')
+        console.log(passengers)
     };
 
-    const addPassenger = (newPassenger: BusPassenger) => {
+    const addPassenger = (newPassenger: BusPassenger, seatIndex: number) => {
         setPassengers(prev => {
-            const updated = prev.some(p => p.seatNumber === newPassenger.seatNumber)
-                ? prev.map(p =>
-                    p.seatNumber === newPassenger.seatNumber ? newPassenger : p
-                )
-                : [...prev, newPassenger];
+            let updated = [...prev];
+            updated[seatIndex] = { ...newPassenger, seatNumber: seats[seatIndex] };
 
+            // Ensure the array has enough slots
+            if (seats.length !== 0) {
+                const newPassengers = updated.slice(0, seats.length);
+                for (let i = 0; i < newPassengers.length; i++) {
+                    newPassengers[i] = { ...newPassengers[i], seatNumber: seats[i] }
+                }
+                updated = newPassengers;
+            }
+            console.log(`updated,`)
+            console.log(updated)
             return updated;
         });
+
+        console.log('passengers: ')
+        console.log(passengers)
     };
 
 
@@ -58,33 +96,44 @@ export default function BusTicketPage() {
     }, [passengers, setTravelDetails]);
 
 
+    useEffect(() => {
+        console.log('passengersbbb', passengers)
+    }, [passengers])
 
     useEffect(() => {
         if (travelType === 'bus') return;
         setTravelType('bus');
-        setTravelDetails({})
+        setTravelDetails({});
     }, []);
 
     return (
         <main className="mt-15 w-full bg-gray-100">
             <div className="w-full">
                 <ProgressStepSection step={1} />
-                <BusTicketView />
-                <BusSeatChose selectedSeats={seats} setSelectedSeats={setSeats} />
+                <BusTicketView bus={busDetails} seatsCount={seats.length} />
+                <BusSeatChose
+                    selectedSeats={seats}
+                    setSelectedSeats={setSeats}
+                    busSeat={busDetails.seat_stat}
+                />
                 <div className="px-12 md:px-18 lg:px-26 xl:px-42 py-2">
                     <div className="bg-white px-8 border-1 shadow-xs">
                         <CustomerDetails
+                            passenger={passengers.length !== 0 ? passengers[0] : null}
                             seatNmb={seats.length > 0 ? seats[0] : null}
                             deleteHandler={deleteHandler}
                             isMain={true}
                             handler={addPassenger}
+                            idx={0}
                         />
                         {seats.slice(1).map((seatNumber, index) => (
                             <CustomerDetails
                                 key={index}
+                                passenger={passengers[index+1]}
                                 seatNmb={seatNumber}
                                 deleteHandler={deleteHandler}
                                 handler={addPassenger}
+                                idx={index + 1}
                             />
                         ))}
                     </div>

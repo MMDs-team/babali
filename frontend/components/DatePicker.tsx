@@ -13,8 +13,13 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover"
 
-export function DatePicker({className}: {className: String}) {
-    const [date, setDate] = React.useState<Date>()
+type DatePickerProps = {
+    className?: string;
+    date: Date;
+    setDate: React.Dispatch<React.SetStateAction<Date>>;
+};
+
+export function DatePicker({ className, date, setDate }: DatePickerProps) {
 
     return (
         <Popover>
@@ -51,7 +56,10 @@ export function DatePicker({className}: {className: String}) {
                     <Calendar mode="single"
                         dir="ltr"
                         selected={date}
-                        onSelect={setDate}
+                        onSelect={(selected) => {
+                            if (selected) {
+                                setDate(selected);}
+                        }}
                         numberOfMonths={1}
                     />
                 </div>
