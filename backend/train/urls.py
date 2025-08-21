@@ -5,7 +5,7 @@ from train.views import ticket_views, travel_views
 
 
 router = DefaultRouter()
-router.register('tickets', ticket_views.TicketViewSet)
-router.register('travels', travel_views.TravelViewSet)
+router.register('tickets', ticket_views.TicketViewSet, basename='train-ticket')
+router.register('travels', travel_views.TravelViewSet, basename='train-travel')
 
 urlpatterns = router.urls
