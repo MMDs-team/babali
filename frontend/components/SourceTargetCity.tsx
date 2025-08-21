@@ -35,9 +35,22 @@ const iranianCities = [
     'رشت',
 ];
 
-export default function SourceTargetCity({className} : {className: String}) {
-    const [sourceCity, setSourceCity] = useState('');
-    const [targetCity, setTargetCity] = useState('');
+type SourceTargetCityProps = {
+    className?: string;
+    sourceCity: string;
+    targetCity: string;
+    setSourceCity: React.Dispatch<React.SetStateAction<string>>;
+    setTargetCity: React.Dispatch<React.SetStateAction<string>>;
+};
+
+export default function SourceTargetCity({
+    className,
+    sourceCity,
+    targetCity,
+    setSourceCity,
+    setTargetCity,
+}: SourceTargetCityProps) {
+
 
     const changeDirection = () => {
         const temp = sourceCity;
