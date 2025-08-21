@@ -81,13 +81,16 @@ class TicketViewSet(ListModelMixin,
 
     @action(detail=False, methods=['patch'])
     def verify(self, request):
-        serial = self.request.query_params.get('Serial')
-        status = self.request.query_params.get('Status')
-        if status == 'OK':
-            Ticket.objects.filter(serial=serial).update(status=Ticket.STATUS_ACCEPTED)
-            return Response({'serial': serial}, status=status.HTTP_200_OK)
+        serial = self.request.query_params.get('serial')
+        transaction_status = self.request.query_params.get('status')
 
-        return Response({'error': 'Payment is not verified.'}, status=status.HTTP_406_NOT_ACCEPTABLE)
+        if serial is not None and transaction_status in ('OK', 'NOK'):
+            ticket_status = Ticket.STATUS_ACCEPTED if transaction_status == 'OK' else Ticket.STATUS_REJECTED
+            verbose_name = dict(Ticket.STATUS_CHOICES)[ticket_status]
+            Ticket.objects.filter(serial=serial).update(status=ticket_status)
+            return Response({'serial': serial, 'status': verbose_name}, status=status.HTTP_200_OK)
+
+        return Response({'error': 'You have to supply both serial & status query params.'}, status=status.HTTP_406_NOT_ACCEPTABLE)
 
 
     @action(detail=False, methods=['get'])
