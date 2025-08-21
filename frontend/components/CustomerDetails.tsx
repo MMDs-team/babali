@@ -7,23 +7,27 @@ import BirthDateInput from './BirthDateInput';
 type CustomerDetailsProps = {
     isMain?: boolean;
     seatNmb: number | null;
+    passenger: any;
     deleteHandler: (seatNmb: number | null) => void;
-    handler: (newPassenger: any) => void;
+    handler: (newPassenger: any, index: number) => void;
+    idx: number
 };
 
 const CustomerDetails: React.FC<CustomerDetailsProps> = ({
     isMain = false,
     seatNmb,
+    passenger,
     deleteHandler,
-    handler
+    handler,
+    idx
 }) => {
 
-    const [firstName, setFirstName] = useState("");
-    const [lastName, setLastName] = useState("");
-    const [gender, setGender] = useState("M");
-    const [SSR, setSSR] = useState('');
-    const [birthDate, setBirthDate] = useState({});
-    const [phone, setPhone] = useState('');
+    const [firstName, setFirstName] = useState(passenger?.firstName ?? "");
+    const [lastName, setLastName] = useState(passenger?.lastNAme ?? "");
+    const [gender, setGender] = useState(passenger?.gender ?? 'M');
+    const [SSR, setSSR] = useState(passenger?.SSR ?? "");
+    const [birthDate, setBirthDate] = useState(passenger?.birthDate ?? {});
+    const [phone, setPhone] = useState(passenger?.phone ?? "");
 
     const handleSSR = (e: React.ChangeEvent<HTMLInputElement>) => {
         let inputValue = e.target.value;
@@ -45,8 +49,18 @@ const CustomerDetails: React.FC<CustomerDetailsProps> = ({
     }
 
     useEffect(() => {
-        handler({ firstName, lastName, gender, SSR, birthDate, phone, seatNumber: seatNmb });
+        handler({ firstName, lastName, gender, SSR, birthDate, phone, seatNumber: seatNmb }, idx);
     }, [firstName, lastName, gender, SSR, birthDate, phone])
+
+    useEffect(() => {
+        if (!passenger) return;
+        setFirstName(passenger.firstName);
+        setLastName(passenger.lastName)  
+        setGender(passenger.gender)  
+        setSSR(passenger.SSR)  
+        setBirthDate(passenger.birthDate)  
+        setPhone(passenger.phone)        
+    }, [passenger])
 
     return (
         <div className='w-full border-1 p-4 px-2 bg-white border-x-0 border-gray-200'>
