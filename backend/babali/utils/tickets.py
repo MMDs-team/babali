@@ -1,6 +1,7 @@
 from django.conf import settings
 import os
 import logging
+from pathlib import Path
 from playwright.sync_api import sync_playwright
 from babali.consts import TEMPLATES_ROOT, TICKETS_ROOT
 
@@ -115,7 +116,8 @@ class TicketGenerator:
             page = context.new_page()
 
             # Serve file:// URL
-            page.goto(f'file://{os.path.abspath(html_path)}', wait_until='networkidle')
+            file_uri = Path(os.path.abspath(html_path)).as_uri()
+            page.goto(file_uri, wait_until='networkidle')
 
             # Generate PDF
             page.pdf(
