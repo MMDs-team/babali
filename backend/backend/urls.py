@@ -22,4 +22,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/bus/', include('bus.urls')),
     path('api/train/', include('train.urls')),
+    path('api/flight/', include('flight.urls')),
 ] + debug_toolbar_urls()

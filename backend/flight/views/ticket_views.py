@@ -7,76 +7,36 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
 from babali.utils.tickets import GENERATOR
-from babali.consts import BUS_TICKET_TYPE
-from bus.models import Ticket, Travel
-from bus.serializers.ticket_serializers import TicketSerializer
+from babali.consts import FLIGHT_TICKET_TYPE
+from flight.models import Ticket, Travel
+from flight.serializers.ticket_serializers import TicketSerializer
 from consts import PENDING_TICKET_MINS
 
 
-BUS_TEMPLATE_NAME = 'bus.html'
-BUS_PLACEHOLDER_MAP = {
+FLIGHT_TEMPLATE_NAME = 'flight.html'
+FLIGHT_PLACEHOLDER_MAP = {
     '<1>': 'first_name',
     '<2>': 'last_name',
     '<3>': 'ssn',
     '<4>': 'date_time',
-    '<5>': 'price',
-    '<6>': 'origin',
-    '<7>': 'dest',
-    '<8>': 'seat_no',
-    '<9>': 'terminal__name',
-    '<10>': 'cooperative__name',
-    '<11>': 'serial'
+    '<5>': 'flight_type',
+    '<6>': 'flight_class',
+    '<7>': 'price',
+    '<8>': 'origin',
+    '<9>': 'dest',
+    '<10>': 'seat_no',
+    '<11>': 'return_ticket',
+    '<12>': 'airport__name',
+    '<13>': 'terminal_no',
+    '<14>': 'flight_agency__name'
 }
+
 
 class TicketViewSet(ListModelMixin,
                     RetrieveModelMixin,
                     GenericViewSet):
     queryset = Ticket.objects.all()
     serializer_class = TicketSerializer
-
-
-    @action(detail=False, methods=['post'])
-    def bulk_create(self, request):
-        serializer = self.get_serializer(data=request.data, many=True)
-        serializer.is_valid(raise_exception=True)
-        
-        validated_data = serializer.validated_data
-        tickets_to_create = []
-        with transaction.atomic():
-            # with connection.cursor() as cursor:
-            #     cursor.execute("LOCK TABLES bus_ticket WRITE;")
-
-            try:
-                latest_serial_no = Ticket.objects.latest('serial').serial
-            except Ticket.DoesNotExist:
-                latest_serial_no = -1
-
-            travel = validated_data[0]['travel'] 
-            travel.capacity -= len(validated_data)
-            travel.save()
-                
-            payment_due_datetime = datetime.datetime.now() + datetime.timedelta(minutes=PENDING_TICKET_MINS)
-            curr_serial_no = latest_serial_no + 1
-            for item_data in validated_data:
-                tickets_to_create.append(
-                    Ticket(
-                        **item_data,
-                        serial=curr_serial_no,
-                        payment_due_datetime=payment_due_datetime
-                    )
-                )
-
-                travel.seat_stat[item_data['seat_no']] = {
-                    'user_phone': item_data['user'].phone,
-                    "gender": "M" if item_data['gender'] else "F"
-                }
-                travel.save()
-                
-            tickets = Ticket.objects.bulk_create(tickets_to_create)
-            response_serializer = self.get_serializer(tickets, many=True)
-            return Response(response_serializer.data, status=status.HTTP_201_CREATED)
-
-        return Response({'error': "Transaction failed."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
     @action(detail=False, methods=['patch'])
@@ -105,23 +65,27 @@ class TicketViewSet(ListModelMixin,
                                                                           'gender',
                                                                           'user',
                                                                           'travel_id',
+                                                                          'return_ticket',
                                                                           'seat_no')
         tickets = list(tickets)
 
         if len(tickets):
             travel_id = tickets[0]['travel_id']
-            travel = Travel.objects.filter(pk=travel_id).select_related('terminal', 'cooperative') \
+            travel = Travel.objects.filter(pk=travel_id).select_related('airport', 'flight_agency') \
                                                         .values('date_time',
+                                                                'flight_type',
+                                                                'flight_class',
+                                                                'terminal_no',
                                                                 'origin',
                                                                 'dest',
-                                                                'terminal__name',
-                                                                'cooperative__name',
                                                                 'price',
+                                                                'airport__name',
+                                                                'flight_agency__name',
                                                                 'description')[0]
 
             tickets = [{**ticket, **travel} for ticket in tickets]
-            tickets_pdf = GENERATOR.generate_tickets_pdf(ticket_template_name=BUS_TEMPLATE_NAME, placeholders_map=BUS_PLACEHOLDER_MAP,
-                                                         data_list=tickets, ticket_type=BUS_TICKET_TYPE, output_name=str(serial))
+            tickets_pdf = GENERATOR.generate_tickets_pdf(ticket_template_name=FLIGHT_TEMPLATE_NAME, placeholders_map=FLIGHT_PLACEHOLDER_MAP,
+                                                         data_list=tickets, ticket_type=FLIGHT_TICKET_TYPE, output_name=str(serial))
             if tickets_pdf is not None:
                 return Response({'tickets_pdf': tickets_pdf}, status=status.HTTP_201_CREATED)
             else: 
