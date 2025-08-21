@@ -70,6 +70,7 @@ class TicketViewSet(ListModelMixin,
                 )
 
                 seat_no = travel.get_next_seat()
+                print(seat_no)
 
                 travel.seat_stat[str(seat_no)] = {
                     'user_phone': item_data['user'].phone,

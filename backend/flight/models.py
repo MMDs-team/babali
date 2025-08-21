@@ -76,7 +76,7 @@ class Travel(models.Model):
         
         for next_seat in range(1, self.airplane.seat_count + 1):
             if self.seat_stat.get(str(next_seat)) == None:
-                return next
+                return next_seat
 
         return None
 

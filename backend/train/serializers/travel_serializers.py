@@ -7,6 +7,7 @@ class TravelSerializer(serializers.ModelSerializer):
     route = serializers.SerializerMethodField() 
     leave_time = serializers.SerializerMethodField() 
     empty_compartment = serializers.SerializerMethodField() 
+    cooperative = serializers.SerializerMethodField() 
 
     class Meta:
         model = Travel
@@ -58,3 +59,6 @@ class TravelSerializer(serializers.ModelSerializer):
             return False 
         
         return True
+
+    def get_cooperative(self, obj):
+        return obj.cooperative.name
