@@ -2,12 +2,11 @@ from django.conf import settings
 import os
 import logging
 from playwright.sync_api import sync_playwright
+from babali.consts import TEMPLATES_ROOT, TICKETS_ROOT
 
 
 logger = logging.getLogger(__name__)
 
-TEMPLATES_ROOT = 'static/tickets/templates/'
-TICKETS_ROOT = 'static/tickets/'
 DOCUMENT_WRAPPER_NAME = '_document_wrapper.html'
 
 class TicketGenerator:
@@ -21,9 +20,11 @@ class TicketGenerator:
         self.browser = None
         self.playwright = None
 
+
     def _sanitize_filename(self, name):
         """Remove unsafe characters from filenames."""
         return "".join(c for c in name if c.isalnum() or c in "_-.")
+
 
     def _read_template(self, template_name):
         """Read template file synchronously."""
@@ -35,12 +36,14 @@ class TicketGenerator:
             logger.error("Template not found: %s", template_path)
             return None
 
+
     def _substitute_data(self, template_content, placeholder_map, data):
         """Replace placeholders in template."""
         for placeholder, data_key in placeholder_map.items():
             value = str(data.get(data_key, ''))
             template_content = template_content.replace(placeholder, value)
         return template_content
+
 
     def _generate_temp_html(self, ticket_template_name, placeholders_map, data_list, ticket_type, output_name):
         """Generate a temporary HTML file with all tickets."""
@@ -73,6 +76,7 @@ class TicketGenerator:
             logger.error("Failed to write HTML: %s", e)
             return None
 
+
     def generate_tickets_pdf(self, ticket_template_name, placeholders_map, data_list, ticket_type, output_name):
         """
         Main method: Generate HTML → PDF (synchronously).
@@ -95,7 +99,7 @@ class TicketGenerator:
             self.playwright = sync_playwright().start()
 
             # Use system Chromium if desired
-            executable_path = os.getenv("CHROMIUM_PATH")
+            executable_path = os.getenv("PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH")
 
             self.browser = self.playwright.chromium.launch(
                 executable_path=executable_path,
@@ -138,5 +142,5 @@ class TicketGenerator:
             if os.path.exists(html_path):
                 os.remove(html_path)
 
-# Instantiate generator
+
 GENERATOR = TicketGenerator()
