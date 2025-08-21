@@ -107,14 +107,14 @@ class TicketViewSet(ListModelMixin,
 
         if len(tickets):
             travel_id = tickets[0]['travel_id']
-            travel = Travel.objects.filter(pk=travel_id).select_related('terminal').select_related('cooperative') \
-                                                                                   .values('date_time',
-                                                                                           'origin',
-                                                                                           'dest',
-                                                                                           'terminal__name',
-                                                                                           'cooperative__name',
-                                                                                           'price',
-                                                                                           'description')[0]
+            travel = Travel.objects.filter(pk=travel_id).select_related('terminal', 'cooperative') \
+                                                        .values('date_time',
+                                                                'origin',
+                                                                'dest',
+                                                                'terminal__name',
+                                                                'cooperative__name',
+                                                                'price',
+                                                                'description')[0]
 
             tickets = [{**ticket, **travel} for ticket in tickets]
             tickets_pdf = GENERATOR.generate_tickets_pdf(ticket_template_name=BUS_TEMPLATE_NAME, placeholders_map=BUS_PLACEHOLDER_MAP,

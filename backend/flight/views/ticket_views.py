@@ -68,7 +68,8 @@ class TicketViewSet(ListModelMixin,
 
         if len(tickets):
             travel_id = tickets[0]['travel_id']
-            travel = Travel.objects.filter(pk=travel_id).values('date_time',
+            travel = Travel.objects.filter(pk=travel_id).select_related('airport', 'flight_agency') \
+                                                        .values('date_time',
                                                                 'flight_type',
                                                                 'flight_class',
                                                                 'terminal_no',
