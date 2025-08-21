@@ -57,7 +57,6 @@ class Travel(models.Model):
     airplane = models.ForeignKey(Airplane, on_delete=models.CASCADE, related_name="flight_travels")
     flight_agency = models.ForeignKey(Agency, on_delete=models.CASCADE, related_name="flight_travels")
 
-    capacity = models.IntegerField(blank=True, null=True)
     date_time = models.DateTimeField(blank=True, null=True)
     price = models.PositiveIntegerField(blank=True, null=True)
     dest = models.CharField(max_length=consts.SHORT_STR_LEN, blank=True, null=True)
@@ -67,7 +66,28 @@ class Travel(models.Model):
     description = models.TextField(max_length=consts.LONG_STR_LEN, blank=True, null=True)
     flight_class = models.CharField(max_length=consts.SHORT_STR_LEN, blank=True, null=True)
     max_loggage_weight = models.PositiveIntegerField(blank=True, null=True)
+
+    seat_stat = models.JSONField(default=dict,  blank=True, null=True)
+
+    capacity = models.IntegerField(blank=True, null=True,
+        help_text="If left empty, it will be set to the airpalne's type capacity.")
     
+    def get_next_seat(self):
+        
+        for next_seat in range(1, self.airplane.seat_count + 1):
+            if self.seat_stat.get(str(next_seat)) == None:
+                return next
+
+        return None
+
+        
+    def save(self, *args, **kwargs):
+
+        if self._state.adding:
+            self.capacity = self.airplane.seat_count
+
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f"Travel ID: {self.travel_id}, Origin: {self.origin}, Destination: {self.dest}"
 

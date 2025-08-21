@@ -47,9 +47,9 @@ class TravelSerializer(serializers.ModelSerializer):
 
         if origin_city:
             arrival = leave_time(obj, origin_city)
-            return arrival.isoformat() if arrival else None
+            return arrival if arrival else None
         
-        return obj.date_time.isoformat()
+        return obj.date_time
 
     def get_empty_compartment(self, obj):
         next_seat = obj.get_next_seat(full_compartment=True)

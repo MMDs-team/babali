@@ -12,7 +12,6 @@ class TravelSerializer(serializers.ModelSerializer):
             'airport',
             'airplane',
             'flight_agency',
-            'capacity',
             'date_time',
             'price',
             'dest',
@@ -22,4 +21,6 @@ class TravelSerializer(serializers.ModelSerializer):
             'description',
             'flight_class',
             'max_loggage_weight',
+            'capacity',
+            'seat_stat'
         ]
