@@ -106,7 +106,7 @@ export default function OrderConfirmationPage({ params, passengers }: ConfirmPag
             } catch (error) {
                 console.error("Error:", error);
 
-                go back
+                // go back
                 if (pathname.endsWith("/confirm")) {
                     router.replace(pathname.replace("/confirm", ""));
                 }
