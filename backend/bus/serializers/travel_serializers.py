@@ -5,6 +5,8 @@ from bus.models import Travel
 
 class TravelSerializer(serializers.ModelSerializer):
     seat_stat = serializers.SerializerMethodField() 
+    terminal = serializers.SerializerMethodField() 
+    cooperative = serializers.SerializerMethodField() 
 
     class Meta:
         model = Travel
@@ -99,3 +101,9 @@ class TravelSerializer(serializers.ModelSerializer):
                 seat_num += 1
         
         return seat_stat 
+
+    def get_terminal(self, obj):
+        return obj.terminal.name
+
+    def get_cooperative(self, obj):
+        return obj.cooperative.name
