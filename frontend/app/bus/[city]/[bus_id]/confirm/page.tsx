@@ -9,6 +9,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { PencilIcon } from 'lucide-react';
 import { useTravel } from '@/contexts/TravelContext';
 
+
+const HOST = process.env.NEXT_PUBLIC_API_HOST;
+const PORT = process.env.NEXT_PUBLIC_API_PORT;
+
 interface Passenger {
     firstName: string,
     lastNAme: string,
@@ -63,6 +67,55 @@ export default function OrderConfirmationPage({ params, passengers }: ConfirmPag
         router.push(newPath);
     }
 
+    const formatBirthDate = (birthDate: { day: string; month: string; year: string }): string => {
+        return `${birthDate.year}-${birthDate.month.padStart(2, "0")}-${birthDate.day.padStart(2, "0")}`;
+    }
+
+    useEffect(() => {
+        const sendRequest = async () => {
+            try {
+                const API_URL = `http://${HOST}:${PORT}/api/bus/tickets/bulk_create/`;
+
+
+                const passengers: any = travelDetails.passengers.map((p: any) => ({
+                    user: travelDetails.passengers[0].phone,
+                    travel: busDetails.travel_id,
+                    first_name: p.firstName,
+                    last_name: p.lastName,
+                    seat_no: p.seatNumber,
+                    gender: p.gender === "M" ? 1 : 0,
+                    birth_date: formatBirthDate(p.birthDate),
+                    ssn: p.SSR
+                }));
+
+                const res = await fetch(API_URL, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(passengers),
+                });
+
+                if (!res.ok) {
+                    throw new Error("Failed to reserve tickets");
+                }
+
+                const data = await res.json();
+                console.log("Tickets reserved:", data);
+
+            } catch (error) {
+                console.error("Error:", error);
+
+                go back
+                if (pathname.endsWith("/confirm")) {
+                    router.replace(pathname.replace("/confirm", ""));
+                }
+            }
+        };
+
+        sendRequest();
+    }, [pathname, router]);
+
 
     useEffect(() => {
         console.log(travelDetails)
@@ -108,10 +161,10 @@ export default function OrderConfirmationPage({ params, passengers }: ConfirmPag
                                 <CardTitle className="text-right text-xl font-bold text-gray-800">
                                     مشخصات سرپرست مسافران
                                 </CardTitle>
-                                <Button 
-                                    variant="outline" 
+                                <Button
+                                    variant="outline"
                                     className="flex items-center space-x-2 text-blue-600 border-blue-600 hover:bg-blue-50 hover:text-blue-700 rounded-lg transition-colors duration-200"
-                                    onClick={() => editPassengers()}    
+                                    onClick={() => editPassengers()}
                                 >
                                     <PencilIcon className="h-4 w-4" />
                                     <span>ویرایش مسافران</span>

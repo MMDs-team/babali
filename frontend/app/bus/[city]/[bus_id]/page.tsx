@@ -31,33 +31,22 @@ export default function BusTicketPage() {
 
         setSeats(prev => {
             const updatedSeats = prev.filter(seat => seat !== seatNumber);
-            console.log('updatedSeats', updatedSeats);
 
             // Reassign passengers to remaining seats
             setPassengers(prevPassengers => {
                 if (updatedSeats.length === 0) return prevPassengers; // keep passengers if no seats
-
-                console.log('seatNumber', seatNumber)
                 // Remove passenger for the deleted seat
                 const newPassengers = prevPassengers.filter(p => p.seatNumber !== seatNumber);
-                console.log('newPassengers', newPassengers)
 
                 // Reassign seat numbers based on updatedSeats
                 for (let i = 0; i < newPassengers.length; i++) {
                     newPassengers[i] = { ...newPassengers[i], seatNumber: updatedSeats[i] };
                 }
-
                 return newPassengers;
             });
 
-            console.log('passengers', passengers)
-
             return updatedSeats;
         });
-
-
-        console.log('passengers11: ')
-        console.log(passengers)
     };
 
     const addPassenger = (newPassenger: BusPassenger, seatIndex: number) => {
@@ -73,13 +62,8 @@ export default function BusTicketPage() {
                 }
                 updated = newPassengers;
             }
-            console.log(`updated,`)
-            console.log(updated)
             return updated;
         });
-
-        console.log('passengers: ')
-        console.log(passengers)
     };
 
 
@@ -94,11 +78,6 @@ export default function BusTicketPage() {
             passengers: passengers,
         }));
     }, [passengers, setTravelDetails]);
-
-
-    useEffect(() => {
-        console.log('passengersbbb', passengers)
-    }, [passengers])
 
     useEffect(() => {
         if (travelType === 'bus') return;
