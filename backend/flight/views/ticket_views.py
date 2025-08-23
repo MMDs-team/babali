@@ -70,8 +70,6 @@ class TicketViewSet(ListModelMixin,
                 )
 
                 seat_no = travel.get_next_seat()
-                print(seat_no)
-
                 travel.seat_stat[str(seat_no)] = {
                     'user_phone': item_data['user'].phone,
                     "gender": "M" if item_data['gender'] else "F"
@@ -83,6 +81,7 @@ class TicketViewSet(ListModelMixin,
             return Response(response_serializer.data, status=status.HTTP_201_CREATED)
 
         return Response({'error': "Transaction failed."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
     @action(detail=False, methods=['patch'])
     def verify(self, request):
@@ -96,6 +95,27 @@ class TicketViewSet(ListModelMixin,
             return Response({'serial': serial, 'status': verbose_name}, status=status.HTTP_200_OK)
 
         return Response({'error': 'You have to supply both serial & status query params.'}, status=status.HTTP_406_NOT_ACCEPTABLE)
+
+    
+    # TODO: Test this endpoint then integrate.
+    # @action(detail=False, methods=['patch'])
+    # def cancel(self, request):
+    #     serial = request.data['serial']
+    #     tickets = Ticket.objects.filter(serial=serial, status='A', canceled=False)
+    #     if len(tickets):
+    #         travel = tickets[0].travel
+    #         for ticket in tickets:
+    #             seat_no = str(ticket.seat_no)
+
+    #             del travel.seat_stat[seat_no]['phone']
+    #             travel.seat_stat[seat_no]['gender'] = 'E'
+
+    #         tickets.update(canceled=True)
+    #         # TODO: Logic for payment rollback.
+
+    #         return Response({'msg': f'Tickets with serial={serial} have been canceled successfully.'})
+
+    #     return Response({'error': f'There is no ticket with serial={serial} to cancel.'})
 
 
     @action(detail=False, methods=['get'])
