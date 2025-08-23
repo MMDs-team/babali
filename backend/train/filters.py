@@ -10,6 +10,7 @@ class TravelFilter(django_filters.FilterSet):
 
     def filter_queryset(self, queryset):
 
+        id = self.data.get("id")
         org = self.data.get("origin")
         dest = self.data.get("destination")
         date = self.data.get("date")
@@ -42,7 +43,7 @@ class TravelFilter(django_filters.FilterSet):
                 if not dest or dest.lower() == edge.dest_city.lower():
                     dest_pass = True
 
-                if org_pass and dest_pass and (not date or date == arrival_time.date()):
+                if org_pass and dest_pass and (not date or date == arrival_time.date()) and (not id or id == str(travel.travel_id)):
                     travel_ids.append(travel.travel_id)
                     break
 
