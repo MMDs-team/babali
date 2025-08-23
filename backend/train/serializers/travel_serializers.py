@@ -7,6 +7,7 @@ class TravelSerializer(serializers.ModelSerializer):
     route = serializers.SerializerMethodField() 
     leave_time = serializers.SerializerMethodField() 
     empty_compartment = serializers.SerializerMethodField() 
+    cooperative = serializers.SerializerMethodField() 
 
     class Meta:
         model = Travel
@@ -47,9 +48,9 @@ class TravelSerializer(serializers.ModelSerializer):
 
         if origin_city:
             arrival = leave_time(obj, origin_city)
-            return arrival.isoformat() if arrival else None
+            return arrival if arrival else None
         
-        return obj.date_time.isoformat()
+        return obj.date_time
 
     def get_empty_compartment(self, obj):
         next_seat = obj.get_next_seat(full_compartment=True)
@@ -58,3 +59,6 @@ class TravelSerializer(serializers.ModelSerializer):
             return False 
         
         return True
+
+    def get_cooperative(self, obj):
+        return obj.cooperative.name

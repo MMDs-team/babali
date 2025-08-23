@@ -15,7 +15,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, re_path, include
 from debug_toolbar.toolbar import debug_toolbar_urls
 
 urlpatterns = [
@@ -23,4 +23,8 @@ urlpatterns = [
     path('api/bus/', include('bus.urls')),
     path('api/train/', include('train.urls')),
     path('api/flight/', include('flight.urls')),
+
+    # DJOSER urls
+    re_path(r'^auth/', include('djoser.urls')),
+    re_path(r'^auth/', include('djoser.urls.jwt')),
 ] + debug_toolbar_urls()
