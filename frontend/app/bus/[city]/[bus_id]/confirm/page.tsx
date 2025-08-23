@@ -1,13 +1,14 @@
 'use client';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 import ProgressStepSection from '@/components/ProgressStepSection';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { PencilIcon } from 'lucide-react';
+import { Loader2, PencilIcon } from 'lucide-react';
 import { useTravel } from '@/contexts/TravelContext';
+import PaymentModal from '@/components/PaymentModal';
 
 
 const HOST = process.env.NEXT_PUBLIC_API_HOST;
@@ -36,6 +37,11 @@ export default function OrderConfirmationPage({ params, passengers }: ConfirmPag
     const router = useRouter();
     const pathname = usePathname()
     const { travelType, travelDetails, busDetails } = useTravel();
+
+    const [isLoading, setIsLoading] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [step, setStep] = useState(2);
+    const [ReserveData, setReserveData] = useState<any>({});
 
     const date = new Date(busDetails.date_time);
     const persianDate = date.toLocaleDateString("fa-IR", {
@@ -71,50 +77,83 @@ export default function OrderConfirmationPage({ params, passengers }: ConfirmPag
         return `${birthDate.year}-${birthDate.month.padStart(2, "0")}-${birthDate.day.padStart(2, "0")}`;
     }
 
-    useEffect(() => {
-        const sendRequest = async () => {
-            try {
-                const API_URL = `http://${HOST}:${PORT}/api/bus/tickets/bulk_create/`;
+    const sendRequest = async () => {
+        try {
+            setIsLoading(true);
+            const API_URL = `http://${HOST}:${PORT}/api/bus/tickets/bulk_create/`;
 
 
-                const passengers: any = travelDetails.passengers.map((p: any) => ({
-                    user: travelDetails.passengers[0].phone,
-                    travel: busDetails.travel_id,
-                    first_name: p.firstName,
-                    last_name: p.lastName,
-                    seat_no: p.seatNumber,
-                    gender: p.gender === "M" ? 1 : 0,
-                    birth_date: formatBirthDate(p.birthDate),
-                    ssn: p.SSR
-                }));
+            const passengers: any = travelDetails.passengers.map((p: any) => ({
+                user: travelDetails.passengers[0].phone,
+                travel: busDetails.travel_id,
+                first_name: p.firstName,
+                last_name: p.lastName,
+                seat_no: p.seatNumber,
+                gender: p.gender === "M" ? 1 : 0,
+                birth_date: formatBirthDate(p.birthDate),
+                ssn: p.SSR
+            }));
 
-                const res = await fetch(API_URL, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(passengers),
-                });
+            const res = await fetch(API_URL, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(passengers),
+            });
 
-                if (!res.ok) {
-                    throw new Error("Failed to reserve tickets");
-                }
-
-                const data = await res.json();
-                console.log("Tickets reserved:", data);
-
-            } catch (error) {
-                console.error("Error:", error);
-
-                // go back
-                if (pathname.endsWith("/confirm")) {
-                    router.replace(pathname.replace("/confirm", ""));
-                }
+            if (!res.ok) {
+                throw new Error("Failed to reserve tickets");
             }
-        };
 
-        sendRequest();
-    }, [pathname, router]);
+            const data = await res.json();
+            setReserveData(data);
+            console.log("Tickets reserved:", data);
+            setIsModalOpen(true);
+            setStep(3);
+
+        } catch (error) {
+            console.error("Error:", error);
+
+            // go back
+            if (pathname.endsWith("/confirm")) {
+                router.replace(pathname.replace("/confirm", ""));
+            }
+        } finally {
+            setIsLoading(false); // stop loading
+        }
+    };
+
+    const handlePay = async () => {
+        try {
+            const API_URL = `http://${HOST}:${PORT}/api/bus/tickets/verify/?serial=${ReserveData[0].serial}&status=OK`;
+
+            const response = await fetch(API_URL, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log('Payment verification result:', data);
+
+            // Close the modal
+            setIsModalOpen(false);
+
+            // Optionally show a success message
+            alert("Payment verified successfully!");
+            router.push(`/bus/ticket?serial=${ReserveData.serial}`)
+        } catch (error) {
+            console.error('Error verifying payment:', error);
+            alert("Payment verification failed!");
+        }
+    };
+
 
 
     useEffect(() => {
@@ -128,7 +167,7 @@ export default function OrderConfirmationPage({ params, passengers }: ConfirmPag
 
     return (
         <div>
-            <ProgressStepSection step={2} />
+            <ProgressStepSection step={step} />
             <div className="px-12 md:px-18 lg:px-26 xl:px-42 py-2 mt-4 bg-accent pt-20">
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
@@ -152,6 +191,15 @@ export default function OrderConfirmationPage({ params, passengers }: ConfirmPag
                                 ))}
                             </div>
                         </div>
+
+                        <PaymentModal
+                            isOpen={isModalOpen}
+                            onClose={() => {
+                                setIsModalOpen(false);
+                                setStep(2);
+                            }}
+                            onPay={handlePay}
+                        />
 
 
 
@@ -218,9 +266,20 @@ export default function OrderConfirmationPage({ params, passengers }: ConfirmPag
                             <span className="text-gray-600 text-sm">مبلغ قابل پرداخت</span>
                             <span className="text-blue-600 text-xl font-bold whitespace-nowrap">{totalPrice} تومان</span>
                         </div>
-                        <button className="w-full bg-blue-600 text-white py-3 rounded-md text-lg font-semibold hover:bg-blue-700 transition-colors">
-                            پرداخت آنلاین
-                        </button>
+                        <Button
+                            className="w-full bg-blue-600 text-white py-3 rounded-md text-lg font-semibold hover:bg-blue-700 transition-colors"
+                            onClick={() => sendRequest()}
+                            disabled={isLoading}
+                        >
+                            {isLoading ? (
+                                <>
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    انتقال به سایت پرداخت
+                                </>
+                            ) : (
+                                "پرداخت آنلاین"
+                            )}
+                        </Button>
                     </div>
                 </div>
 
