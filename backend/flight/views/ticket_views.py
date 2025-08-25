@@ -118,7 +118,7 @@ class TicketViewSet(ListModelMixin,
     #     return Response({'error': f'There is no ticket with serial={serial} to cancel.'})
 
 
-    @action(detail=False, methods=['get'])
+    @action(detail=False, methods=['post'])
     def print(self, request):
         serial = request.data['serial']
         tickets = Ticket.objects.filter(serial=serial, status='A').select_related('travel') \
