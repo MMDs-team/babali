@@ -14,17 +14,28 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf import settings
 from django.contrib import admin
 from django.urls import path, re_path, include
 from debug_toolbar.toolbar import debug_toolbar_urls
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/bus/', include('bus.urls')),
-    path('api/train/', include('train.urls')),
-    path('api/flight/', include('flight.urls')),
 
     # DJOSER urls
     re_path(r'^auth/', include('djoser.urls')),
     re_path(r'^auth/', include('djoser.urls.jwt')),
 ] + debug_toolbar_urls()
+
+
+# Dynamically include app-specific URLs
+if settings.APP_MODE == 'all':
+    urlpatterns.append(path('api/bus/', include('bus.urls')))
+    urlpatterns.append(path('api/train/', include('train.urls')))
+    urlpatterns.append(path('api/flight/', include('flight.urls')))
+elif settings.APP_MODE == 'bus':
+    urlpatterns.append(path('api/bus/', include('bus.urls')))
+elif settings.APP_MODE == 'train':
+    urlpatterns.append(path('api/train/', include('train.urls')))
+elif settings.APP_MODE == 'flight':
+    urlpatterns.append(path('api/flight/', include('flight.urls')))

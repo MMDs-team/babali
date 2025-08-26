@@ -55,7 +55,7 @@ fi
 CRON_COMMAND="*/5 * * * * $PYTHON_EXEC $MANAGE_PY_PATH cleanup_ticket_pdfs >> /tmp/cron_ticket_pdfs_cleanup.log 2>&1"
 COMMENT="# Django Ticket Cleanup Job"
 
-if ! crontab -l | grep -Fq "$MANAGE_PY_PATH cleanup_tickets"; then
+if ! crontab -l | grep -Fq "$MANAGE_PY_PATH cleanup_ticket_pdfs"; then
     (crontab -l 2>/dev/null; echo "$COMMENT"; echo "$CRON_COMMAND") | crontab -
     echo "Cron job added successfully."
 else

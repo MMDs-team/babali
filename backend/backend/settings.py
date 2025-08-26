@@ -10,8 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
-from pathlib import Path
 import credentials
+import os
+from pathlib import Path
 
 # Use custome user
 AUTH_USER_MODEL = 'babali.User'
@@ -50,11 +51,26 @@ INSTALLED_APPS = [
     
     'printer',
     'babali',
-
-    'bus',
-    'flight',
-    'train',
 ]
+
+
+# --- Dynamic Application ---
+# Get the application mode from an environment variable.
+# The second argument to getenv is a default value, e.g., 'bus'.
+APP_MODE = os.getenv('APP_MODE', 'all')
+
+# Add the specific app based on the mode.
+if APP_MODE == 'all':
+    INSTALLED_APPS.append('bus')
+    INSTALLED_APPS.append('train')
+    INSTALLED_APPS.append('flight')
+elif APP_MODE == 'bus':
+    INSTALLED_APPS.append('bus')
+elif APP_MODE == 'train':
+    INSTALLED_APPS.append('train')
+elif APP_MODE == 'flight':
+    INSTALLED_APPS.append('flight')
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
