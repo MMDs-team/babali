@@ -22,6 +22,7 @@ class Command(BaseCommand):
 
         for ticket_type in TICKET_TYPES.values():
             dir_path = os.path.join(settings.BASE_DIR, TICKETS_ROOT, ticket_type)
+            if not os.path.exists(dir_path): continue
             for filename in os.listdir(dir_path):
                 if filename.lower().endswith(".pdf"):
                     file_path = os.path.join(dir_path, filename)
