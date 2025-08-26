@@ -48,11 +48,11 @@ fi
 
 
 # 3. Set up Cron Job for PDF Cleanup
-echo "Setting up hourly cron job for ticket cleanup..."
+echo "Setting up every 5 minute cron job for ticket cleanup..."
 if command -v systemctl &> /dev/null; then
     sudo systemctl enable --now cronie.service || sudo systemctl enable --now cron.service
 fi
-CRON_COMMAND="*/5 * * * * $PYTHON_EXEC $MANAGE_PY_PATH cleanup_tickets >> /tmp/cron_ticket_cleanup.log 2>&1"
+CRON_COMMAND="*/5 * * * * $PYTHON_EXEC $MANAGE_PY_PATH cleanup_ticket_pdfs >> /tmp/cron_ticket_pdfs_cleanup.log 2>&1"
 COMMENT="# Django Ticket Cleanup Job"
 
 if ! crontab -l | grep -Fq "$MANAGE_PY_PATH cleanup_tickets"; then

@@ -6,8 +6,8 @@ from rest_framework.mixins import ListModelMixin, CreateModelMixin, RetrieveMode
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
-from babali.utils.tickets import GENERATOR
-from babali.consts import TRAIN_TICKET_TYPE
+from printer.utils.tickets import GENERATOR
+from printer.consts import TRAIN_TICKET_TYPE
 from train.models import Ticket, Travel
 from train.serializers.ticket_serializers import TicketSerializer
 from consts import PENDING_TICKET_MINS

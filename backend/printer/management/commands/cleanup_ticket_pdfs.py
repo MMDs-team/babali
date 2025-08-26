@@ -3,7 +3,7 @@ import time
 from django.core.management.base import BaseCommand
 from django.conf import settings
 
-from babali.consts import TICKETS_ROOT, TICKET_TYPES
+from printer.consts import TICKETS_ROOT, TICKET_TYPES
 
 
 CLEANUP_AGE_SECONDS = 10 * 60

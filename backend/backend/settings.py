@@ -48,10 +48,12 @@ INSTALLED_APPS = [
     'django_filters',
     'corsheaders',
     
+    'printer',
+    'babali',
+
     'bus',
     'flight',
     'train',
-    'babali',
 ]
 
 MIDDLEWARE = [
