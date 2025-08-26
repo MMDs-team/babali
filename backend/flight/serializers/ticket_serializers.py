@@ -20,6 +20,7 @@ class TicketSerializer(serializers.ModelSerializer):
             'seat_no',
             'status',
             'payment_due_datetime',
+            'canceled',
         ]
 
         read_only_fields = [

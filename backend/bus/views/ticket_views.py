@@ -6,8 +6,8 @@ from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
-from babali.utils.tickets import GENERATOR
-from babali.consts import BUS_TICKET_TYPE
+from printer.utils.tickets import GENERATOR
+from printer.consts import BUS_TICKET_TYPE
 from bus.models import Ticket, Travel
 from bus.serializers.ticket_serializers import TicketSerializer
 from consts import PENDING_TICKET_MINS
@@ -92,20 +92,40 @@ class TicketViewSet(ListModelMixin,
 
         return Response({'error': 'You have to supply both serial & status query params.'}, status=status.HTTP_406_NOT_ACCEPTABLE)
 
+    
+    @action(detail=False, methods=['patch'])
+    def cancel(self, request):
+        serial = request.data['serial']
+        tickets = Ticket.objects.filter(serial=serial, status='A', canceled=False)
+        if len(tickets):
+            travel = tickets[0].travel
+            for ticket in tickets:
+                seat_no = str(ticket.seat_no)
 
-    @action(detail=False, methods=['get'])
+                del travel.seat_stat[seat_no]['phone']
+                travel.seat_stat[seat_no]['gender'] = 'E'
+
+            tickets.update(canceled=True)
+            # TODO: Logic for payment rollback.
+
+            return Response({'msg': f'Tickets with serial={serial} have been canceled successfully.'})
+
+        return Response({'error': f'There is no ticket with serial={serial} to cancel.'})
+
+
+    @action(detail=False, methods=['post'])
     def print(self, request):
         serial = request.data['serial']
-        tickets = Ticket.objects.filter(serial=serial, status='A').select_related('travel') \
-                                                                  .values('first_name',
-                                                                          'last_name',
-                                                                          'serial',
-                                                                          'ssn',
-                                                                          'birth_date',
-                                                                          'gender',
-                                                                          'user',
-                                                                          'travel_id',
-                                                                          'seat_no')
+        tickets = Ticket.objects.filter(serial=serial, status='A', canceled=False).select_related('travel') \
+                                                                                  .values('first_name',
+                                                                                          'last_name',
+                                                                                          'serial',
+                                                                                          'ssn',
+                                                                                          'birth_date',
+                                                                                          'gender',
+                                                                                          'user',
+                                                                                          'travel_id',
+                                                                                          'seat_no')
         tickets = list(tickets)
 
         if len(tickets):
