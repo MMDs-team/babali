@@ -1,5 +1,5 @@
 # Ticket documents constants:
-TEMPLATES_ROOT = 'babali/templates/'
+TEMPLATES_ROOT = 'printer/templates/'
 TICKETS_ROOT = 'static/tickets/'
 
 BUS_TICKET_TYPE = 'bus'

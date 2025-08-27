@@ -122,6 +122,7 @@ class Ticket(models.Model):
     seat_no = models.PositiveIntegerField(blank=True, null=True)
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, default=STATUS_PENDING, blank=True, null=True)
     payment_due_datetime = models.DateTimeField(blank=True, null=True)
+    canceled = models.BooleanField(default=False, null=True, blank=True)
 
     def __str__(self):
         return f"Ticket ID: {self.ticket_id}, User: {self.user.username}, Travel ID: {self.travel.travel_id}"

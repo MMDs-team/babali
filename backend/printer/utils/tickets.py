@@ -3,7 +3,7 @@ import os
 import logging
 from pathlib import Path
 from playwright.sync_api import sync_playwright
-from babali.consts import TEMPLATES_ROOT, TICKETS_ROOT
+from printer.consts import TEMPLATES_ROOT, TICKETS_ROOT
 
 
 logger = logging.getLogger(__name__)
