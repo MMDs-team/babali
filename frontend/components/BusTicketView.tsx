@@ -31,10 +31,6 @@ const BusTicketView = ({ bus, seatsCount }: { bus: any, seatsCount: number }) =>
         router.push(`${basePath}?date=${bus.date_time.split("T")[0]}`);
     }
 
-    useEffect(() => {
-        console.log(bus)
-    })
-
     return (
         <div className='px-12 md:px-18 lg:px-26 xl:px-42 py-8'>
             <div className="flex w-full border-1 shadow bg-white">
