@@ -22,11 +22,15 @@ const TicketDetailsPage = () => {
     const router = useRouter();
     const { busDetails, travelDetails } = useTravel();
 
+    
     const serial = searchParams.get('serial');
     const [travelInfo, setTravelInfo] = useState(null);
-    const [passengers, setPassengers] = useState([]);
     const [loading, setLoading] = useState(true);
-
+    
+    const dateTimeString = busDetails.date_time; 
+    const dateObject = new Date(dateTimeString); 
+    const time = dateObject.toLocaleTimeString();
+    const date = dateObject.toDateString();
     const step = 4;
 
     useEffect(() => {
@@ -35,22 +39,11 @@ const TicketDetailsPage = () => {
 
         const fetchTicket = async () => {
             try {
-                // const res = await fetch(`http://${HOST}:${PORT}/api/bus/travels/?id=${}`);
-                // if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-                // const ticketSummary = await res.json();
+                const res = await fetch(`http://${HOST}:${PORT}/api/bus/tickets/?serial=${serial}`);
+                if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+                const ticketSummary = await res.json();
 
-                // setTravelInfo(ticketSummary.travel_info);
-
-                // Fetch details of each passenger
-                // const passengerDetailsPromises = ticketSummary.passengers.map(async (t) => {
-                //     const API_URL = `http://${HOST}:${PORT}/api/bus/tickets/${t.ticket_id}`;
-                //     const resDetail = await fetch(API_URL);
-                //     if (!resDetail.ok) throw new Error(`Failed to fetch ticket ${t.ticket_id}`);
-                //     return resDetail.json();
-                // });
-
-                // const passengersData = await Promise.all(passengerDetailsPromises);
-                // setPassengers(passengersData);
+                setTravelInfo(ticketSummary.travel_info);
             } catch (err) {
                 console.error('Error fetching ticket details:', err);
             } finally {
@@ -106,30 +99,26 @@ const TicketDetailsPage = () => {
                     <h1 className="text-2xl font-bold mb-4">Travel Details</h1>
                     <div className="grid grid-cols-2 gap-4 mb-6">
                         <div>
-                            <p><strong>Departure City:</strong> travelInfo.departure_city</p>
-                            <p><strong>Departure Time:</strong> travelInfo.departure_time</p>
+                            <p><strong>مبداء:</strong> {busDetails.origin}</p>
+                            <p><strong>ساعت حرکت:</strong>{time}</p>
                         </div>
                         <div>
-                            <p><strong>Arrival City:</strong> travelInfo.arrival_city</p>
-                            <p><strong>Arrival Time:</strong> travelInfo.arrival_time</p>
+                            <p><strong>مقصد:</strong> {busDetails.dest}</p>
+                            <p><strong>تاریخ:</strong>{date}</p>
                         </div>
                         <div>
-                            <p><strong>Bus Number:</strong> travelInfo.bus_number</p>
-                            <p><strong>Route:</strong> travelInfo.route</p>
-                        </div>
-                        <div>
-                            <p><strong>Status:</strong> travelInfo.status</p>
+                            <p><strong>شماره اتوبوس:</strong>{busDetails.bus}</p>
                         </div>
                     </div>
 
                     {/* Passenger Table */}
-                    <h2 className="text-xl font-semibold mb-2">Passengers & Seats</h2>
+                    <h2 className="text-xl font-semibold mb-2">مسافرین</h2>
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>Name</TableHead>
-                                <TableHead>Seat Number</TableHead>
-                                <TableHead>Ticket ID</TableHead>
+                                <TableHead>نام</TableHead>
+                                <TableHead>شماره صندلی</TableHead>
+                                <TableHead>شماره بلیط</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
