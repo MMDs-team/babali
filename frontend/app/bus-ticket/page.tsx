@@ -5,10 +5,6 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-const HOST = process.env.NEXT_PUBLIC_API_HOST;
-const PORT = process.env.NEXT_PUBLIC_API_PORT;
-
-
 export default function BusTicketPage() {
     
     const router = useRouter();

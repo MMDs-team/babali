@@ -2,6 +2,7 @@
 'use client';
 import { useState } from 'react';
 import InputWithSuggestions from './InputWithSuggestioni';
+import { iranianCities } from '@/constants/iranCities';
 
 
 function ChangeDirectonButton({ clickHandler }: { clickHandler: () => void; }) {
@@ -22,18 +23,6 @@ function ChangeDirectonButton({ clickHandler }: { clickHandler: () => void; }) {
     )
 }
 
-const iranianCities = [
-    'تهران',
-    'مشهد',
-    'اصفهان',
-    'شیراز',
-    'تبریز',
-    'اهواز',
-    'کرج',
-    'قم',
-    'کرمان',
-    'رشت',
-];
 
 type SourceTargetCityProps = {
     className?: string;

@@ -4,6 +4,7 @@ import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { DatePicker } from "@/components/DatePicker";
 import SourceTargetCity from "@/components/SourceTargetCity";
 import { Button } from "@/components/ui/button";
+import PassengerSelector from "./PassengerCountSelect";
 
 const InputNav = () => {
 
@@ -13,6 +14,9 @@ const InputNav = () => {
 
     const [sourceCity, setSourceCity] = useState<string>('');
     const [targetCity, setTargetCity] = useState<string>('');
+    const [totalPassengerCount, setTotalPassengerCount] = useState<number[]>([1, 0, 0]);
+
+    const [type, setType] = useState<string>('bus')
     const [travelDate, setTravelDate] = useState<Date>(new Date());
 
     const [scrollY, setScrollY] = useState(0);
@@ -33,9 +37,11 @@ const InputNav = () => {
         if (!sourceCity || !targetCity || !travelDate) return;
         console.log(travelDate)
         const formattedDate = formatLocalDate(travelDate);
+        const totalCnt = totalPassengerCount[0] + totalPassengerCount[1] + totalPassengerCount[2];
+
         console.log(formattedDate)
 
-        router.push(`/bus/${formatCity(sourceCity)}-${formatCity(targetCity)}?date=${formattedDate}`);
+        router.push(`/${type}/${formatCity(sourceCity)}-${formatCity(targetCity)}?date=${formattedDate}${type === 'train' ? `&count=${totalCnt}&pass=${totalPassengerCount[0]}-${totalPassengerCount[1]}-${totalPassengerCount[2]}` : ''}`);
     };
 
 
@@ -44,15 +50,23 @@ const InputNav = () => {
         if (!pathname) return;
 
         // Extract origin and dest from /bus/origin-dest
-        const match = pathname.match(/\/bus\/([^/]+)-([^/]+)/);
+        const match = pathname.match(/\/(bus|train)\/([^/]+)-([^/]+)/);
         if (match) {
-            setSourceCity(decodeURIComponent(match[1]));
-            setTargetCity(decodeURIComponent(match[2]));
+            // match[1] -> "bus" or "train"
+            setSourceCity(decodeURIComponent(match[2]));
+            setTargetCity(decodeURIComponent(match[3]));
+            setType(match[1]);
         }
 
         // Get date from query
         const dateParam = searchParams?.get("date");
+        const count = searchParams?.get("pass");
+        if (count) {
+            const passList = count.split("-").map(Number);
+            setTotalPassengerCount(passList);
+        }
         if (dateParam) setTravelDate(new Date(dateParam));
+        
     }, [pathname, searchParams]);
 
 
@@ -97,6 +111,10 @@ const InputNav = () => {
                     setTargetCity={setTargetCity}
                 />
                 <DatePicker className='flex-3' date={travelDate} setDate={setTravelDate} />
+                {type === 'train' && <PassengerSelector
+                    totalPassengerCount={totalPassengerCount}
+                    setTotalPassengerCount={setTotalPassengerCount}
+                />}
                 <Button
                     className="flex-1 h-auto bg-amber-400 text-black hover:bg-amber-500"
                     onClick={async () => await searchTravel()}
