@@ -11,8 +11,8 @@ type TravelContextType = {
     travelDetails: any | null;
     setTravelDetails: (details: any) => void;
 
-    busDetails: any | null;
-    setBusDetails: (details: any) => void;
+    vehicleDetails: any | null;
+    setVehicleDetails: (details: any) => void;
 };
 
 // Context
@@ -22,7 +22,7 @@ const TravelContext = createContext<TravelContextType | undefined>(undefined);
 export const TravelProvider = ({ children }: { children: ReactNode }) => {
     const [travelType, setTravelType] = useState<TravelType | null>(null);
     const [travelDetails, setTravelDetails] = useState<Object | null>(null);
-    const [busDetails, setBusDetails] = useState<Object | null>(null);
+    const [vehicleDetails, setVehicleDetails] = useState<Object | null>(null);
 
     return (
         <TravelContext.Provider
@@ -31,8 +31,8 @@ export const TravelProvider = ({ children }: { children: ReactNode }) => {
                 setTravelType,
                 travelDetails,
                 setTravelDetails,
-                busDetails,
-                setBusDetails
+                vehicleDetails,
+                setVehicleDetails
             }}
         >
             {children}

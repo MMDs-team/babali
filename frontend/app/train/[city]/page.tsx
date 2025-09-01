@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import InputNav from "@/components/InputNav";
 import TravelSample from "@/components/TravelSample";
+import TrainTravelSample from "@/components/TrainTravelSample";
 
 
 const HOST = process.env.NEXT_PUBLIC_API_HOST;
@@ -23,7 +24,7 @@ export default function BusTicketPage() {
     useEffect(() => {
         if (!pathname) return;
 
-        const match = pathname.match(/\/bus\/([^/]+)-([^/]+)/);
+        const match = pathname.match(/\/train\/([^/]+)-([^/]+)/);
         if (match) {
             setSourceCity(decodeURIComponent(match[1]));
             setTargetCity(decodeURIComponent(match[2]));
@@ -34,18 +35,22 @@ export default function BusTicketPage() {
     }, [pathname, searchParams]);
 
     useEffect(() => {
+        console.log('helllll')
         if (!sourceCity || !targetCity || !travelDate) return;
+        console.log('helllll2')
 
         const fetchTravels = async () => {
             try {
-                const url = `http://${HOST}:${PORT}/api/bus/travels/?origin=${encodeURIComponent(
+                const url = `http://${HOST}:${PORT}/api/train/travels/?origin=${encodeURIComponent(
                     sourceCity
-                )}&dest=${encodeURIComponent(targetCity)}&date=${travelDate}`;
+                )}&dest=${encodeURIComponent(targetCity)}`//&date=${travelDate}`;
 
                 const res = await fetch(url);
                 if (!res.ok) throw new Error("Failed to fetch travels");
 
                 const data = await res.json();
+                console.log('data')
+                console.log(url)
                 console.log(data)
                 setTravels(data);
             } catch (err) {
@@ -57,20 +62,20 @@ export default function BusTicketPage() {
     }, [sourceCity, targetCity, travelDate]);
 
     return (
-        <main className="mt-15 w-full">
+        <main className="mt-15 w-full min-h-dvh">
             <InputNav />
-            <div className="w-full bg-gray-100 p-4 pt-8 flex flex-col gap-3">
+            <div className="w-full bg-gray-100 p-4 pt-8 flex flex-col gap-3 min-h-dvh">
 
                 {travels.length > 0 ? (
                     travels.map((each, index) => (
-                        <TravelSample
+                        <TrainTravelSample
                             key={index}
                             travel={each}
                         />
                     ))
                 ) : (
 
-                    <div className="flex min-h-100 flex-col items-center justify-center mt-12 p-6 bg-gray-100 rounded-lg border border-gray-200">
+                    <div className="flex flex-col items-center justify-center mt-12 p-6 bg-gray-100 rounded-lg border border-gray-200">
                         <svg
                             className="w-12 h-full text-gray-400 mb-4"
                             fill="none"

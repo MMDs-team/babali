@@ -20,14 +20,14 @@ const PORT = process.env.NEXT_PUBLIC_API_PORT;
 const TicketDetailsPage = () => {
     const searchParams = useSearchParams();
     const router = useRouter();
-    const { busDetails, travelDetails } = useTravel();
+    const { vehicleDetails, travelDetails } = useTravel();
 
     
     const serial = searchParams.get('serial');
     const [travelInfo, setTravelInfo] = useState(null);
     const [loading, setLoading] = useState(true);
     
-    const dateTimeString = busDetails.date_time; 
+    const dateTimeString = vehicleDetails.date_time; 
     const dateObject = new Date(dateTimeString); 
     const time = dateObject.toLocaleTimeString();
     const date = dateObject.toDateString();
@@ -99,15 +99,15 @@ const TicketDetailsPage = () => {
                     <h1 className="text-2xl font-bold mb-4">Travel Details</h1>
                     <div className="grid grid-cols-2 gap-4 mb-6">
                         <div>
-                            <p><strong>مبداء:</strong> {busDetails.origin}</p>
+                            <p><strong>مبداء:</strong> {vehicleDetails.origin}</p>
                             <p><strong>ساعت حرکت:</strong>{time}</p>
                         </div>
                         <div>
-                            <p><strong>مقصد:</strong> {busDetails.dest}</p>
+                            <p><strong>مقصد:</strong> {vehicleDetails.dest}</p>
                             <p><strong>تاریخ:</strong>{date}</p>
                         </div>
                         <div>
-                            <p><strong>شماره اتوبوس:</strong>{busDetails.bus}</p>
+                            <p><strong>شماره اتوبوس:</strong>{vehicleDetails.bus}</p>
                         </div>
                     </div>
 

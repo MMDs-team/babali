@@ -23,7 +23,7 @@ export default function BusTicketPage() {
     const pathname = usePathname();
 
     const [seats, setSeats] = useState<number[]>([]);
-    const { travelType, setTravelType, setTravelDetails, busDetails } = useTravel();
+    const { travelType, setTravelType, setTravelDetails, vehicleDetails } = useTravel();
     const [passengers, setPassengers] = useState<BusPassenger[]>([]);
 
     const deleteHandler = (seatNumber: number | null) => {
@@ -89,11 +89,11 @@ export default function BusTicketPage() {
         <main className="mt-15 w-full bg-gray-100">
             <div className="w-full">
                 <ProgressStepSection step={1} />
-                <BusTicketView bus={busDetails} seatsCount={seats.length} />
+                <BusTicketView bus={vehicleDetails} seatsCount={seats.length} />
                 <BusSeatChose
                     selectedSeats={seats}
                     setSelectedSeats={setSeats}
-                    busSeat={busDetails.seat_stat}
+                    busSeat={vehicleDetails.seat_stat}
                 />
                 <div className="px-12 md:px-18 lg:px-26 xl:px-42 py-2">
                     <div className="bg-white px-8 border-1 shadow-xs">

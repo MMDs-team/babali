@@ -36,14 +36,14 @@ export default function OrderConfirmationPage({ params, passengers }: ConfirmPag
 
     const router = useRouter();
     const pathname = usePathname()
-    const { travelType, travelDetails, busDetails } = useTravel();
+    const { travelType, travelDetails, vehicleDetails } = useTravel();
 
     const [isLoading, setIsLoading] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [step, setStep] = useState(2);
     const [ReserveData, setReserveData] = useState<any>({});
 
-    const date = new Date(busDetails.date_time);
+    const date = new Date(vehicleDetails.date_time);
     const persianDate = date.toLocaleDateString("fa-IR", {
         weekday: "long",
         day: "numeric",
@@ -54,17 +54,17 @@ export default function OrderConfirmationPage({ params, passengers }: ConfirmPag
         return passengers.map(p => p.seatNumber);
     }
 
-    const totalPrice = busDetails.price * travelDetails.passengers.length;
+    const totalPrice = vehicleDetails.price * travelDetails.passengers.length;
 
     const ticketInfo = [
-        { label: "مبدا", value: busDetails.origin },
-        { label: "مقصد", value: busDetails.dest },
-        { label: "تاریخ و ساعت حرکت", value: `${persianDate} ${busDetails.date_time.split("T")[1].substring(0, 5)}` },
+        { label: "مبدا", value: vehicleDetails.origin },
+        { label: "مقصد", value: vehicleDetails.dest },
+        { label: "تاریخ و ساعت حرکت", value: `${persianDate} ${vehicleDetails.date_time.split("T")[1].substring(0, 5)}` },
         { label: "شرکت مسافربری", value: "همسفر جاکسواران بیهقی" },
         { label: "نوع اتوبوس", value: "مان VIP (کاوه)" },
         { label: "تعداد صندلی", value: travelDetails.passengers.length },
         { label: "شماره صندلی(ها)", value: extractSeats(travelDetails.passengers).join(", ") },
-        { label: "قیمت هر صندلی", value: `${busDetails.price} تومان` },
+        { label: "قیمت هر صندلی", value: `${vehicleDetails.price} تومان` },
         { label: "مبلغ کل", value: `${totalPrice} تومان` },
     ];
 
@@ -85,7 +85,7 @@ export default function OrderConfirmationPage({ params, passengers }: ConfirmPag
 
             const passengers: any = travelDetails.passengers.map((p: any) => ({
                 user: travelDetails.passengers[0].phone,
-                travel: busDetails.travel_id,
+                travel: vehicleDetails.travel_id,
                 first_name: p.firstName,
                 last_name: p.lastName,
                 seat_no: p.seatNumber,
@@ -158,8 +158,8 @@ export default function OrderConfirmationPage({ params, passengers }: ConfirmPag
 
     useEffect(() => {
         console.log(travelDetails)
-        console.log('busDetails')
-        console.log(busDetails)
+        console.log('vehicleDetails')
+        console.log(vehicleDetails)
         if (travelType !== 'bus') {
             router.push(`/bus-ticket`);
         }
