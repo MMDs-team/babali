@@ -4,6 +4,7 @@ import { usePathname, useSearchParams } from "next/navigation";
 import InputNav from "@/components/InputNav";
 import TravelSample from "@/components/TravelSample";
 import TrainTravelSample from "@/components/TrainTravelSample";
+import { useTravel } from "@/contexts/TravelContext";
 
 
 const HOST = process.env.NEXT_PUBLIC_API_HOST;
@@ -18,7 +19,10 @@ export default function BusTicketPage() {
     const [sourceCity, setSourceCity] = useState<string>("");
     const [targetCity, setTargetCity] = useState<string>("");
     const [travelDate, setTravelDate] = useState<string>("");
+    const [passCnt, setPassCnt] = useState<number>(1);
     const [travels, setTravels] = useState<any[]>([]);
+
+    const {setTravelDetails} = useTravel();
 
 
     useEffect(() => {
@@ -31,26 +35,25 @@ export default function BusTicketPage() {
         }
 
         const dateParam = searchParams?.get("date");
+        const passegnerCount = searchParams?.get("count");
+
         if (dateParam) setTravelDate(dateParam);
+        if (passegnerCount) setPassCnt(Number(passegnerCount));
     }, [pathname, searchParams]);
 
     useEffect(() => {
-        console.log('helllll')
-        if (!sourceCity || !targetCity || !travelDate) return;
-        console.log('helllll2')
+        if (!sourceCity || !targetCity || !travelDate || !passCnt) return;
 
         const fetchTravels = async () => {
             try {
                 const url = `http://${HOST}:${PORT}/api/train/travels/?origin=${encodeURIComponent(
                     sourceCity
-                )}&dest=${encodeURIComponent(targetCity)}`//&date=${travelDate}`;
+                )}&destination=${encodeURIComponent(targetCity)}&date=${travelDate}`;
 
                 const res = await fetch(url);
                 if (!res.ok) throw new Error("Failed to fetch travels");
 
                 const data = await res.json();
-                console.log('data')
-                console.log(url)
                 console.log(data)
                 setTravels(data);
             } catch (err) {
@@ -59,7 +62,9 @@ export default function BusTicketPage() {
         };
 
         fetchTravels();
-    }, [sourceCity, targetCity, travelDate]);
+        setTravelDetails({passCnt: passCnt});
+
+    }, [sourceCity, targetCity, travelDate, passCnt]);
 
     return (
         <main className="mt-15 w-full min-h-dvh">
