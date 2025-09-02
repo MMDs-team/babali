@@ -106,9 +106,11 @@ class TicketViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
             for ticket in tickets:
                 seat_no = str(ticket.seat_no)
 
-                del travel.seat_stat[seat_no]['phone']
+                del travel.seat_stat[seat_no]['user_phone']
                 travel.seat_stat[seat_no]['gender'] = 'E'
 
+            travel.capacity += len(tickets)
+            travel.save()
             tickets.update(canceled=True)
             # TODO: Logic for payment rollback.
 
