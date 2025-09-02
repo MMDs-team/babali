@@ -18,7 +18,7 @@ interface Passenger {
     firstName: string,
     lastNAme: string,
     gender: 'M' | 'F',
-    SSR: string,
+    SSN: string,
     birthDate: Date,
     phone: string | null
     seatNumber: number
@@ -50,20 +50,15 @@ export default function OrderConfirmationPage({ params, passengers }: ConfirmPag
         month: "long",
     });
 
-    function extractSeats(passengers: Passenger[]): number[] {
-        return passengers.map(p => p.seatNumber);
-    }
-
     const totalPrice = vehicleDetails.price * travelDetails.passengers.length;
 
     const ticketInfo = [
         { label: "مبدا", value: vehicleDetails.origin },
         { label: "مقصد", value: vehicleDetails.dest },
         { label: "تاریخ و ساعت حرکت", value: `${persianDate} ${vehicleDetails.date_time.split("T")[1].substring(0, 5)}` },
-        { label: "شرکت مسافربری", value: "همسفر جاکسواران بیهقی" },
-        { label: "نوع اتوبوس", value: "مان VIP (کاوه)" },
-        { label: "تعداد صندلی", value: travelDetails.passengers.length },
-        { label: "شماره صندلی(ها)", value: extractSeats(travelDetails.passengers).join(", ") },
+        { label: "شرکت ریلی	", value: vehicleDetails.flight_agency },
+        { label: "نوع پرواز", value: vehicleDetails.flight_type},
+        { label: "کلاس پرواز", value: vehicleDetails.flight_class},
         { label: "قیمت هر صندلی", value: `${vehicleDetails.price} تومان` },
         { label: "مبلغ کل", value: `${totalPrice} تومان` },
     ];
@@ -74,24 +69,22 @@ export default function OrderConfirmationPage({ params, passengers }: ConfirmPag
     }
 
     const formatBirthDate = (birthDate: { day: string; month: string; year: string }): string => {
-        return `${birthDate.year}-${birthDate.month.padStart(2, "0")}-${birthDate.day.padStart(2, "0")}`;
+        return `${birthDate.year}-${birthDate.month.padStart(2, "0")}-${birthDate.day.padStart(2, "0")}`;   
     }
 
     const sendRequest = async () => {
         try {
             setIsLoading(true);
-            const API_URL = `http://${HOST}:${PORT}/api/bus/tickets/bulk_create/`;
-
+            const API_URL = `http://${HOST}:${PORT}/api/flight/tickets/bulk_create/`;
 
             const passengers: any = travelDetails.passengers.map((p: any) => ({
                 user: travelDetails.passengers[0].phone,
                 travel: vehicleDetails.travel_id,
                 first_name: p.firstName,
                 last_name: p.lastName,
-                seat_no: p.seatNumber,
                 gender: p.gender === "M" ? 1 : 0,
                 birth_date: formatBirthDate(p.birthDate),
-                ssn: p.SSR
+                ssn: p.SSN
             }));
 
             const res = await fetch(API_URL, {
@@ -126,7 +119,7 @@ export default function OrderConfirmationPage({ params, passengers }: ConfirmPag
 
     const handlePay = async () => {
         try {
-            const API_URL = `http://${HOST}:${PORT}/api/bus/tickets/verify/?serial=${ReserveData[0].serial}&status=OK`;
+            const API_URL = `http://${HOST}:${PORT}/api/flight/tickets/verify/?serial=${ReserveData[0].serial}&status=OK`;
 
             const response = await fetch(API_URL, {
                 method: "PATCH",
@@ -147,7 +140,7 @@ export default function OrderConfirmationPage({ params, passengers }: ConfirmPag
 
             // Optionally show a success message
             alert("Payment verified successfully!");
-            router.push(`/bus/ticket?serial=${ReserveData[0].serial}`)
+            router.push(`/airplain-in/ticket?serial=${ReserveData[0].serial}`)
         } catch (error) {
             console.error('Error verifying payment:', error);
             alert("Payment verification failed!");
@@ -157,11 +150,10 @@ export default function OrderConfirmationPage({ params, passengers }: ConfirmPag
 
 
     useEffect(() => {
-        console.log(travelDetails)
-        console.log('vehicleDetails')
-        console.log(vehicleDetails)
-        if (travelType !== 'bus') {
-            router.push(`/bus-ticket`);
+        console.log('travelDetails', travelDetails)
+        console.log('vehicleDetails', vehicleDetails)
+        if (travelType !== 'airplain-in') {
+            router.push(`/`);
         }
     }, [])
 

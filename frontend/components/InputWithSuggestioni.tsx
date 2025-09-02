@@ -72,7 +72,7 @@ const InputWithSuggestions: React.FC<InputWithSuggestionsProps> = ({
                 htmlFor={inputId}
                 className={`absolute right-0 transition-all px-5 text-sm text-gray-500
                     ${isFloating
-                        ? 'top-[-10px] text-sm text-gray-500'
+                        ? 'top-[-10px] bg-white text-xs text-gray-500'
                         : 'top-3 text-base text-gray-400 peer-focus:top-[-10px] px-2 peer-focus:text-xs bg-white rounded peer-focus:text-gray-500'
                     }`}
             >

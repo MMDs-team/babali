@@ -1,39 +1,40 @@
 import { useTravel } from '@/contexts/TravelContext';
 import Image from 'next/image';
 import { usePathname, useRouter } from "next/navigation";
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import TrainStaions from './TrainStations';
+import TravelStars from './Stars';
 
-type TravelSampleProps = {
+type TrainTravelSampleProps = {
     travel: any
 };
 
-const TravelSample: React.FC<TravelSampleProps> = ({ travel }) => {
+const TrainTravelSample: React.FC<TrainTravelSampleProps> = ({ travel }) => {
+
+    const [stationsVisable, setStaionVisable] = useState(false);
 
     const { vehicleDetails, setVehicleDetails } = useTravel();
     const router = useRouter();
     const pathname = usePathname();
 
-    function countTypeE(data: Array<Array<{ id: number | null; type?: string }>>): number {
-        let count = 0;
-        for (const subArray of data) {
-            for (const item of subArray) {
-                if (item.type === 'E') count++;
-            }
-        }
-        return count;
-    }
-
     const travelID = travel.travel_id;
     const price = travel.price || 0;
-    const origin = travel.origin;
-    const destination = travel.dest;
+    const origin = travel.route[0];
+    const destination = travel.route[travel.route.length - 1];
     const company = travel.cooperative || "ـ";
-    const remainingSeats = countTypeE(travel.seat_stat) || 0;
-    const departureTime = travel.date_time.split("T")[1].substring(0, 5) || "--:--";
-    const originTerminal = travel.originTerminal || "پایانه مبدا نامشخص";
-    const destinationTerminal = travel.destinationTerminal || "پایانه مقصد نامشخص";
-    const busType = travel.busType || "Standard";
+    const capacity = travel.capacity;
+    const routes = travel.route;
+    const empty_compartment = travel.empty_compartment;
+    const stars = travel.star;
+
     const currency = 'تومان'
+
+    const formatTime = (dateString: string): string => {
+        const date = new Date(dateString);
+        return date.toISOString().substring(11, 16);
+    }
+    const arrivalHM = formatTime(travel.arrival_time);
+    const departureHM = formatTime(travel.departure_time);
 
     const handleClick = () => {
         setVehicleDetails(travel)
@@ -41,6 +42,10 @@ const TravelSample: React.FC<TravelSampleProps> = ({ travel }) => {
         router.push(`${pathname}/${travelID}`);
     };
 
+
+    useEffect(() => {
+        console.log('whyy', travel)
+    }, [])
 
 
     return (
@@ -58,39 +63,58 @@ const TravelSample: React.FC<TravelSampleProps> = ({ travel }) => {
                             quality={100}
                         />
                         <h2 className="pr-4 text-sm text-gray-800 font-semibold">تعاونی {company}</h2>
+                        <div className='pr-4 gap-x-2 flex'>
+                            <span className="text-sm bg-gray-100 text-gray-700 px-3 py-1 rounded-full">
+                                {stars} ستاره
+                            </span>
+                            <span className="text-sm bg-gray-100 text-gray-700 px-3 py-1 rounded-full">
+                                کوپه ۴ نفره
+                            </span>
+                        </div>
                     </div>
-                    <span className="text-sm bg-gray-100 text-gray-700 px-3 py-1 rounded-full">
-                        {busType}
-                    </span>
+                    <TravelStars rating={3} size={20} />
                 </div>
 
 
                 <div className="flex px-14 py-4">
-                    <p className="text-xl font-extrabold px-4">{departureTime}</p>
+                    <p className="font-extrabold px-4">{departureHM}</p>
                     <div className="flex flex-col md:flex-row md:justify-between items-center gap-2 md:gap-0">
 
                         <div className="text-center">
                             <p className="text-sm text-gray-600">{origin}</p>
-                            <p className="text-xs text-gray-400">{originTerminal}</p>
+
                         </div>
 
                         <div className="flex items-center justify-center my-2 md:my-0">
                             <span className="w-16 h-px bg-gray-300 mx-2" />
-                            <span role="img" aria-label="bus">🚌</span>
+                            <span role="img" aria-label="train">🚆</span>
                             <span className="w-16 h-px bg-gray-300 mx-2" />
                         </div>
 
                         <div className="text-center">
                             <p className="text-sm text-gray-600">{destination}</p>
-                            <p className="text-xs text-gray-400">{destinationTerminal}</p>
                         </div>
                     </div>
+                    <p className="font-extrabold px-4">{arrivalHM}</p>
+
+                </div>
+                <div className='px-8'>
+                    {stationsVisable &&
+                        <TrainStaions stations={routes} />
+
+                    }
                 </div>
 
-                <div className="flex text-sm text-blue-600 mt-4 gap-6">
-                    <a href="#">نقشه صندلی‌ها</a>
-                    <a href="#">اطلاعات اتوبوس و سفر</a>
-                    <a href="#">قوانین جریمه و استرداد</a>
+                <div className="flex text-sm text-blue-600 mt-4 gap-12">
+                    <div
+                        className='cursor-pointer '>اطلاعات قطار</div>
+                    <div
+                        className='cursor-pointer '
+                        onClick={() => setStaionVisable(!stationsVisable)}
+                    >ایستگاه‌ها</div>
+                    <div
+                        className='cursor-pointer '
+                    >قوانین استرداد</div>
                 </div>
             </div>
 
@@ -101,10 +125,10 @@ const TravelSample: React.FC<TravelSampleProps> = ({ travel }) => {
                 <button onClick={() => handleClick()} className="bg-blue-600 text-white rounded-md px-6 py-2 hover:bg-blue-700 transition">
                     انتخاب بلیط
                 </button>
-                <p className="text-sm text-gray-500">{remainingSeats} صندلی باقی مانده</p>
+                <p className="text-sm text-gray-500">{capacity} ظرفیت باقی مانده</p>
             </div>
         </div>
     );
 };
 
-export default TravelSample;
+export default TrainTravelSample;

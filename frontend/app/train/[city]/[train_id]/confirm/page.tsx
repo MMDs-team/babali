@@ -18,7 +18,7 @@ interface Passenger {
     firstName: string,
     lastNAme: string,
     gender: 'M' | 'F',
-    SSR: string,
+    SSN: string,
     birthDate: Date,
     phone: string | null
     seatNumber: number
@@ -43,27 +43,22 @@ export default function OrderConfirmationPage({ params, passengers }: ConfirmPag
     const [step, setStep] = useState(2);
     const [ReserveData, setReserveData] = useState<any>({});
 
-    const date = new Date(vehicleDetails.date_time);
+    const date = new Date(vehicleDetails.departure_time);
     const persianDate = date.toLocaleDateString("fa-IR", {
         weekday: "long",
         day: "numeric",
         month: "long",
     });
 
-    function extractSeats(passengers: Passenger[]): number[] {
-        return passengers.map(p => p.seatNumber);
-    }
-
     const totalPrice = vehicleDetails.price * travelDetails.passengers.length;
 
     const ticketInfo = [
-        { label: "مبدا", value: vehicleDetails.origin },
-        { label: "مقصد", value: vehicleDetails.dest },
-        { label: "تاریخ و ساعت حرکت", value: `${persianDate} ${vehicleDetails.date_time.split("T")[1].substring(0, 5)}` },
-        { label: "شرکت مسافربری", value: "همسفر جاکسواران بیهقی" },
-        { label: "نوع اتوبوس", value: "مان VIP (کاوه)" },
-        { label: "تعداد صندلی", value: travelDetails.passengers.length },
-        { label: "شماره صندلی(ها)", value: extractSeats(travelDetails.passengers).join(", ") },
+        { label: "مبدا", value: vehicleDetails.route[0] },
+        { label: "مقصد", value: vehicleDetails.route[vehicleDetails.route.length - 1] },
+        { label: "تاریخ و ساعت حرکت", value: `${persianDate} ${vehicleDetails.departure_time.split("T")[1].substring(0, 5)}` },
+        { label: "شرکت ریلی	", value: vehicleDetails.cooperative },
+        { label: "نوع واگن", value: `${vehicleDetails.star} ستاره ۴ تخته` },
+        { label: "کوپه دربست", value: `${travelDetails.fullCompartment?'بله':'انتخاب نشد'}` },
         { label: "قیمت هر صندلی", value: `${vehicleDetails.price} تومان` },
         { label: "مبلغ کل", value: `${totalPrice} تومان` },
     ];
@@ -80,7 +75,7 @@ export default function OrderConfirmationPage({ params, passengers }: ConfirmPag
     const sendRequest = async () => {
         try {
             setIsLoading(true);
-            const API_URL = `http://${HOST}:${PORT}/api/bus/tickets/bulk_create/`;
+            const API_URL = `http://${HOST}:${PORT}/api/train/tickets/bulk_create/`;
 
 
             const passengers: any = travelDetails.passengers.map((p: any) => ({
@@ -88,18 +83,22 @@ export default function OrderConfirmationPage({ params, passengers }: ConfirmPag
                 travel: vehicleDetails.travel_id,
                 first_name: p.firstName,
                 last_name: p.lastName,
-                seat_no: p.seatNumber,
                 gender: p.gender === "M" ? 1 : 0,
                 birth_date: formatBirthDate(p.birthDate),
-                ssn: p.SSR
+                ssn: p.SSN
             }));
+
+            const body = {
+                get_full_com: true,
+                tickets: passengers
+            }
 
             const res = await fetch(API_URL, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(passengers),
+                body: JSON.stringify(body),
             });
 
             if (!res.ok) {
@@ -126,7 +125,7 @@ export default function OrderConfirmationPage({ params, passengers }: ConfirmPag
 
     const handlePay = async () => {
         try {
-            const API_URL = `http://${HOST}:${PORT}/api/bus/tickets/verify/?serial=${ReserveData[0].serial}&status=OK`;
+            const API_URL = `http://${HOST}:${PORT}/api/train/tickets/verify/?serial=${ReserveData[0].serial}&status=OK`;
 
             const response = await fetch(API_URL, {
                 method: "PATCH",
@@ -147,7 +146,7 @@ export default function OrderConfirmationPage({ params, passengers }: ConfirmPag
 
             // Optionally show a success message
             alert("Payment verified successfully!");
-            router.push(`/bus/ticket?serial=${ReserveData[0].serial}`)
+            router.push(`/train/ticket?serial=${ReserveData[0].serial}`)
         } catch (error) {
             console.error('Error verifying payment:', error);
             alert("Payment verification failed!");
@@ -157,11 +156,10 @@ export default function OrderConfirmationPage({ params, passengers }: ConfirmPag
 
 
     useEffect(() => {
-        console.log(travelDetails)
-        console.log('vehicleDetails')
-        console.log(vehicleDetails)
-        if (travelType !== 'bus') {
-            router.push(`/bus-ticket`);
+        console.log('travelDetails', travelDetails)
+        console.log('vehicleDetails', vehicleDetails)
+        if (travelType !== 'train') {
+            router.push(`/train-ticket`);
         }
     }, [])
 

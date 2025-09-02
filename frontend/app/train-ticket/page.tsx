@@ -1,12 +1,64 @@
+'use client'
+import { DatePicker } from "@/components/DatePicker";
+import PassengerSelector from "@/components/PassengerCountSelect";
+import SourceTargetCity from "@/components/SourceTargetCity";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+
 export default function TrainPage() {
+
+    const router = useRouter();
+
+    const [sourceCity, setSourceCity] = useState<string>('');
+    const [targetCity, setTargetCity] = useState<string>('');
+    const [totalPassengerCount, setTotalPassengerCount] = useState([1, 0, 0]);
+    const [date, setDate] = useState<Date>(new Date());
+
+    const formatCity = (city: string) => city.replace(/\s+/g, "_");
+
+    function formatLocalDate(date: Date): string {
+        const year = date.getFullYear();
+        const month = (date.getMonth() + 1).toString().padStart(2, "0");
+        const day = date.getDate().toString().padStart(2, "0");
+
+        return `${year}-${month}-${day}`;
+    }
+
+    const searchTravel = async () => {
+        if (!sourceCity || !targetCity || !date) return;
+
+        const formattedDate = formatLocalDate(date);
+        const totalCnt = totalPassengerCount[0] + totalPassengerCount[1] + totalPassengerCount[2];
+
+        router.push(`/train/${formatCity(sourceCity)}-${formatCity(targetCity)}?date=${formattedDate}&count=${totalCnt}&pass=${totalPassengerCount[0]}-${totalPassengerCount[1]}-${totalPassengerCount[2]}`);
+    };
+
+
     return (
-        <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-            <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
+        <main className="px-12 md:px-18 lg:px-26 xl:px-42 w-full">
+            <div className="w-full">
+                <div className="flex gap-2 border-1 border-t-0 px-4 py-8">
+                    <SourceTargetCity
+                        className='flex-5'
+                        sourceCity={sourceCity}
+                        targetCity={targetCity}
+                        setSourceCity={setSourceCity}
+                        setTargetCity={setTargetCity}
+                    />
+                    <DatePicker className='flex-3' date={date} setDate={setDate} />
+                    <PassengerSelector
+                        totalPassengerCount={totalPassengerCount}
+                        setTotalPassengerCount={setTotalPassengerCount}
+                    />
+                    <Button className="flex-1 h-auto bg-amber-400 text-black hover:bg-amber-500"
+                        onClick={async () => await searchTravel()}
+                    >
+                        جستجو
+                    </Button>
+                </div>
+            </div>
 
-            </main>
-            <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-
-            </footer>
-        </div>
+        </main>
     );
 }

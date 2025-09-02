@@ -27,7 +27,7 @@ const TicketDetailsPage = () => {
     const [travelInfo, setTravelInfo] = useState(null);
     const [loading, setLoading] = useState(true);
     
-    const dateTimeString = vehicleDetails.date_time; 
+    const dateTimeString = vehicleDetails.departure_time; 
     const dateObject = new Date(dateTimeString); 
     const time = dateObject.toLocaleTimeString();
     const date = dateObject.toDateString();
@@ -39,7 +39,7 @@ const TicketDetailsPage = () => {
 
         const fetchTicket = async () => {
             try {
-                const res = await fetch(`http://${HOST}:${PORT}/api/bus/tickets/?serial=${serial}`);
+                const res = await fetch(`http://${HOST}:${PORT}/api/train/tickets/?serial=${serial}`);
                 if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
                 const ticketSummary = await res.json();
 
@@ -61,7 +61,7 @@ const TicketDetailsPage = () => {
             const formData = new FormData();
             formData.append('serial', serial);
 
-            const res = await fetch(`http://${HOST}:${PORT}/api/bus/tickets/print/`, {
+            const res = await fetch(`http://${HOST}:${PORT}/api/train/tickets/print/`, {
                 method: 'POST',
                 body: formData,
             });
@@ -142,9 +142,9 @@ const TicketDetailsPage = () => {
                         </button>
                         <button
                             className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
-                            onClick={() => router.push('/bus')}
+                            onClick={() => router.push('/train')}
                         >
-                            Back to Bus List
+                            Back to Train List
                         </button>
                     </div>
                 </div>
