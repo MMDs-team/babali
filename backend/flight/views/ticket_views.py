@@ -12,6 +12,8 @@ from flight.models import Ticket, Travel
 from flight.serializers.ticket_serializers import TicketSerializer
 from consts import PENDING_TICKET_MINS
 
+from django_filters.rest_framework import DjangoFilterBackend
+from flight.filters import TicketFilter
 
 FLIGHT_TEMPLATE_NAME = 'flight.html'
 FLIGHT_PLACEHOLDER_MAP = {
@@ -32,11 +34,12 @@ FLIGHT_PLACEHOLDER_MAP = {
 }
 
 
-class TicketViewSet(ListModelMixin,
-                    RetrieveModelMixin,
-                    GenericViewSet):
+class TicketViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
     queryset = Ticket.objects.all()
     serializer_class = TicketSerializer
+
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = TicketFilter
 
     @action(detail=False, methods=['post'])
     def bulk_create(self, request):
