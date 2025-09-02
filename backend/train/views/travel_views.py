@@ -18,4 +18,5 @@ class TravelViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
     def get_serializer_context(self):
         context = super().get_serializer_context()
         context["origin_city"] = self.request.query_params.get("origin")
+        context["dest_city"] = self.request.query_params.get("destination")
         return context

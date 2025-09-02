@@ -12,6 +12,9 @@ from bus.models import Ticket, Travel
 from bus.serializers.ticket_serializers import TicketSerializer
 from consts import PENDING_TICKET_MINS
 
+from django_filters.rest_framework import DjangoFilterBackend
+from bus.filters import TicketFilter
+
 
 BUS_TEMPLATE_NAME = 'bus.html'
 BUS_PLACEHOLDER_MAP = {
@@ -28,11 +31,12 @@ BUS_PLACEHOLDER_MAP = {
     '<11>': 'serial'
 }
 
-class TicketViewSet(ListModelMixin,
-                    RetrieveModelMixin,
-                    GenericViewSet):
+class TicketViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
     queryset = Ticket.objects.all()
     serializer_class = TicketSerializer
+
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = TicketFilter
 
 
     @action(detail=False, methods=['post'])
