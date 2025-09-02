@@ -12,6 +12,8 @@ from train.models import Ticket, Travel
 from train.serializers.ticket_serializers import TicketSerializer
 from consts import PENDING_TICKET_MINS
 
+from django_filters.rest_framework import DjangoFilterBackend
+from train.filters import TicketFilter
 
 TRAIN_TEMPLATE_NAME = 'train.html'
 TRAIN_PLACEHOLDER_MAP = {
@@ -29,12 +31,12 @@ TRAIN_PLACEHOLDER_MAP = {
 }
 
 
-class TicketViewSet(ListModelMixin,
-                    RetrieveModelMixin,
-                    GenericViewSet):
+class TicketViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
     queryset = Ticket.objects.all()
     serializer_class = TicketSerializer
 
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = TicketFilter
 
     @action(detail=False, methods=['post'])
     def bulk_create(self, request):
@@ -67,7 +69,7 @@ class TicketViewSet(ListModelMixin,
             for item_data in validated_data:
 
                 compartment_num = math.ceil(next_seat_number / compartment_capacity)
-
+                print(item_data)
                 tickets_to_create.append(
                     Ticket(
                         **item_data,
