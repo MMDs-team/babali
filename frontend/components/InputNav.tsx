@@ -41,7 +41,7 @@ const InputNav = () => {
 
         console.log(formattedDate)
 
-        router.push(`/${type}/${formatCity(sourceCity)}-${formatCity(targetCity)}?date=${formattedDate}${type === 'train' ? `&count=${totalCnt}&pass=${totalPassengerCount[0]}-${totalPassengerCount[1]}-${totalPassengerCount[2]}` : ''}`);
+        router.push(`/${type}/${formatCity(sourceCity)}-${formatCity(targetCity)}?date=${formattedDate}${(type === 'train' || type === 'airplain-in') ? `&count=${totalCnt}&pass=${totalPassengerCount[0]}-${totalPassengerCount[1]}-${totalPassengerCount[2]}` : ''}`);
     };
 
 
@@ -50,9 +50,9 @@ const InputNav = () => {
         if (!pathname) return;
 
         // Extract origin and dest from /bus/origin-dest
-        const match = pathname.match(/\/(bus|train)\/([^/]+)-([^/]+)/);
+        const match = pathname.match(/\/(bus|train|airplain-in)\/([^/]+)-([^/]+)/);
         if (match) {
-            // match[1] -> "bus" or "train"
+            // match[1] -> "bus" or "train" or "airplain-in"
             setSourceCity(decodeURIComponent(match[2]));
             setTargetCity(decodeURIComponent(match[3]));
             setType(match[1]);
@@ -111,7 +111,7 @@ const InputNav = () => {
                     setTargetCity={setTargetCity}
                 />
                 <DatePicker className='flex-3' date={travelDate} setDate={setTravelDate} />
-                {type === 'train' && <PassengerSelector
+                {(type === 'train' || type === 'airplain-in' ) && <PassengerSelector
                     totalPassengerCount={totalPassengerCount}
                     setTotalPassengerCount={setTotalPassengerCount}
                 />}

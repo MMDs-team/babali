@@ -2,16 +2,15 @@
 import { useEffect, useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import InputNav from "@/components/InputNav";
-import TravelSample from "@/components/TravelSample";
-import TrainTravelSample from "@/components/TrainTravelSample";
 import { useTravel } from "@/contexts/TravelContext";
+import PlainTravelSample from "@/components/PlainTravelSample";
 
 
 const HOST = process.env.NEXT_PUBLIC_API_HOST;
 const PORT = process.env.NEXT_PUBLIC_API_PORT;
 
 
-export default function TrainTicketPage() {
+export default function AirplainTicketPage() {
 
     const pathname = usePathname();
     const searchParams = useSearchParams();
@@ -28,7 +27,7 @@ export default function TrainTicketPage() {
     useEffect(() => {
         if (!pathname) return;
 
-        const match = pathname.match(/\/train\/([^/]+)-([^/]+)/);
+        const match = pathname.match(/\/airplain-in\/([^/]+)-([^/]+)/);
         if (match) {
             setSourceCity(decodeURIComponent(match[1]));
             setTargetCity(decodeURIComponent(match[2]));
@@ -46,7 +45,7 @@ export default function TrainTicketPage() {
 
         const fetchTravels = async () => {
             try {
-                const url = `http://${HOST}:${PORT}/api/train/travels/?origin=${encodeURIComponent(
+                const url = `http://${HOST}:${PORT}/api/flight/travels/?origin=${encodeURIComponent(
                     sourceCity
                 )}&destination=${encodeURIComponent(targetCity)}&date=${travelDate}`;
 
@@ -54,7 +53,7 @@ export default function TrainTicketPage() {
                 if (!res.ok) throw new Error("Failed to fetch travels");
 
                 const data = await res.json();
-                console.log(data)
+                console.log('data', data)
                 setTravels(data);
             } catch (err) {
                 console.error(err);
@@ -73,7 +72,7 @@ export default function TrainTicketPage() {
 
                 {travels.length > 0 ? (
                     travels.map((each, index) => (
-                        <TrainTravelSample
+                        <PlainTravelSample
                             key={index}
                             travel={each}
                         />

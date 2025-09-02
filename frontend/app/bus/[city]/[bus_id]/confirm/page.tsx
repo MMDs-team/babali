@@ -147,7 +147,7 @@ export default function OrderConfirmationPage({ params, passengers }: ConfirmPag
 
             // Optionally show a success message
             alert("Payment verified successfully!");
-            router.push(`/bus/ticket?serial=${ReserveData.serial}`)
+            router.push(`/bus/ticket?serial=${ReserveData[0].serial}`)
         } catch (error) {
             console.error('Error verifying payment:', error);
             alert("Payment verification failed!");

@@ -43,7 +43,7 @@ export default function OrderConfirmationPage({ params, passengers }: ConfirmPag
     const [step, setStep] = useState(2);
     const [ReserveData, setReserveData] = useState<any>({});
 
-    const date = new Date(vehicleDetails.departure_time);
+    const date = new Date(vehicleDetails.date_time);
     const persianDate = date.toLocaleDateString("fa-IR", {
         weekday: "long",
         day: "numeric",
@@ -53,12 +53,12 @@ export default function OrderConfirmationPage({ params, passengers }: ConfirmPag
     const totalPrice = vehicleDetails.price * travelDetails.passengers.length;
 
     const ticketInfo = [
-        { label: "مبدا", value: vehicleDetails.route[0] },
-        { label: "مقصد", value: vehicleDetails.route[vehicleDetails.route.length - 1] },
-        { label: "تاریخ و ساعت حرکت", value: `${persianDate} ${vehicleDetails.departure_time.split("T")[1].substring(0, 5)}` },
-        { label: "شرکت ریلی	", value: vehicleDetails.cooperative },
-        { label: "نوع واگن", value: `${vehicleDetails.star} ستاره ۴ تخته` },
-        { label: "کوپه دربست", value: `${travelDetails.fullCompartment?'بله':'انتخاب نشد'}` },
+        { label: "مبدا", value: vehicleDetails.origin },
+        { label: "مقصد", value: vehicleDetails.dest },
+        { label: "تاریخ و ساعت حرکت", value: `${persianDate} ${vehicleDetails.date_time.split("T")[1].substring(0, 5)}` },
+        { label: "شرکت ریلی	", value: vehicleDetails.flight_agency },
+        { label: "نوع پرواز", value: vehicleDetails.flight_type},
+        { label: "کلاس پرواز", value: vehicleDetails.flight_class},
         { label: "قیمت هر صندلی", value: `${vehicleDetails.price} تومان` },
         { label: "مبلغ کل", value: `${totalPrice} تومان` },
     ];
@@ -69,14 +69,13 @@ export default function OrderConfirmationPage({ params, passengers }: ConfirmPag
     }
 
     const formatBirthDate = (birthDate: { day: string; month: string; year: string }): string => {
-        return `${birthDate.year}-${birthDate.month.padStart(2, "0")}-${birthDate.day.padStart(2, "0")}`;
+        return `${birthDate.year}-${birthDate.month.padStart(2, "0")}-${birthDate.day.padStart(2, "0")}`;   
     }
 
     const sendRequest = async () => {
         try {
             setIsLoading(true);
-            const API_URL = `http://${HOST}:${PORT}/api/train/tickets/bulk_create/`;
-
+            const API_URL = `http://${HOST}:${PORT}/api/flight/tickets/bulk_create/`;
 
             const passengers: any = travelDetails.passengers.map((p: any) => ({
                 user: travelDetails.passengers[0].phone,
@@ -88,17 +87,12 @@ export default function OrderConfirmationPage({ params, passengers }: ConfirmPag
                 ssn: p.SSN
             }));
 
-            const body = {
-                get_full_com: true,
-                tickets: passengers
-            }
-
             const res = await fetch(API_URL, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(body),
+                body: JSON.stringify(passengers),
             });
 
             if (!res.ok) {
@@ -125,7 +119,7 @@ export default function OrderConfirmationPage({ params, passengers }: ConfirmPag
 
     const handlePay = async () => {
         try {
-            const API_URL = `http://${HOST}:${PORT}/api/train/tickets/verify/?serial=${ReserveData[0].serial}&status=OK`;
+            const API_URL = `http://${HOST}:${PORT}/api/flight/tickets/verify/?serial=${ReserveData[0].serial}&status=OK`;
 
             const response = await fetch(API_URL, {
                 method: "PATCH",
@@ -146,7 +140,7 @@ export default function OrderConfirmationPage({ params, passengers }: ConfirmPag
 
             // Optionally show a success message
             alert("Payment verified successfully!");
-            router.push(`/train/ticket?serial=${ReserveData[0].serial}`)
+            router.push(`/airplain-in/ticket?serial=${ReserveData[0].serial}`)
         } catch (error) {
             console.error('Error verifying payment:', error);
             alert("Payment verification failed!");
@@ -158,8 +152,8 @@ export default function OrderConfirmationPage({ params, passengers }: ConfirmPag
     useEffect(() => {
         console.log('travelDetails', travelDetails)
         console.log('vehicleDetails', vehicleDetails)
-        if (travelType !== 'train') {
-            router.push(`/train-ticket`);
+        if (travelType !== 'airplain-in') {
+            router.push(`/`);
         }
     }, [])
 

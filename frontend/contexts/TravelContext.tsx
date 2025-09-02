@@ -1,7 +1,7 @@
 'use client';
 import { createContext, useContext, useState, ReactNode } from 'react';
 
-export type TravelType = 'bus' | 'train' | 'flight';
+export type TravelType = 'bus' | 'train' | 'airplain-in';
 
 
 type TravelContextType = {

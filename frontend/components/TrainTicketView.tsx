@@ -38,7 +38,7 @@ const
 
         const goBackToTicket = () => {
             const basePath = pathname.split("/").slice(0, 3).join("/");
-            router.push(`${basePath}?date=${train.departure_time.split("T")[0]}&count=${1}`);
+            router.push(`${basePath}?date=${train.departure_time.split("T")[0]}&count=${1}&pass=1-0-0`);
         }
 
         useEffect(() => {
