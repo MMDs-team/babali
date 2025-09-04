@@ -24,7 +24,7 @@ const BirthDateInput = ({ onChange }: { onChange: (value: { day: string; month: 
     }, [day, month, year]);
 
     return (
-        <div className='flex h-full space-x-2'>
+        <div className='flex h-full py-2'>
             {/* Day Select */}
             <Select onValueChange={(val) => setDay(val)}>
                 <SelectTrigger className="rounded-none w-20">

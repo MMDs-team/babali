@@ -1,8 +1,8 @@
 'use client'
 import { DatePicker } from "@/components/DatePicker";
 import FAQAccordion from "@/components/FAQAccordion";
+import SearchButton from "@/components/SearchButton";
 import SourceTargetCity from "@/components/SourceTargetCity";
-import { Button } from "@/components/ui/button";
 import { busFaq } from "@/constants/FAQData";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -47,11 +47,8 @@ export default function BusTicketPage() {
                         setTargetCity={setTargetCity}
                     />
                     <DatePicker className='flex-3' date={date} setDate={setDate} />
-                    <Button className="flex-1 h-auto bg-amber-400 text-black hover:bg-amber-500"
-                        onClick={async () => await searchTravel()}
-                    >
-                        جستجو
-                    </Button>
+
+                    <SearchButton onSearch={async () => await searchTravel()}/>
                 </div>
             </div>
 

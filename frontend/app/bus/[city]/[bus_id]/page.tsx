@@ -4,8 +4,10 @@ import BusTicketView from "@/components/BusTicketView";
 import CustomerDetails from "@/components/CustomerDetails";
 import ProgressStepSection from "@/components/ProgressStepSection";
 import { useTravel } from "@/contexts/TravelContext";
-import { usePathname, useRouter } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+
+
 
 export type BusPassenger = {
     firstName: string,
@@ -17,13 +19,21 @@ export type BusPassenger = {
     seatNumber: number
 }
 
+const HOST = process.env.NEXT_PUBLIC_API_HOST;
+const PORT = process.env.NEXT_PUBLIC_API_PORT;
+
 export default function BusTicketPage() {
 
     const router = useRouter();
     const pathname = usePathname();
 
+    const params = useParams();
+    const busID = params.bus_id;
+
     const [seats, setSeats] = useState<number[]>([]);
-    const { travelType, setTravelType, setTravelDetails, vehicleDetails } = useTravel();
+    const [isLoading, setIsLoading] = useState(false);
+
+    const { travelType, setTravelType, setTravelDetails, vehicleDetails, setVehicleDetails } = useTravel();
     const [passengers, setPassengers] = useState<BusPassenger[]>([]);
 
     const deleteHandler = (seatNumber: number | null) => {
@@ -66,6 +76,34 @@ export default function BusTicketPage() {
         });
     };
 
+    const sendRequest = async () => {
+        try {
+            setIsLoading(true);
+            const API_URL = `http://${HOST}:${PORT}/api/bus/travels/?id=${busID}`;
+
+            const res = await fetch(API_URL, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+
+            if (!res.ok) {
+                throw new Error("Failed to get bus");
+            }
+
+            const data = await res.json();
+
+            console.log('data', data[0])
+            setVehicleDetails(data[0])
+
+        } catch (error) {
+            console.error("Error:", error);
+
+        } finally {
+            setIsLoading(false); // stop loading
+        }
+    }
 
 
     const goToConfirm = () => {
@@ -80,6 +118,7 @@ export default function BusTicketPage() {
     }, [passengers, setTravelDetails]);
 
     useEffect(() => {
+        if (busID && !vehicleDetails) sendRequest();
         if (travelType === 'bus') return;
         setTravelType('bus');
         setTravelDetails({});
@@ -89,35 +128,39 @@ export default function BusTicketPage() {
         <main className="mt-15 w-full bg-gray-100">
             <div className="w-full">
                 <ProgressStepSection step={1} />
-                <BusTicketView bus={vehicleDetails} seatsCount={seats.length} />
-                <BusSeatChose
-                    selectedSeats={seats}
-                    setSelectedSeats={setSeats}
-                    busSeat={vehicleDetails.seat_stat}
-                />
-                <div className="px-12 md:px-18 lg:px-26 xl:px-42 py-2">
-                    <div className="bg-white px-8 border-1 shadow-xs">
-                        <CustomerDetails
-                            passenger={passengers.length !== 0 ? passengers[0] : null}
-                            seatNmb={seats.length > 0 ? seats[0] : null}
-                            deleteHandler={deleteHandler}
-                            isMain={true}
-                            handler={addPassenger}
-                            idx={0}
+                {vehicleDetails &&
+                    <>
+                        <BusTicketView bus={vehicleDetails} seatsCount={seats.length} />
+                        <BusSeatChose
+                            selectedSeats={seats}
+                            setSelectedSeats={setSeats}
+                            busSeat={vehicleDetails.seat_stat}
                         />
-                        {seats.slice(1).map((seatNumber, index) => (
-                            <CustomerDetails
-                                key={index}
-                                passenger={passengers[index+1]}
-                                seatNmb={seatNumber}
-                                deleteHandler={deleteHandler}
-                                handler={addPassenger}
-                                idx={index + 1}
-                            />
-                        ))}
-                    </div>
+                        <div className="px-12 md:px-18 lg:px-26 xl:px-42 py-2">
+                            <div className="bg-white px-8 border-1 shadow-xs">
+                                <CustomerDetails
+                                    passenger={passengers.length !== 0 ? passengers[0] : null}
+                                    seatNmb={seats.length > 0 ? seats[0] : null}
+                                    deleteHandler={deleteHandler}
+                                    isMain={true}
+                                    handler={addPassenger}
+                                    idx={0}
+                                />
+                                {seats.slice(1).map((seatNumber, index) => (
+                                    <CustomerDetails
+                                        key={index}
+                                        passenger={passengers[index + 1]}
+                                        seatNmb={seatNumber}
+                                        deleteHandler={deleteHandler}
+                                        handler={addPassenger}
+                                        idx={index + 1}
+                                    />
+                                ))}
+                            </div>
 
-                </div>
+                        </div>
+                    </>
+                }
 
                 <div className="px-12 md:px-18 lg:px-26 xl:px-42 py-2 bg-white mt-4">
                     <div className="w-full flex justify-between items-center p-4 rounded-lg">

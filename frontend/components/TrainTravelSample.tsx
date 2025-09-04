@@ -4,6 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from 'react';
 import TrainStaions from './TrainStations';
 import TravelStars from './Stars';
+import SelectTicketButton from './SelectTicketButton';
 
 type TrainTravelSampleProps = {
     travel: any
@@ -41,12 +42,6 @@ const TrainTravelSample: React.FC<TrainTravelSampleProps> = ({ travel }) => {
 
         router.push(`${pathname}/${travelID}`);
     };
-
-
-    useEffect(() => {
-        console.log('whyy', travel)
-    }, [])
-
 
     return (
         <div className="flex flex-col md:flex-row border rounded-xl shadow-sm overflow-hidden bg-white w-full max-w-5xl mx-auto text-right">
@@ -122,9 +117,9 @@ const TrainTravelSample: React.FC<TrainTravelSampleProps> = ({ travel }) => {
                 <p className="text-xl font-bold text-blue-600">
                     {price.toLocaleString()} {currency}
                 </p>
-                <button onClick={() => handleClick()} className="bg-blue-600 text-white rounded-md px-6 py-2 hover:bg-blue-700 transition">
-                    انتخاب بلیط
-                </button>
+
+                <SelectTicketButton onClick={async () => await handleClick()} />
+                    
                 <p className="text-sm text-gray-500">{capacity} ظرفیت باقی مانده</p>
             </div>
         </div>

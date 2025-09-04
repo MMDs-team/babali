@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { DatePicker } from "@/components/DatePicker";
 import SourceTargetCity from "@/components/SourceTargetCity";
-import { Button } from "@/components/ui/button";
 import PassengerSelector from "./PassengerCountSelect";
+import SearchButton from "./SearchButton";
 
 const InputNav = () => {
 
@@ -66,7 +66,7 @@ const InputNav = () => {
             setTotalPassengerCount(passList);
         }
         if (dateParam) setTravelDate(new Date(dateParam));
-        
+
     }, [pathname, searchParams]);
 
 
@@ -111,16 +111,13 @@ const InputNav = () => {
                     setTargetCity={setTargetCity}
                 />
                 <DatePicker className='flex-3' date={travelDate} setDate={setTravelDate} />
-                {(type === 'train' || type === 'airplain-in' ) && <PassengerSelector
+                {(type === 'train' || type === 'airplain-in') && <PassengerSelector
                     totalPassengerCount={totalPassengerCount}
                     setTotalPassengerCount={setTotalPassengerCount}
                 />}
-                <Button
-                    className="flex-1 h-auto bg-amber-400 text-black hover:bg-amber-500"
-                    onClick={async () => await searchTravel()}
-                >
-                    جستجو
-                </Button>
+                
+                <SearchButton onSearch={async () => await searchTravel()} />
+
             </div>
             <div className={`${isCollapsed ? 'flex' : 'hidden'} w-full cursor-pointer items-center justify-center py-3 w-bold text-gray-700 whitespace-nowrap`}>
                 <svg viewBox="0 0 24 24" width="1.5rem" height="1.5rem" fill="currentColor" className="shrink-0 text-grays-500 ml-2">

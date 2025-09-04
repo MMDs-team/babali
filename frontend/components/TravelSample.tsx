@@ -2,6 +2,7 @@ import { useTravel } from '@/contexts/TravelContext';
 import Image from 'next/image';
 import { usePathname, useRouter } from "next/navigation";
 import React from 'react';
+import SelectTicketButton from './SelectTicketButton';
 
 type TravelSampleProps = {
     travel: any
@@ -98,9 +99,9 @@ const TravelSample: React.FC<TravelSampleProps> = ({ travel }) => {
                 <p className="text-xl font-bold text-blue-600">
                     {price.toLocaleString()} {currency}
                 </p>
-                <button onClick={() => handleClick()} className="bg-blue-600 text-white rounded-md px-6 py-2 hover:bg-blue-700 transition">
-                    انتخاب بلیط
-                </button>
+                
+                <SelectTicketButton onClick={async () => await handleClick()} />
+
                 <p className="text-sm text-gray-500">{remainingSeats} صندلی باقی مانده</p>
             </div>
         </div>

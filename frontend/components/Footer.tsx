@@ -32,9 +32,9 @@ export default function Footer() {
                     <div>
                         <div className="flex items-center mb-4">
                             <span className="text-2xl font-bold text-yellow-500">A</span>
-                            <span className="text-xl font-bold ml-2">alibaba</span>
+                            <span className="text-xl font-bold ml-2">babali</span>
                         </div>
-                        <p className="text-gray-600">تلفن پشتیبانی: ۰۲۱-۴۳۹۰۰۰۰۰</p>
+                        <p className="text-gray-600">تلفن پشتیبانی: 0210000000</p>
                     </div>
 
                     {/* AliBaba Section */}

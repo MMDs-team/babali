@@ -2,8 +2,8 @@
 import { DatePicker } from "@/components/DatePicker";
 import FAQAccordion from "@/components/FAQAccordion";
 import PassengerSelector from "@/components/PassengerCountSelect";
+import SearchButton from "@/components/SearchButton";
 import SourceTargetCity from "@/components/SourceTargetCity";
-import { Button } from "@/components/ui/button";
 import { flightFaq } from "@/constants/FAQData";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -53,11 +53,8 @@ export default function AirplainPage() {
                         totalPassengerCount={totalPassengerCount}
                         setTotalPassengerCount={setTotalPassengerCount}
                     />
-                    <Button className="flex-1 h-auto bg-amber-400 text-black hover:bg-amber-500"
-                        onClick={async () => await searchTravel()}
-                    >
-                        جستجو
-                    </Button>
+
+                    <SearchButton onSearch={async () => await searchTravel()}/>
                 </div>
             </div>
 
