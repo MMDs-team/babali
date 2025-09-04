@@ -1,6 +1,5 @@
 
 'use client';
-import { useState } from 'react';
 import InputWithSuggestions from './InputWithSuggestioni';
 import { iranianCities } from '@/constants/iranCities';
 

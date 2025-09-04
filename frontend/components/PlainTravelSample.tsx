@@ -2,8 +2,6 @@ import { useTravel } from '@/contexts/TravelContext';
 import Image from 'next/image';
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from 'react';
-import TrainStaions from './TrainStations';
-import TravelStars from './Stars';
 
 type PlainTravelSampleProps = {
     travel: any

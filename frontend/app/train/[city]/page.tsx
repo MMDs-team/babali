@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import InputNav from "@/components/InputNav";
-import TravelSample from "@/components/TravelSample";
 import TrainTravelSample from "@/components/TrainTravelSample";
 import { useTravel } from "@/contexts/TravelContext";
 

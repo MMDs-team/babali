@@ -1,8 +1,10 @@
 'use client'
 import { DatePicker } from "@/components/DatePicker";
+import FAQAccordion from "@/components/FAQAccordion";
 import PassengerSelector from "@/components/PassengerCountSelect";
 import SourceTargetCity from "@/components/SourceTargetCity";
 import { Button } from "@/components/ui/button";
+import { flightFaq } from "@/constants/FAQData";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -58,6 +60,8 @@ export default function AirplainPage() {
                     </Button>
                 </div>
             </div>
+
+            <FAQAccordion data={flightFaq}/>
 
         </main>
     );
