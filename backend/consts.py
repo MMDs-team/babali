@@ -16,3 +16,10 @@ LONG_STR_LEN = 250
 
 # View constants:
 PENDING_TICKET_MINS = 15
+
+
+# Ticket printing constants:
+PRINT_TICKETS_URL = 'http://localhost:9000/api/print/'
+BUS_TICKET_TYPE = 'bus'
+TRAIN_TICKET_TYPE = 'train'
+FLIGHT_TICKET_TYPE = 'flight'

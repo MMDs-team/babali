@@ -46,15 +46,15 @@ class TicketGenerator:
         return template_content
 
 
-    def _generate_temp_html(self, ticket_template_name, placeholders_map, data_list, ticket_type, output_name):
+    def _generate_temp_html(self, tickets_template_name, placeholders_map, tickets_data, tickets_type, output_name):
         """Generate a temporary HTML file with all tickets."""
-        ticket_template_content = self._read_template(ticket_template_name)
+        ticket_template_content = self._read_template(tickets_template_name)
         if not ticket_template_content:
             return None
 
         all_tickets_html = [
             self._substitute_data(ticket_template_content, placeholders_map, {key: value for key, value in data.items() if value is not None})
-            for data in data_list
+            for data in tickets_data
         ]
 
         wrapper_content = self._read_template(DOCUMENT_WRAPPER_NAME)
@@ -64,7 +64,7 @@ class TicketGenerator:
         final_html = wrapper_content.replace('{{TICKETS_CONTENT}}', ''.join(all_tickets_html))
         final_html = final_html.replace('{{DOCUMENT_TITLE}}', output_name)
 
-        output_dir = os.path.join(self.output_dir_root, ticket_type)
+        output_dir = os.path.join(self.output_dir_root, tickets_type)
         os.makedirs(output_dir, exist_ok=True)
 
         html_path = os.path.join(output_dir, f'{output_name}.html')
@@ -78,18 +78,18 @@ class TicketGenerator:
             return None
 
 
-    def generate_tickets_pdf(self, ticket_template_name, placeholders_map, data_list, ticket_type, output_name):
+    def generate_tickets_pdf(self, tickets_template_name, placeholders_map, tickets_data, tickets_type, output_name):
         """
         Main method: Generate HTML → PDF (synchronously).
         Returns path to PDF or None on failure.
         """
         # Sanitize inputs
         safe_output_name = self._sanitize_filename(output_name)
-        safe_ticket_type = self._sanitize_filename(ticket_type)
+        safe_tickets_type = self._sanitize_filename(tickets_type)
 
         html_path = self._generate_temp_html(
-            ticket_template_name, placeholders_map, data_list,
-            safe_ticket_type, safe_output_name
+            tickets_template_name, placeholders_map, tickets_data,
+            safe_tickets_type, safe_output_name
         )
         if not html_path:
             return None
