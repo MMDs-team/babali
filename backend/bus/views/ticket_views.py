@@ -106,8 +106,9 @@ class TicketViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
             for ticket in tickets:
                 seat_no = str(ticket.seat_no)
 
-                del travel.seat_stat[seat_no]['user_phone']
-                travel.seat_stat[seat_no]['gender'] = 'E'
+                if seat_no in travel.seat_stat:
+                    del travel.seat_stat[seat_no]['user_phone']
+                    travel.seat_stat[seat_no]['gender'] = 'E'
 
             travel.capacity += len(tickets)
             travel.save()
