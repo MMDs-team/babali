@@ -58,7 +58,7 @@ export default function AirplainPage() {
                 </div>
             </div>
 
-            <FAQAccordion data={flightFaq}/>
+            <FAQAccordion className="" main={true} data={flightFaq}/>
 
         </main>
     );

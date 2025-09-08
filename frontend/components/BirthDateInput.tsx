@@ -10,7 +10,7 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 
-const BirthDateInput = ({ onChange }: { onChange: (value: { day: string; month: string; year: string }) => void }) => {
+const BirthDateInput = ({ onChange, className }: { onChange: (value: { day: string; month: string; year: string }) => void, className?:string }) => {
 
     const [day, setDay] = useState<string>('');
     const [month, setMonth] = useState<string>('');
@@ -24,7 +24,7 @@ const BirthDateInput = ({ onChange }: { onChange: (value: { day: string; month: 
     }, [day, month, year]);
 
     return (
-        <div className='flex h-full py-2'>
+        <div className={`flex h-full py-2 ${className}`}>
             {/* Day Select */}
             <Select onValueChange={(val) => setDay(val)}>
                 <SelectTrigger className="rounded-none w-20">

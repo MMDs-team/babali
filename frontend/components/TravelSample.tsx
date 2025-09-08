@@ -10,7 +10,7 @@ type TravelSampleProps = {
 
 const TravelSample: React.FC<TravelSampleProps> = ({ travel }) => {
 
-    const { vehicleDetails, setVehicleDetails } = useTravel();
+    const { setVehicleDetails } = useTravel();
     const router = useRouter();
     const pathname = usePathname();
 
@@ -31,7 +31,7 @@ const TravelSample: React.FC<TravelSampleProps> = ({ travel }) => {
     const company = travel.cooperative || "ـ";
     const remainingSeats = countTypeE(travel.seat_stat) || 0;
     const departureTime = travel.date_time.split("T")[1].substring(0, 5) || "--:--";
-    const originTerminal = travel.originTerminal || "پایانه مبدا نامشخص";
+    const originTerminal = `پابانه ${travel.terminal}` || "پایانه مبدا نامشخص";
     const destinationTerminal = travel.destinationTerminal || "پایانه مقصد نامشخص";
     const busType = travel.busType || "Standard";
     const currency = 'تومان'
@@ -45,7 +45,17 @@ const TravelSample: React.FC<TravelSampleProps> = ({ travel }) => {
 
 
     return (
-        <div className="flex flex-col md:flex-row border rounded-xl shadow-sm overflow-hidden bg-white w-full max-w-5xl mx-auto text-right">
+        <div
+            className="flex flex-col md:flex-row border rounded-xl shadow-sm overflow-hidden bg-white w-full max-w-5xl mx-auto text-right"
+            onClick={(e) => {
+                if (window.innerWidth < 1024) {
+                    handleClick();
+                } else {
+                    // Prevent parent div from hijacking clicks on lg+
+                    e.stopPropagation();
+                }
+            }}
+        >
 
             <div className="md:w-3/4 w-full p-4" >
                 <div className="flex items-center justify-between mb-3">
@@ -66,9 +76,9 @@ const TravelSample: React.FC<TravelSampleProps> = ({ travel }) => {
                 </div>
 
 
-                <div className="flex px-14 py-4">
-                    <p className="text-xl font-extrabold px-4">{departureTime}</p>
-                    <div className="flex flex-col md:flex-row md:justify-between items-center gap-2 md:gap-0">
+                <div className="flex lg:px-14 lg:py-4 ">
+                    <p className="text-xl font-extrabold">{departureTime}</p>
+                    <div className="flex flex-row justify-between items-center gap-2 md:gap-2">
 
                         <div className="text-center">
                             <p className="text-sm text-gray-600">{origin}</p>
@@ -76,9 +86,9 @@ const TravelSample: React.FC<TravelSampleProps> = ({ travel }) => {
                         </div>
 
                         <div className="flex items-center justify-center my-2 md:my-0">
-                            <span className="w-16 h-px bg-gray-300 mx-2" />
+                            <span className="w-8 lg:w-16 h-px bg-gray-300 mx-2" />
                             <span role="img" aria-label="bus">🚌</span>
-                            <span className="w-16 h-px bg-gray-300 mx-2" />
+                            <span className="w-8 lg:w-16 h-px bg-gray-300 mx-2" />
                         </div>
 
                         <div className="text-center">
@@ -88,19 +98,18 @@ const TravelSample: React.FC<TravelSampleProps> = ({ travel }) => {
                     </div>
                 </div>
 
-                <div className="flex text-sm text-blue-600 mt-4 gap-6">
+                <div className="hidden lg:flex text-sm text-blue-600 mt-4 gap-6">
                     <a href="#">نقشه صندلی‌ها</a>
                     <a href="#">اطلاعات اتوبوس و سفر</a>
                     <a href="#">قوانین جریمه و استرداد</a>
                 </div>
             </div>
 
-            <div className="md:w-1/4 w-full p-4 flex flex-col items-center justify-center border-r space-y-3">
+            <div className="md:w-1/4 w-full p-4 flex lg:flex-col items-center justify-between lg:justify-center border-r space-y-3">
                 <p className="text-xl font-bold text-blue-600">
                     {price.toLocaleString()} {currency}
                 </p>
-                
-                <SelectTicketButton onClick={async () => await handleClick()} />
+                <SelectTicketButton className='hidden lg:block' onClick={async () => handleClick()} />
 
                 <p className="text-sm text-gray-500">{remainingSeats} صندلی باقی مانده</p>
             </div>

@@ -2,11 +2,13 @@ import { useState } from "react";
 import { Loader2 } from "lucide-react";
 
 interface SelectTicketButtonProps {
+    className?: string,
     onClick: () => Promise<void>;
     secondaryLoading?: boolean; // optional second loader
 }
 
 const SelectTicketButton: React.FC<SelectTicketButtonProps> = ({
+    className,
     onClick,
     secondaryLoading = false,
 }) => {
@@ -26,7 +28,7 @@ const SelectTicketButton: React.FC<SelectTicketButtonProps> = ({
     return (
         <button
             onClick={handleClick}
-            className={`bg-blue-600 text-white rounded-md px-6 py-2 hover:bg-blue-700 transition flex items-center justify-center gap-2 ${loading ? "opacity-70 cursor-not-allowed" : ""
+            className={`${className} bg-blue-600 text-white rounded-md px-6 py-2 hover:bg-blue-700 transition flex items-center justify-center gap-2 ${loading ? "opacity-70 cursor-not-allowed" : ""
                 }`}
             disabled={loading}
         >

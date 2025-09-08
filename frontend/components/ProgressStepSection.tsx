@@ -1,12 +1,23 @@
 'use client'
 
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+
+const typesName: Record<string, string> = {
+    'bus': 'اتوبوس',
+    'train': 'قطار',
+    'airplain-in': 'پرواز'
+}
 
 const ProgressStepSection = ({ step }: { step: number }) => {
 
     const [scrollY, setScrollY] = useState(0);
     const [isScrollingUp, setIsScrollingUp] = useState(false);
     const [lastScrollY, setLastScrollY] = useState(0);
+    const [mobileSize, setMobileSize] = useState(window.innerWidth < 1024);
+    const [type, setType] = useState('bus');
+
+    const pathname = usePathname();
 
     useEffect(() => {
         const handleScroll = () => {
@@ -20,19 +31,32 @@ const ProgressStepSection = ({ step }: { step: number }) => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, [lastScrollY]);
 
+    useEffect(() => {
+        if (window.innerWidth < 1024) {
+            setMobileSize(true);
+        } else setMobileSize(false);
+
+        const match = pathname.match(/\/(bus|train|airplain-in)\/([^/]+)-([^/]+)/);
+        if (match) {
+            setType(match[1]);
+        }
+    }, [pathname])
+
     const baseStyle = 'w-full z-50 transition-all duration-300 ease-in-out';
     let positionStyle = '';
 
-    if (scrollY < 100) {
-        positionStyle = 'sticky top-15';
-    } else if (isScrollingUp) {
-        positionStyle = 'sticky top-15';
-    } else {
-        positionStyle = 'sticky top-0';
-    }
+    
+        if (scrollY < 100) {
+            positionStyle = `sticky ${mobileSize?'top-0':'top-15'}`;
+        } else if (isScrollingUp) {
+            positionStyle = `sticky ${mobileSize?'top-0':'top-15'}`;
+        } else {
+            positionStyle = `sticky top-0`;
+        }
+    
 
     return (
-        <ul className={`flex px-12 md:px-18 lg:px-26 xl:px-42 py-8 bg-white text-gray-400 text-xs shadow-sm ${positionStyle} ${baseStyle}`}>
+        <ul className={`flex px-0 md:px-18 lg:px-26 xl:px-42 py-8 bg-white text-gray-400 text-xs shadow-sm ${positionStyle} ${baseStyle}`}>
             <li className={`pr-4 flex-1 flex flex-col items-center relative after:content-[''] after:absolute after:right-1/2 after:top-[11px] after:z-[-1] after:h-px after:w-full after:border-b after:${step > 0 ? 'border-green-600' : 'border-gray-200'}`}>
                 <span className="flex bg-white md:pb-1 md:px-1">
                     <svg viewBox="0 0 24 24" width="26px" height="26px" fill="currentColor" className={step >= 0 ? 'text-green-600' : 'text-gray-200'}>
@@ -40,7 +64,7 @@ const ProgressStepSection = ({ step }: { step: number }) => {
                         </path>
                     </svg>
                 </span>
-                <span className={`font-bold ${step === 0 ? 'text-green-700' : step < 0 ? 'text-gray-400' : 'text-gray-800'}`}>انتخاب اتوبوس</span>
+                <span className={`font-bold text-center ${step === 0 ? 'text-green-700' : step < 0 ? 'text-gray-400' : 'text-gray-800'}`}>انتخاب {typesName[type]}</span>
 
             </li>
             <li className={`flex-1 flex flex-col items-center relative after:content-[''] after:absolute after:right-1/2 after:top-[11px] after:z-[-1] after:h-px after:w-full after:border-b after:${step > 1 ? 'border-green-600' : 'border-gray-200'}`}>
@@ -50,7 +74,7 @@ const ProgressStepSection = ({ step }: { step: number }) => {
                         </path>
                     </svg>
                 </span>
-                <span className={`font-bold ${step === 1 ? 'text-green-700' : step < 1 ? 'text-gray-400' : 'text-gray-800'}`}
+                <span className={`font-bold text-center ${step === 1 ? 'text-green-700' : step < 1 ? 'text-gray-400' : 'text-gray-800'}`}
                 >مشخصات مسافران</span>
 
             </li>
@@ -61,7 +85,7 @@ const ProgressStepSection = ({ step }: { step: number }) => {
                         </path>
                     </svg>
                 </span>
-                <span className={`font-bold ${step === 2 ? 'text-green-700' : step < 2 ? 'text-gray-400' : 'text-gray-800'}`}>تایید اطلاعات</span>
+                <span className={`font-bold text-center ${step === 2 ? 'text-green-700' : step < 2 ? 'text-gray-400' : 'text-gray-800'}`}>تایید اطلاعات</span>
 
             </li>
             <li className={`flex-1 flex flex-col items-center relative after:content-[''] after:absolute after:right-1/2 after:top-[11px] after:z-[-1] after:h-px after:w-full after:border-b after:${step > 3 ? 'border-green-600' : 'border-gray-200'}`}>
@@ -71,7 +95,7 @@ const ProgressStepSection = ({ step }: { step: number }) => {
                         </path>
                     </svg>
                 </span>
-                <span className={`font-bold ${step === 3 ? 'text-green-700' : step < 3 ? 'text-gray-400' : 'text-gray-800'}`}>پرداخت</span>
+                <span className={`font-bold text-center ${step === 3 ? 'text-green-700' : step < 3 ? 'text-gray-400' : 'text-gray-800'}`}>پرداخت</span>
 
             </li>
             <li className="pl-4 flex-1 flex flex-col items-center">
@@ -81,7 +105,7 @@ const ProgressStepSection = ({ step }: { step: number }) => {
                         </path>
                     </svg>
                 </span>
-                <span className={`font-bold ${step === 4 ? 'text-green-700' : step < 4 ? 'text-gray-400' : 'text-gray-800'}`}>صدور بلیط</span>
+                <span className={`font-bold text-center ${step === 4 ? 'text-green-700' : step < 4 ? 'text-gray-400' : 'text-gray-800'}`}>صدور بلیط</span>
 
             </li>
         </ul>

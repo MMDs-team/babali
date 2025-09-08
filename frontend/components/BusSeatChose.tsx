@@ -44,7 +44,7 @@ const BusSeatChose: React.FC<BusSeatChoseProps> = ({ selectedSeats, setSelectedS
 
 
     return (
-        <div className='px-12 md:px-18 lg:px-26 xl:px-42 py-6'>
+        <div className='px-4 lg:px-26 xl:px-42 py-6'>
             <div className='w-full border-1 shadow-xs p-4 md:px-6 px-4 bg-white'>
 
                 <div className="flex items-center">
@@ -62,7 +62,7 @@ const BusSeatChose: React.FC<BusSeatChoseProps> = ({ selectedSeats, setSelectedS
                     <BusSeatChoseDetails selectedCnt={selectedSeats.length} />
 
                     <div className="flex-1 border-1">
-                        <div className="flex flex-col md:flex-row-reverse rounded-xl p-1 max-w-[44rem]">
+                        <div className="flex flex-row-reverse rounded-xl p-1 max-w-[44rem]">
                             <strong className="flex items-center justify-center pl-4 border-l text-sm text-gray-600 [writing-mode:vertical-lr] rotate-180">جلوی اتوبوس</strong>
                             <div className="flex-1 pl-2">
                                 {BUS_MAP.map((row, idx) => (

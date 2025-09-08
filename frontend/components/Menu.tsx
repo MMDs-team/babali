@@ -93,8 +93,8 @@ export default function Menu() {
                 </div>
             </div>
 
-            <div className="lg:hidden bg-amber-400 p-3 rounded-t-2xl absolute -top-24 w-full">
-                <div className="grid grid-cols-2 gap-2 bg-white rounded-2xl shadow p-3">
+            <div className="lg:hidden bg-amber-400 p-3 rounded-t-2xl absolute -top-16 w-full">
+                <div className="grid grid-cols-2 gap-2 bg-white rounded-2xl shadow p-3 mt-8">
                     {navItems
                         .filter((item) => item.path !== "/iranout")
                         .map((item) => (

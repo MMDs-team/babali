@@ -125,7 +125,7 @@ export default function BusTicketPage() {
     }, []);
 
     return (
-        <main className="mt-15 w-full bg-gray-100">
+        <main className="lg:mt-15 w-full bg-gray-100">
             <div className="w-full">
                 <ProgressStepSection step={1} />
                 {vehicleDetails &&
@@ -136,7 +136,7 @@ export default function BusTicketPage() {
                             setSelectedSeats={setSeats}
                             busSeat={vehicleDetails.seat_stat}
                         />
-                        <div className="px-12 md:px-18 lg:px-26 xl:px-42 py-2">
+                        <div className="px-4 lg:px-26 xl:px-42 py-2">
                             <div className="bg-white px-8 border-1 shadow-xs">
                                 <CustomerDetails
                                     passenger={passengers.length !== 0 ? passengers[0] : null}
@@ -162,7 +162,7 @@ export default function BusTicketPage() {
                     </>
                 }
 
-                <div className="px-12 md:px-18 lg:px-26 xl:px-42 py-2 bg-white mt-4">
+                <div className="px-2 font-sm lg:px-26 xl:px-42 py-2 bg-white mt-4">
                     <div className="w-full flex justify-between items-center p-4 rounded-lg">
 
 

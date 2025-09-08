@@ -11,7 +11,7 @@ const BusTicketView = ({ bus, seatsCount }: { bus: any, seatsCount: number }) =>
     const destination = bus.dest;
     const company = bus.cooperative || "ـ";
     const departureTime = bus.date_time.split("T")[1].substring(0, 5) || "--:--";
-    const originTerminal = bus.originTerminal || "";
+    const originTerminal = bus.terminal || "";
     const destinationTerminal = bus.destinationTerminal || "";
     const busType = bus.busType || "Standard";
 
@@ -32,8 +32,8 @@ const BusTicketView = ({ bus, seatsCount }: { bus: any, seatsCount: number }) =>
     }
 
     return (
-        <div className='px-12 md:px-18 lg:px-26 xl:px-42 py-8'>
-            <div className="flex w-full border-1 shadow bg-white">
+        <div className='px-4 lg:px-26 xl:px-42 py-8'>
+            <div className="flex flex-col lg:flex-row w-full border-1 shadow bg-white">
                 <div className='flex flex-3 p-4'>
                     <div className='flex flex-col px-4'>
                         <span className='py-2'>
@@ -49,31 +49,29 @@ const BusTicketView = ({ bus, seatsCount }: { bus: any, seatsCount: number }) =>
                         />
                     </div>
                     <div className='flex flex-col justify-around'>
-                        <div className='flex gap-4'>
-                            <span className='bg-gray-200 py-1 px-2 rounded-2xl text-sm text-gray-600'>
+                        <div className='flex gap-4'>    
+                            {/* <span className='bg-gray-200 py-1 px-2 rounded-2xl text-sm text-gray-600'>
                                 مان VIP (کاوه)
-                            </span>
-                            <span className='text-gray-800'>
-                                همسفر چابکسواران پایانه بیهقی
-                            </span>
+                            </span> */}
+                            <span className='text-gray-800'>{company}</span>
                         </div>
                         <div className='flex p-2 py-4 gap-4'>
-                            <span className='text-xl font-extrabold'>{departureTime}</span>
+                            {/* <span className='text-xl font-extrabold'>{departureTime}</span> */}
                             <div className='flex'>
                                 <div className="text-center">
                                     <p className="text-sm text-gray-600">{origin}</p>
-                                    <p className="text-xs text-gray-400">پایانه بیهقی</p>
+                                    {/* <p className="text-xs text-gray-400">پایانه بیهقی</p> */}
                                 </div>
 
                                 <div className="flex items-center justify-center my-2 md:my-0">
-                                    <span className="w-16 h-px bg-gray-300 mx-2" />
+                                    <span className="w-8 lg:w-16 h-px bg-gray-300 mx-2" />
                                     <span role="img" aria-label="bus">🚌</span>
-                                    <span className="w-16 h-px bg-gray-300 mx-2" />
+                                    <span className="w-8 lg:w-16 h-px bg-gray-300 mx-2" />
                                 </div>
 
                                 <div className="text-center">
                                     <p className="text-sm text-gray-600">{destination}</p>
-                                    <p className="text-xs text-gray-400">پایاه کاوه</p>
+                                    {/* <p className="text-xs text-gray-400">پایاه کاوه</p> */}
                                 </div>
                             </div>
                         </div>
