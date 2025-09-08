@@ -23,7 +23,7 @@ const SearchButton: React.FC<SearchButtonProps> = ({ onSearch }) => {
 
     return (
         <Button
-            className={`flex-1 h-auto bg-amber-400 text-black hover:bg-amber-500 ${loading ? "opacity-70 cursor-not-allowed" : ""
+            className={`w-full lg:flex-1 h-auto bg-amber-400 text-black hover:bg-amber-500 ${loading ? "opacity-70 cursor-not-allowed" : ""
                 }`}
             onClick={handleClick}
             disabled={loading}

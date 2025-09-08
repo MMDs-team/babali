@@ -1,6 +1,7 @@
 'use client'
 import { DatePicker } from "@/components/DatePicker";
 import FAQAccordion from "@/components/FAQAccordion";
+import MobileDrawerPage from "@/components/MobileDrawerPage";
 import PassengerSelector from "@/components/PassengerCountSelect";
 import SearchButton from "@/components/SearchButton";
 import SourceTargetCity from "@/components/SourceTargetCity";
@@ -39,7 +40,7 @@ export default function TrainPage() {
 
     return (
         <main className="px-12 md:px-18 lg:px-26 xl:px-42 w-full">
-            <div className="w-full">
+            <div className="hidden lg:block w-full">
                 <div className="flex gap-2 border-1 border-t-0 px-4 py-8">
                     <SourceTargetCity
                         className='flex-5'
@@ -54,11 +55,32 @@ export default function TrainPage() {
                         setTotalPassengerCount={setTotalPassengerCount}
                     />
 
-                    <SearchButton onSearch={async () => await searchTravel()}/>
+                    <SearchButton onSearch={async () => await searchTravel()} />
                 </div>
             </div>
 
-            <FAQAccordion data={trainFaq}/>
+
+            <FAQAccordion data={trainFaq} />
+
+            <MobileDrawerPage>
+                <SourceTargetCity
+                    className='flex-5'
+                    sourceCity={sourceCity}
+                    targetCity={targetCity}
+                    setSourceCity={setSourceCity}
+                    setTargetCity={setTargetCity}
+                />
+                <DatePicker className='w-full my-4' date={date} setDate={setDate} />
+                <PassengerSelector
+                    totalPassengerCount={totalPassengerCount}
+                    setTotalPassengerCount={setTotalPassengerCount}
+                />
+
+                <SearchButton onSearch={async () => await searchTravel()} />
+
+                <FAQAccordion data={trainFaq} />
+
+            </MobileDrawerPage>
 
         </main>
     );

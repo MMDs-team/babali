@@ -9,7 +9,7 @@ import {
 
 export default function Footer() {
     return (
-        <footer className="bg-white border-t text-gray-700 text-sm mt-14" dir="rtl">
+        <footer className="bg-white border-t text-gray-700 text-sm mt-14 pt-34 " dir="rtl">
             <div className="max-w-7xl mx-auto px-6 py-10">
                 {/* Top Features */}
                 <div className="grid md:grid-cols-3 gap-6 text-center md:text-right mb-10">

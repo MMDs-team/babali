@@ -1,4 +1,3 @@
-// components/FAQAccordion.tsx
 "use client";
 
 import { useState, useRef, useEffect } from "react";
@@ -13,9 +12,9 @@ export default function FAQAccordion({ data }: { data: FAQItem[] }) {
     const [openIndex, setOpenIndex] = useState<number | null>(null);
 
     return (
-        <section className="max-w-5xl mx-auto p-6" dir="rtl">
+        <section className="mt-8 lg:mt-2  max-w-5xl mx-auto p-6" dir="rtl">
             <h2 className="text-xl font-bold mb-6">پرسش‌های شما</h2>
-            <div>
+            <div className="h-100 overflow-y-auto lg:h-auto lg:overflow-y-visible">
                 {data.map((faq, idx) => (
                     <AccordionItem
                         key={idx}

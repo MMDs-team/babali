@@ -148,7 +148,7 @@ const TicketDetailsPage = () => {
                         </button>
                         <button
                             className="px-6 py-2 bg-gray-400 text-white rounded-xs hover:bg-gray-500 transition"
-                            onClick={() => router.push('/')}
+                            onClick={() => router.push('/iranin')}
                         >
                             بازگشت
                         </button>

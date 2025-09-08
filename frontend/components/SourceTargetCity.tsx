@@ -47,7 +47,7 @@ export default function SourceTargetCity({
     }
 
     return (
-        <div className={`flex relative ${className}`}>
+        <div className={`flex relative flex-col lg:flex-row ${className}`}>
             <InputWithSuggestions
                 label="مبداء"
                 suggestions={iranianCities}

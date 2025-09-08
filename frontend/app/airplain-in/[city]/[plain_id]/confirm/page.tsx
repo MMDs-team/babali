@@ -146,7 +146,7 @@ export default function OrderConfirmationPage() {
             router.push(parentPath);
         }
         if (travelType !== 'airplain-in') {
-            router.push(`/`);
+            router.push(`/iranin`);
         }
     }, [])
 

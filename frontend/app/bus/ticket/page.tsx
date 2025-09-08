@@ -39,6 +39,8 @@ const TicketDetailsPage = () => {
     useEffect(() => {
         if (!serial) return;
 
+        console.log('lets go...')
+
         const fetchTicket = async () => {
             try {
                 const res = await fetch(`http://${HOST}:${PORT}/api/bus/tickets/?serial=${serial}`);
@@ -58,6 +60,7 @@ const TicketDetailsPage = () => {
         };
 
         fetchTicket();
+        console.log('end..')
     }, [serial]);
 
     const handleDownloadTicket = async () => {
@@ -71,10 +74,11 @@ const TicketDetailsPage = () => {
                 method: 'POST',
                 body: formData,
             });
-
+            
             if (!res.ok) throw new Error('Failed to get PDF link');
-
+            
             const data = await res.json();
+            console.log(res)
             const pdfLink = data.tickets_pdf;
 
             const a = document.createElement('a');

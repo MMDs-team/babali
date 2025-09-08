@@ -66,7 +66,7 @@ export default function TrainTicketPage() {
     }, [sourceCity, targetCity, travelDate, passCnt]);
 
     return (
-        <main className="mt-15 w-full min-h-dvh">
+        <main className="m-0 lg:mt-15 w-full min-h-dvh">
             <InputNav />
             <div className="w-full bg-gray-100 p-4 pt-8 flex flex-col gap-3 min-h-dvh">
 

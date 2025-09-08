@@ -4,8 +4,22 @@ import Link from 'next/link';
 import Image from "next/image";
 import { NavigationMenuDemo } from './NavbarLists';
 import NavbarMainLeft from './NavbarMainLeft';
+import { usePathname } from 'next/navigation';
+
+const routes: string[] = [
+    '/',
+    '/iranin',
+    '/bus-ticket',
+    '/train-ticket',
+    '/iranout',
+    '/hotel',
+    '/tour',
+    '/accommodation'
+]
 
 const Navbar: React.FC = () => {
+    const pathName = usePathname();
+    const show = pathName in routes;
 
     return (
         <header>
@@ -38,7 +52,7 @@ const Navbar: React.FC = () => {
                 </div>
             </nav>
 
-            <nav className='md:hidden block w-full bg-amber-400 pb-18'>
+            {show && <nav className='md:hidden block w-full bg-amber-400 pb-18'>
                 <Link href="/" className='flex justify-center py-7'>
                     <Image
                         className="dark:invert"
@@ -49,7 +63,7 @@ const Navbar: React.FC = () => {
                         priority
                     />
                 </Link>
-            </nav>
+            </nav>}
 
         </header>
     );
