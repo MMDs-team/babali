@@ -1,4 +1,5 @@
 import datetime, requests
+from django.contrib.auth import get_user_model
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db import connection, transaction
 from rest_framework import status
@@ -22,7 +23,16 @@ class TicketViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
 
     @action(detail=False, methods=['post'])
     def bulk_create(self, request):
-        serializer = self.get_serializer(data=request.data, many=True)
+        data = request.data
+        if len(data) == 0: return Response({'error': 'There is no ticket data to process.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = data[0].get('user')
+        if user is None: return Response({'error': 'Missing user field.'}, status=status.HTTP_400_BAD_REQUEST)
+        User = get_user_model()
+        if not User.objects.filter(pk=user).exists():
+            User.objects.create(pk=user, username=user, password=user)
+
+        serializer = self.get_serializer(data=data, many=True)
         serializer.is_valid(raise_exception=True)
         
         validated_data = serializer.validated_data
