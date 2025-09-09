@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
-    'djoser',
+    # 'djoser',
     'debug_toolbar',
     'django_filters',
     'corsheaders',
@@ -69,6 +69,8 @@ elif APP_MODE == 'train':
     INSTALLED_APPS.append('train')
 elif APP_MODE == 'flight':
     INSTALLED_APPS.append('flight')
+elif APP_MODE == 'none': 
+    pass
 
 
 MIDDLEWARE = [
@@ -193,9 +195,9 @@ SIMPLE_JWT = {
 
 
 # DJOSER configuration
-DJOSER = {
-    'TOKEN_MODEL': None,
-}
+# DJOSER = {
+#     'TOKEN_MODEL': None,
+# }
 
 
 # CORS configuration

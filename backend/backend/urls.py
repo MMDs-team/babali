@@ -23,8 +23,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # DJOSER urls
-    re_path(r'^auth/', include('djoser.urls')),
-    re_path(r'^auth/', include('djoser.urls.jwt')),
+    # re_path(r'^auth/', include('djoser.urls')),
+    # re_path(r'^auth/', include('djoser.urls.jwt')),
 ] + debug_toolbar_urls()
 
 
@@ -39,3 +39,5 @@ elif settings.APP_MODE == 'train':
     urlpatterns.append(path('api/train/', include('train.urls')))
 elif settings.APP_MODE == 'flight':
     urlpatterns.append(path('api/flight/', include('flight.urls')))
+elif settings.APP_MODE == 'none': 
+    pass

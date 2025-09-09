@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  MYSQL_DATABASE: "mydb"
+  MYSQL_USER: "myuser"
+  DATABASE_ENGINE: "django.db.backends.mysql"
+  DATABASE_NAME: "mydb"
+  DATABASE_USER: "myuser"
+  DATABASE_HOST: "db"
+  DATABASE_PORT: "3306"

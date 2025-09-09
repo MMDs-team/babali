@@ -1,0 +1,77 @@
+# ---- Builder Stage ----
+# Use a full OS image to get build tools and install dependencies
+FROM python:3.12-bullseye AS builder
+
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+# Set the working directory
+WORKDIR /app
+
+# Install system dependencies required for building mysqlclient
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends build-essential default-libmysqlclient-dev && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install Python dependencies as wheels for caching
+COPY requirements.txt .
+RUN pip wheel --no-cache-dir --wheel-dir=/app/wheels -r requirements.txt
+
+
+# ---- Final Stage ----
+# Use a slim image for the final, small production container
+FROM python:3.12-slim-bullseye AS final
+
+# Add metadata to the image
+LABEL maintainer="Mohammad Khandan <mkhandani13@gmail.com>"
+LABEL version="1.0"
+LABEL description="Babali Backend"
+
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+ENV PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium
+
+# Perform all root-level operations first
+# -----------------------------------------------------------------
+# 1. Install system dependencies and fonts as root
+RUN apt-get update && apt-get install --no-install-recommends -y \
+    # Add essential Persian and English fonts
+    fonts-farsiweb \
+    fonts-dejavu-core \
+    # Add the MariaDB runtime client library
+    libmariadb3 \
+    # Install system Chromium. This automatically pulls in the necessary runtime dependencies.
+    chromium \
+    # Clean up apt cache to save space
+    && apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# 2. Create the non-root user
+RUN useradd --create-home --shell /bin/bash appuser
+# -----------------------------------------------------------------
+
+# Now, switch to the non-root user for all subsequent operations
+USER appuser
+
+# Add the user's local bin directory to the PATH
+ENV PATH="/home/appuser/.local/bin:${PATH}"
+
+WORKDIR /home/appuser/app
+
+# Install Python packages from the wheels created in the builder stage
+COPY --from=builder /app/wheels /wheels
+COPY --from=builder /app/requirements.txt .
+RUN pip install --no-cache-dir --user /wheels/*
+
+# Copy the application code into the container
+# Use --chown to set the correct permissions for the non-root user
+COPY --chown=appuser:appuser ./backend .
+
+# Expose the port your Django app runs on
+EXPOSE 8000
+
+# The command to run your application in production
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "backend.wsgi:application"]
