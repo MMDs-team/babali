@@ -3,7 +3,16 @@ import time
 from django.core.management.base import BaseCommand
 from django.conf import settings
 
-from printer.consts import TICKETS_ROOT, TICKET_TYPES
+
+TICKETS_ROOT = 'static/tickets/'
+BUS_TICKET_TYPE = 'bus'
+TRAIN_TICKET_TYPE = 'train'
+FLIGHT_TICKET_TYPE = 'flight'
+TICKET_TYPES = {
+    'bus': BUS_TICKET_TYPE,
+    'train': TRAIN_TICKET_TYPE,
+    'flight': FLIGHT_TICKET_TYPE
+}
 
 
 CLEANUP_AGE_SECONDS = 10 * 60
