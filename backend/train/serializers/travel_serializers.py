@@ -5,6 +5,7 @@ from train.utils import train_time
 
 class TravelSerializer(serializers.ModelSerializer):
     route = serializers.SerializerMethodField() 
+    compartment_capacity = serializers.SerializerMethodField()
     empty_compartment = serializers.SerializerMethodField() 
     cooperative = serializers.SerializerMethodField() 
     departure_time = serializers.SerializerMethodField() 
@@ -18,6 +19,7 @@ class TravelSerializer(serializers.ModelSerializer):
             'train',
             'route', 
             'cooperative',
+            'compartment_capacity',
             'capacity',
             'description',
             'price',
@@ -46,6 +48,9 @@ class TravelSerializer(serializers.ModelSerializer):
         cities.append(edges[edge_id].dest_city)
 
         return cities
+
+    def get_compartment_capacity(self, obj):
+        return obj.train.compartment_capacity
 
     def get_departure_time(self, obj):
         origin_city = self.context.get("origin_city")

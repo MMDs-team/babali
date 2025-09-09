@@ -1,35 +1,18 @@
-import datetime
+import datetime, requests
+from django.contrib.auth import get_user_model
 from django.db import connection, transaction
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
-from printer.utils.tickets import GENERATOR
-from printer.consts import BUS_TICKET_TYPE
+from bus.filters import TicketFilter
 from bus.models import Ticket, Travel
 from bus.serializers.ticket_serializers import TicketSerializer
-from consts import PENDING_TICKET_MINS
+from consts import PENDING_TICKET_MINS, PRINT_TICKETS_URL, BUS_TICKET_TYPE
 
-from django_filters.rest_framework import DjangoFilterBackend
-from bus.filters import TicketFilter
-
-
-BUS_TEMPLATE_NAME = 'bus.html'
-BUS_PLACEHOLDER_MAP = {
-    '<1>': 'first_name',
-    '<2>': 'last_name',
-    '<3>': 'ssn',
-    '<4>': 'date_time',
-    '<5>': 'price',
-    '<6>': 'origin',
-    '<7>': 'dest',
-    '<8>': 'seat_no',
-    '<9>': 'terminal__name',
-    '<10>': 'cooperative__name',
-    '<11>': 'serial'
-}
 
 class TicketViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
     queryset = Ticket.objects.all()
@@ -41,7 +24,16 @@ class TicketViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
 
     @action(detail=False, methods=['post'])
     def bulk_create(self, request):
-        serializer = self.get_serializer(data=request.data, many=True)
+        data = request.data
+        if len(data) == 0: return Response({'error': 'There is no ticket data to process.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = data[0].get('user')
+        if user is None: return Response({'error': 'Missing user field.'}, status=status.HTTP_400_BAD_REQUEST)
+        User = get_user_model()
+        if not User.objects.filter(pk=user).exists():
+            User.objects.create(pk=user, username=user, password=user)
+
+        serializer = self.get_serializer(data=data, many=True)
         serializer.is_valid(raise_exception=True)
         
         validated_data = serializer.validated_data
@@ -106,9 +98,12 @@ class TicketViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
             for ticket in tickets:
                 seat_no = str(ticket.seat_no)
 
-                del travel.seat_stat[seat_no]['phone']
-                travel.seat_stat[seat_no]['gender'] = 'E'
+                if seat_no in travel.seat_stat:
+                    del travel.seat_stat[seat_no]['user_phone']
+                    travel.seat_stat[seat_no]['gender'] = 'E'
 
+            travel.capacity += len(tickets)
+            travel.save()
             tickets.update(canceled=True)
             # TODO: Logic for payment rollback.
 
@@ -131,7 +126,6 @@ class TicketViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
                                                                                           'travel_id',
                                                                                           'seat_no')
         tickets = list(tickets)
-
         if len(tickets):
             travel_id = tickets[0]['travel_id']
             travel = Travel.objects.filter(pk=travel_id).select_related('terminal', 'cooperative') \
@@ -143,12 +137,26 @@ class TicketViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
                                                                 'price',
                                                                 'description')[0]
 
+            travel['date_time'] = travel['date_time'].isoformat()
             tickets = [{**ticket, **travel} for ticket in tickets]
-            tickets_pdf = GENERATOR.generate_tickets_pdf(ticket_template_name=BUS_TEMPLATE_NAME, placeholders_map=BUS_PLACEHOLDER_MAP,
-                                                         data_list=tickets, ticket_type=BUS_TICKET_TYPE, output_name=str(serial))
-            if tickets_pdf is not None:
-                return Response({'tickets_pdf': tickets_pdf}, status=status.HTTP_201_CREATED)
-            else: 
-                return Response({'error': "There was a problem in pdf generation task."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-        return Response({'error': "There is no valid ticket to print."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            for i in range(len(tickets)):
+                if tickets[i].get('birth_date') is not None:
+                    tickets[i]['birth_date'] = tickets[i]['birth_date'].isoformat()
+
+            try:
+                payload = {
+                    'tickets_type': BUS_TICKET_TYPE,
+                    'tickets_data': tickets,
+                    'output_name': serial
+                }
+                response = requests.post(PRINT_TICKETS_URL, json=payload)
+                response.raise_for_status()
+
+                response_data = response.json()
+                tickets_pdf_path = response_data['path']
+                return Response({'tickets_pdf': tickets_pdf_path}, status=status.HTTP_201_CREATED)
+
+            except Exception as e:
+                return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        else: return Response({'error': 'There is no valid ticket to print'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
