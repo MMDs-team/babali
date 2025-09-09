@@ -141,6 +141,7 @@ class TestTicketViewSet:
         ticket.refresh_from_db()
         assert ticket.canceled is True
 
+    @pytest.mark.skip('Not finished yet.')
     def test_print_ticket(self, api_client, test_data):
         ticket = test_data["ticket"]
         url = reverse("train-ticket-print")

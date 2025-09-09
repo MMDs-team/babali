@@ -129,6 +129,10 @@ class TicketViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
 
             travel['date_time'] = travel['date_time'].isoformat()
             tickets = [{**ticket, **travel} for ticket in tickets]
+            for i in range(len(tickets)):
+                if tickets[i].get('birth_date') is not None:
+                    tickets[i]['birth_date'] = tickets[i]['birth_date'].isoformat()
+
             try:
                 payload = {
                     'tickets_type': BUS_TICKET_TYPE,
