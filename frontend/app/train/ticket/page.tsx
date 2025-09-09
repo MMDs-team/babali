@@ -96,7 +96,7 @@ const TicketDetailsPage = () => {
     return (
         <div className="min-h-screen bg-gray-50">
             <ProgressStepSection step={step} />
-            <div className='px-12 md:px-18 lg:px-26 xl:px-42 py-2 mt-4 bg-accent pt-20'>
+            <div className='px-4 lg:px-26 xl:px-42 py-2 mt-4 bg-accent pt-20'>
 
                 {/* Ticket Card */}
                 <div className="max-w-5xl mx-auto bg-white shadow-lg rounded-xs p-6">
@@ -118,7 +118,7 @@ const TicketDetailsPage = () => {
                     {/* Passenger Table */}
                     <h2 className="text-xl font-semibold mb-4 text-gray-700">مسافرین</h2>
                     <div className="overflow-x-auto border rounded-xs shadow-sm">
-                        <Table className="min-w-[500px]">
+                        <Table className="">
                             <TableHeader className="bg-amber-100">
                                 <TableRow>
                                     <TableHead className="text-right">نام و نام خانوادگی</TableHead>

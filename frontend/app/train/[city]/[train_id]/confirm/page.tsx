@@ -45,10 +45,10 @@ export default function OrderConfirmationPage() {
         { label: "مقصد", value: vehicleDetails.route[vehicleDetails.route.length - 1] },
         { label: "تاریخ و ساعت حرکت", value: `${persianDate(vehicleDetails.departure_time)} ${vehicleDetails.departure_time.split("T")[1].substring(0, 5)}` },
         { label: "شرکت ریلی	", value: vehicleDetails.cooperative },
-        { label: "نوع واگن", value: `${vehicleDetails.star} ستاره ۴ تخته` },
+        { label: "نوع واگن", value: `${vehicleDetails.star} ستاره ${vehicleDetails.compartment_capacity?vehicleDetails.compartment_capacity:'-'} تخته` },
         { label: "کوپه دربست", value: `${travelDetails.fullCompartment ? 'بله' : 'انتخاب نشد'}` },
         { label: "قیمت هر صندلی", value: `${vehicleDetails.price} تومان` },
-        { label: "مبلغ کل", value: `${totalPrice} تومان` },
+        { label: "مبلغ کل", value: `${totalPrice()} تومان` },
     ];
 
     const editPassengers = () => {
@@ -158,7 +158,7 @@ export default function OrderConfirmationPage() {
     return (
         <div>
             <ProgressStepSection step={step} />
-            <div className="px-12 md:px-18 lg:px-26 xl:px-42 py-2 mt-4 bg-accent pt-20">
+            <div className="px-4 lg:px-26 xl:px-42 py-2 mt-4 bg-accent lg:pt-20">
                 {vehicleDetails &&
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
 
@@ -213,16 +213,16 @@ export default function OrderConfirmationPage() {
                                         <Table className="min-w-full divide-y divide-gray-200">
                                             <TableHeader>
                                                 <TableRow className="bg-gray-50">
-                                                    <TableHead className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    <TableHead className="lg:px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                                                         نام و نام خانوادگی
                                                     </TableHead>
-                                                    <TableHead className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    <TableHead className="lg:px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                                                         جنسیت
                                                     </TableHead>
-                                                    <TableHead className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    <TableHead className="lg:px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                                                         تاریخ تولد
                                                     </TableHead>
-                                                    <TableHead className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    <TableHead className="lg:px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                                                         شماره همراه
                                                     </TableHead>
                                                 </TableRow>
@@ -230,16 +230,16 @@ export default function OrderConfirmationPage() {
                                             <TableBody className="bg-white divide-y divide-gray-200">
                                                 {travelDetails?.passengers.map((passenger: any, index: any) => (
                                                     <TableRow key={index} className="hover:bg-gray-50">
-                                                        <TableCell className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 text-right">
+                                                        <TableCell className="lg:px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 text-right">
                                                             {`${passenger.firstName} ${passenger.lastName}`}
                                                         </TableCell>
-                                                        <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
+                                                        <TableCell className="lg:px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
                                                             {passenger.gender === 'M' ? 'مرد' : 'زن'}
                                                         </TableCell>
-                                                        <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
+                                                        <TableCell className="lg:px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
                                                             {passenger.birthDate.year}-{passenger.birthDate.month}-{passenger.birthDate.day}
                                                         </TableCell>
-                                                        <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
+                                                        <TableCell className="lg:px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
                                                             {passenger.phone ? passenger.phone : '-'}
                                                         </TableCell>
                                                     </TableRow>
@@ -251,9 +251,9 @@ export default function OrderConfirmationPage() {
                             </Card>
 
                         </div>
-                        <div className="md:col-span-1 bg-white border border-gray-200 rounded-lg p-6 shadow-sm fixed left-20">
+                        <div className="md:col-span-1 bg-white border border-gray-200 rounded-lg p-6 shadow-sm block lg:fixed lg:left-20">
                             <div className="flex justify-between items-center mb-4">
-                                <span className="text-gray-600 text-sm">مبلغ قابل پرداخت</span>
+                                <span className="text-gray-600 text-sm pl-2"> مبلغ قابل پرداخت</span>
                                 <span className="text-blue-600 text-xl font-bold whitespace-nowrap">{totalPrice()} تومان</span>
                             </div>
                             <Button

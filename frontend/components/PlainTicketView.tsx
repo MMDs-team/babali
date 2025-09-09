@@ -42,10 +42,10 @@ const PlainTicketView = ({ plain, seatsCount }: { plain: any, seatsCount: number
     }, [])
 
     return (
-        <div className='px-12 md:px-18 lg:px-26 xl:px-42 py-4'>
-            <div className="flex w-full border-1 shadow bg-white">
-                <div className='flex flex-3 p-4'>
-                    <div className='flex flex-col px-4'>
+        <div className='px-4 lg:px-26 xl:px-42 py-4'>
+            <div className="flex flex-col lg:flex-row w-full border-1 shadow bg-white">
+                <div className='flex flex-col lg:flex-row flex-3 p-4'>
+                    <div className='flex flex-row-reverse justify-end lg:justify-between lg:flex-col px-4'>
                         <span className='py-2'>
                             {persianDate}
                         </span>
@@ -69,9 +69,9 @@ const PlainTicketView = ({ plain, seatsCount }: { plain: any, seatsCount: number
                                 </div>
 
                                 <div className="flex items-center justify-center my-2 md:my-0">
-                                    <span className="w-16 h-px bg-gray-300 mx-2" />
+                                    <span className="w-8 lg:w-16 h-px bg-gray-300 mx-2" />
                                     <span role="img" aria-label="plain">✈️</span>
-                                    <span className="w-16 h-px bg-gray-300 mx-2" />
+                                    <span className="w-8 lg:w-16 h-px bg-gray-300 mx-2" />
                                 </div>
 
                                 <div className="text-center">

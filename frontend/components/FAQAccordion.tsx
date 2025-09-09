@@ -12,7 +12,7 @@ export default function FAQAccordion({ className, data, main }: { className?:str
     const [openIndex, setOpenIndex] = useState<number | null>(null);
 
     return (
-        <section className={`${className} mt-8 lg:mt-2  max-w-5xl mx-auto p-6 ${main&&'pt-65'}`} dir="rtl">
+        <section className={`${className} mt-8 lg:mt-2  max-w-5xl mx-auto p-6 ${main&&'pt-65 lg:pt-8'}`} dir="rtl">
             <h2 className="text-xl font-bold mb-6">پرسش‌های شما</h2>
             <div className={`h-100 overflow-y-auto lg:h-auto lg:overflow-y-visible ${main&&'h-auto overflow-visible'}`}>
                 {data.map((faq, idx) => (

@@ -119,7 +119,8 @@ export default function TrainTicketPage() {
         if (trainID && !vehicleDetails) sendRequest();
 
         let pass = [1];
-        let td = travelDetails['passCnt'];
+        let td = null;
+        if (travelDetails) td = travelDetails['passCnt'];
         if (td) pass = Array.from({ length: td }, (_, i) => i + 1);
         setSeats(pass);
         if (travelType === 'train') return;
@@ -129,18 +130,19 @@ export default function TrainTicketPage() {
 
 
     return (
-        <main className="mt-15 w-full bg-gray-100">
+        <main className="lg:mt-15 w-full bg-gray-100">
             <div className="w-full">
                 <ProgressStepSection step={1} />
                 {vehicleDetails && <>
-                    <div className='px-12 md:px-18 lg:px-26 xl:px-42 pt-8'>
-                        <div className="flex w-full border-1 shadow bg-white p-8 justify-between">
+                    <div className='px-4 lg:px-26 xl:px-42 pt-8'>
+                        <div className="flex w-full border-1 shadow bg-white p-4 lg:p-8 justify-between">
 
                             <div className="flex items-center space-x-3">
 
                                 <button
                                     type="button"
                                     onClick={() => setIsPrivate(!isPrivate)}
+                                    disabled={!vehicleDetails?.empty_compartment}
                                     className={`w-12 h-6 flex items-center rounded-full p-1 transition-colors duration-300 ${isPrivate ? "bg-blue-500" : "bg-gray-300"
                                         }`}
                                 >
@@ -149,16 +151,16 @@ export default function TrainTicketPage() {
                                             }`}
                                     />
                                 </button>
-                                <span className="text-gray-700 font-bold">کوپه دربست</span>
+                                <span className={`text-gray-700 font-bold ${!vehicleDetails?.empty_compartment && 'line-through'}`}>کوپه دربست</span>
                             </div>
 
                             <div className='flex gap-x-4'>
-                                <div className='pr-4 gap-x-2 flex'>
-                                    <span className="text-sm bg-gray-100 text-gray-700 px-3 py-1 rounded-full">
-                                        {3} ستاره
+                                <div className='pr-4 gap-x-2 flex flex-col lg:flex-row gap-y-1'>
+                                    <span className="text-sm bg-gray-100 text-gray-700 px-2 py-1 rounded-full">
+                                        {vehicleDetails ? vehicleDetails.star : '-'} ستاره
                                     </span>
-                                    <span className="text-sm bg-gray-100 text-gray-700 px-3 py-1 rounded-full">
-                                        کوپه ۴ نفره
+                                    <span className="text-sm bg-gray-100 text-gray-700 px-2 py-1 rounded-full">
+                                        کوپه {vehicleDetails ? vehicleDetails.compartment_capacity : '-'} نفره
                                     </span>
                                 </div>
                                 <TravelStars rating={3} size={20} />
@@ -169,7 +171,7 @@ export default function TrainTicketPage() {
 
                     <TrainTicketView train={vehicleDetails} seatsCount={seats.length} />
 
-                    <div className="px-12 md:px-18 lg:px-26 xl:px-42 py-2">
+                    <div className="px-4 lg:px-26 xl:px-42 py-2">
                         <div className="bg-white px-8 border-1 shadow-xs">
                             <CustomerDetails
                                 passenger={passengers[0]}
@@ -203,7 +205,7 @@ export default function TrainTicketPage() {
                 </>
                 }
 
-                <div className="px-12 md:px-18 lg:px-26 xl:px-42 py-2 bg-white mt-4">
+                <div className="px-4 lg:px-26 xl:px-42 py-2 bg-white mt-4">
                     <div className="w-full flex justify-between items-center p-4 rounded-lg">
 
 

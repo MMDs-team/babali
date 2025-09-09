@@ -162,7 +162,7 @@ export default function BusTicketPage() {
                     </>
                 }
 
-                <div className="px-2 font-sm lg:px-26 xl:px-42 py-2 bg-white mt-4">
+                <div className="px-4 font-sm lg:px-26 xl:px-42 py-2 bg-white mt-4">
                     <div className="w-full flex justify-between items-center p-4 rounded-lg">
 
 

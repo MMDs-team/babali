@@ -122,14 +122,14 @@ export default function PlainTicketPage() {
 
 
     return (
-        <main className="mt-15 w-full bg-gray-100">
+        <main className="lg:mt-15 w-full bg-gray-100">
             <div className="w-full">
                 <ProgressStepSection step={1} />
                 
                 {vehicleDetails && <PlainTicketView plain={vehicleDetails} seatsCount={seats.length} />}
 
 
-                <div className="px-12 md:px-18 lg:px-26 xl:px-42 py-2">
+                <div className="px-4 lg:px-26 xl:px-42 py-2">
                     <div className="bg-white px-8 border-1 shadow-xs">
                         {vehicleDetails && <>
                             <CustomerDetails
@@ -163,7 +163,7 @@ export default function PlainTicketPage() {
 
                 </div>
 
-                <div className="px-12 md:px-18 lg:px-26 xl:px-42 py-2 bg-white mt-4">
+                <div className="px-4 lg:px-26 xl:px-42 py-2 bg-white mt-4">
                     <div className="w-full flex justify-between items-center p-4 rounded-lg">
 
 
