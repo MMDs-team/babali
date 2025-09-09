@@ -1,6 +1,7 @@
 'use client'
 import { DatePicker } from "@/components/DatePicker";
 import FAQAccordion from "@/components/FAQAccordion";
+import MobileDrawerPage from "@/components/MobileDrawerPage";
 import PassengerSelector from "@/components/PassengerCountSelect";
 import SearchButton from "@/components/SearchButton";
 import SourceTargetCity from "@/components/SourceTargetCity";
@@ -58,7 +59,26 @@ export default function AirplainPage() {
                 </div>
             </div>
 
-            <FAQAccordion className="" main={true} data={flightFaq}/>
+            <FAQAccordion data={flightFaq} />
+
+            <MobileDrawerPage>
+                <SourceTargetCity
+                    className='flex-5'
+                    sourceCity={sourceCity}
+                    targetCity={targetCity}
+                    setSourceCity={setSourceCity}
+                    setTargetCity={setTargetCity}
+                />
+                <DatePicker className='w-full my-4' date={date} setDate={setDate} />
+                <PassengerSelector
+                    totalPassengerCount={totalPassengerCount}
+                    setTotalPassengerCount={setTotalPassengerCount}
+                />
+
+                <SearchButton onSearch={async () => await searchTravel()} />
+
+                <FAQAccordion data={flightFaq} />
+            </MobileDrawerPage>
 
         </main>
     );

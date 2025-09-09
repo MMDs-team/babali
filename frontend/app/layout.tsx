@@ -5,6 +5,7 @@ import "./globals.css";
 import NavMobile from "@/components/NavMobile";
 import Hero from "@/components/Hero";
 import { TravelProvider } from "@/contexts/TravelContext";
+import Footer from "../components/Footer";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -37,6 +38,8 @@ export default function RootLayout({
                 <Hero />
                 <TravelProvider> {children} </TravelProvider>
                 <NavMobile />
+                
+                <Footer />
             </body>
         </html>
     );

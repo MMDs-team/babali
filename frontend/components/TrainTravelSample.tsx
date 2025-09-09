@@ -4,6 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from 'react';
 import TrainStaions from './TrainStations';
 import TravelStars from './Stars';
+import SelectTicketButton from './SelectTicketButton';
 
 type TrainTravelSampleProps = {
     travel: any
@@ -42,14 +43,18 @@ const TrainTravelSample: React.FC<TrainTravelSampleProps> = ({ travel }) => {
         router.push(`${pathname}/${travelID}`);
     };
 
-
-    useEffect(() => {
-        console.log('whyy', travel)
-    }, [])
-
-
     return (
-        <div className="flex flex-col md:flex-row border rounded-xl shadow-sm overflow-hidden bg-white w-full max-w-5xl mx-auto text-right">
+        <div
+            className="flex flex-col md:flex-row border rounded-xl shadow-sm overflow-hidden bg-white w-full max-w-5xl mx-auto text-right"
+            onClick={(e) => {
+                if (window.innerWidth < 1024) {
+                    handleClick();
+                } else {
+                    // Prevent parent div from hijacking clicks on lg+
+                    e.stopPropagation();
+                }
+            }}
+        >
 
             <div className="md:w-3/4 w-full p-4" >
                 <div className="flex items-center justify-between mb-3">
@@ -64,10 +69,10 @@ const TrainTravelSample: React.FC<TrainTravelSampleProps> = ({ travel }) => {
                         />
                         <h2 className="pr-4 text-sm text-gray-800 font-semibold">تعاونی {company}</h2>
                         <div className='pr-4 gap-x-2 flex'>
-                            <span className="text-sm bg-gray-100 text-gray-700 px-3 py-1 rounded-full">
+                            <span className="text-sm bg-gray-100 text-gray-700 px-2 py-1 rounded-full">
                                 {stars} ستاره
                             </span>
-                            <span className="text-sm bg-gray-100 text-gray-700 px-3 py-1 rounded-full">
+                            <span className="text-sm bg-gray-100 text-gray-700 px-2 py-1 rounded-full">
                                 کوپه ۴ نفره
                             </span>
                         </div>
@@ -76,9 +81,9 @@ const TrainTravelSample: React.FC<TrainTravelSampleProps> = ({ travel }) => {
                 </div>
 
 
-                <div className="flex px-14 py-4">
-                    <p className="font-extrabold px-4">{departureHM}</p>
-                    <div className="flex flex-col md:flex-row md:justify-between items-center gap-2 md:gap-0">
+                <div className="flex justify-between lg:px-14 py-4">
+                    <p className="font-extrabold lg:px-4">{departureHM}</p>
+                    <div className="flex lg:flex-col md:flex-row md:justify-between items-center gap-2 md:gap-0">
 
                         <div className="text-center">
                             <p className="text-sm text-gray-600">{origin}</p>
@@ -86,9 +91,9 @@ const TrainTravelSample: React.FC<TrainTravelSampleProps> = ({ travel }) => {
                         </div>
 
                         <div className="flex items-center justify-center my-2 md:my-0">
-                            <span className="w-16 h-px bg-gray-300 mx-2" />
+                            <span className="w-8 lg:w-16 h-px bg-gray-300 mx-2" />
                             <span role="img" aria-label="train">🚆</span>
-                            <span className="w-16 h-px bg-gray-300 mx-2" />
+                            <span className="w-8 lg:w-16 h-px bg-gray-300 mx-2" />
                         </div>
 
                         <div className="text-center">
@@ -105,7 +110,7 @@ const TrainTravelSample: React.FC<TrainTravelSampleProps> = ({ travel }) => {
                     }
                 </div>
 
-                <div className="flex text-sm text-blue-600 mt-4 gap-12">
+                <div className="hidden lg:flex text-sm text-blue-600 mt-4 gap-12">
                     <div
                         className='cursor-pointer '>اطلاعات قطار</div>
                     <div
@@ -118,13 +123,13 @@ const TrainTravelSample: React.FC<TrainTravelSampleProps> = ({ travel }) => {
                 </div>
             </div>
 
-            <div className="md:w-1/4 w-full p-4 flex flex-col items-center justify-center border-r space-y-3">
+            <div className="md:w-1/4 w-full p-4 flex lg:flex-col items-center justify-between lg:justify-center border-r space-y-3">
                 <p className="text-xl font-bold text-blue-600">
                     {price.toLocaleString()} {currency}
                 </p>
-                <button onClick={() => handleClick()} className="bg-blue-600 text-white rounded-md px-6 py-2 hover:bg-blue-700 transition">
-                    انتخاب بلیط
-                </button>
+
+                <SelectTicketButton className='hidden lg:block' onClick={async () => await handleClick()} />
+
                 <p className="text-sm text-gray-500">{capacity} ظرفیت باقی مانده</p>
             </div>
         </div>

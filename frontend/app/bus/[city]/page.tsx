@@ -5,10 +5,6 @@ import InputNav from "@/components/InputNav";
 import TravelSample from "@/components/TravelSample";
 
 
-const HOST = process.env.NEXT_PUBLIC_API_HOST;
-const PORT = process.env.NEXT_PUBLIC_API_PORT;
-
-
 export default function BusTicketPage() {
 
     const pathname = usePathname();
@@ -60,7 +56,7 @@ export default function BusTicketPage() {
     }, [sourceCity, targetCity, travelDate]);
 
     return (
-        <main className="mt-15 w-full">
+        <main className="m-0 lg:mt-15 w-full">
             <InputNav />
             <div className="w-full bg-gray-100 p-4 pt-8 flex flex-col gap-3">
 

@@ -30,23 +30,34 @@ const CustomerDetails: React.FC<CustomerDetailsProps> = ({
     const [phone, setPhone] = useState(passenger?.phone ?? "");
 
     const handleSSR = (e: React.ChangeEvent<HTMLInputElement>) => {
-        let inputValue = e.target.value;
-        const filteredValue = inputValue.replace(/\D/g, '');
-        const limitedValue = filteredValue.substring(0, 10);
-        setSSR(limitedValue);
+        let value = e.target.value;
+
+        // Convert Persian digits to English
+        value = convertPersianToEnglishDigits(value);
+
+        // Optional: enforce pattern (only digits, max 10)
+        value = value.replace(/\D/g, "").slice(0, 10);
+
+        setSSR(value); // store in state as English digits
     };
 
+
     const handlePhone = (e: React.ChangeEvent<HTMLInputElement>) => {
-        e.preventDefault()
-        let inputValue = e.target.value;
-        const filteredValue = inputValue.replace(/\D/g, '');
-        const limitedValue = filteredValue.substring(0, 12);
-        setPhone(limitedValue);
+        let value = e.target.value;
+
+        value = convertPersianToEnglishDigits(value);
+        value = value.replace(/\D/g, "").slice(0, 11);
+        setPhone(value);
     };
 
     const handleBirth = (date: { day: string; month: string; year: string }) => {
         setBirthDate(date);
     }
+
+    const convertPersianToEnglishDigits = (str: string) => {
+        return str.replace(/[۰-۹]/g, (d) => String(d.charCodeAt(0) - 1776));
+    };
+
 
     useEffect(() => {
         handler({ firstName, lastName, gender, SSR, birthDate, phone, seatNumber: seatNmb }, idx);
@@ -55,11 +66,11 @@ const CustomerDetails: React.FC<CustomerDetailsProps> = ({
     useEffect(() => {
         if (!passenger) return;
         setFirstName(passenger.firstName);
-        setLastName(passenger.lastName)  
-        setGender(passenger.gender)  
-        setSSR(passenger.SSR)  
-        setBirthDate(passenger.birthDate)  
-        setPhone(passenger.phone)        
+        setLastName(passenger.lastName)
+        setGender(passenger.gender)
+        setSSR(passenger.SSR)
+        setBirthDate(passenger.birthDate)
+        setPhone(passenger.phone)
     }, [passenger])
 
     return (
@@ -84,7 +95,7 @@ const CustomerDetails: React.FC<CustomerDetailsProps> = ({
                     </div>
                 }
             </div>
-            <div className="flex gap-2">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
                 <FloatingInput
                     id="firstName"
                     label="نام"
@@ -111,15 +122,15 @@ const CustomerDetails: React.FC<CustomerDetailsProps> = ({
                     onChange={handleSSR}
                 />
             </div>
-            <div className='flex pt-4 gap-2 items-center'>
-                <BirthDateInput onChange={handleBirth} />
+            <div className='flex flex-col lg:flex-row pt-4 gap-2 items-center'>
+                <BirthDateInput className='w-full flex justify-center lg:w-auto' onChange={handleBirth} />
 
                 {isMain && <FloatingInput
                     id="phone"
                     label="تلفن همراه"
                     value={phone}
                     patern="^0?9\d{9}$"
-                    className='w-70'
+                    className='w-full lg:w-70'
                     onChange={handlePhone}
                 />}
             </div>

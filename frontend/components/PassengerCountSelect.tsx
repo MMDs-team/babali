@@ -24,7 +24,7 @@ export default function PassengerSelector({
             <PopoverTrigger asChild>
                 <Button
                     variant="outline"
-                    className="w-48 justify-between py-6"
+                    className="w-full mb-5 lg:mb-0 lg:w-48 justify-between py-6"
                 >
                     {totalPassengerCount[0] + totalPassengerCount[1] + totalPassengerCount[2]} مسافر
                 </Button>
