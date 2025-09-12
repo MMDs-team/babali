@@ -60,7 +60,6 @@ class TicketViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
             for item_data in validated_data:
 
                 compartment_num = math.ceil(next_seat_number / compartment_capacity)
-                print(item_data)
                 tickets_to_create.append(
                     Ticket(
                         **item_data,
@@ -152,6 +151,11 @@ class TicketViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
 
             travel['date_time'] = travel['date_time'].isoformat()
             tickets = [{**ticket, **travel} for ticket in tickets]
+
+            for i in range(len(tickets)):
+                if tickets[i].get('birth_date') is not None:
+                    tickets[i]['birth_date'] = tickets[i]['birth_date'].isoformat()
+
             try:
                 payload = {
                     'tickets_type': TRAIN_TICKET_TYPE,
@@ -163,7 +167,7 @@ class TicketViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
 
                 response_data = response.json()
                 tickets_pdf_path = response_data['path']
-                return Response({'tickets_pdf': tickets_pdf_path}, status=status.HTTP_201_CREATED)
+                return Response({'path': tickets_pdf_path}, status=status.HTTP_201_CREATED)
 
             except Exception as e:
                 return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

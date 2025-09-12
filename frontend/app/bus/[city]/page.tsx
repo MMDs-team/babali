@@ -34,8 +34,8 @@ export default function BusTicketPage() {
 
         const fetchTravels = async () => {
             try {
-                const HOST = process.env.NEXT_PUBLIC_API_HOST;
-                const PORT = process.env.NEXT_PUBLIC_API_PORT;
+                const HOST = process.env.NEXT_PUBLIC_BACKEND_HOST;
+                const PORT = process.env.NEXT_PUBLIC_BACKEND_PORT;
 
                 const url = `http://${HOST}:${PORT}/api/bus/travels/?origin=${encodeURIComponent(
                     sourceCity

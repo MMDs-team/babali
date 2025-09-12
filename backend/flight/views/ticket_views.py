@@ -11,7 +11,7 @@ from rest_framework.viewsets import GenericViewSet
 from flight.filters import TicketFilter
 from flight.models import Ticket, Travel
 from flight.serializers.ticket_serializers import TicketSerializer
-from consts import PENDING_TICKET_MINS, PRINT_TICKETS_URL, TRAIN_TICKET_TYPE
+from consts import PENDING_TICKET_MINS, PRINT_TICKETS_URL, FLIGHT_TICKET_TYPE
 
 
 class TicketViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
@@ -53,15 +53,17 @@ class TicketViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
             payment_due_datetime = datetime.datetime.now() + datetime.timedelta(minutes=PENDING_TICKET_MINS)
             curr_serial_no = latest_serial_no + 1
             for item_data in validated_data:
+                seat_no = travel.get_next_seat()
+
                 tickets_to_create.append(
                     Ticket(
                         **item_data,
                         serial=curr_serial_no,
+                        seat_no=seat_no,
                         payment_due_datetime=payment_due_datetime
                     )
                 )
 
-                seat_no = travel.get_next_seat()
                 travel.seat_stat[str(seat_no)] = {
                     'user_phone': item_data['user'].phone,
                     "gender": "M" if item_data['gender'] else "F"
@@ -97,7 +99,6 @@ class TicketViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
             travel = tickets[0].travel
             for ticket in tickets:
                 seat_no = str(ticket.seat_no)
-                print(seat_no)
 
                 if seat_no in travel.seat_stat:
                     del travel.seat_stat[seat_no]['user_phone']
@@ -145,18 +146,23 @@ class TicketViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
 
             travel['date_time'] = travel['date_time'].isoformat()
             tickets = [{**ticket, **travel} for ticket in tickets]
+            for i in range(len(tickets)):
+                if tickets[i].get('birth_date') is not None:
+                    tickets[i]['birth_date'] = tickets[i]['birth_date'].isoformat()
+
             try:
                 payload = {
-                    'tickets_type': TRAIN_TICKET_TYPE,
+                    'tickets_type': FLIGHT_TICKET_TYPE,
                     'tickets_data': tickets,
                     'output_name': serial
                 }
+
                 response = requests.post(PRINT_TICKETS_URL, json=payload)
                 response.raise_for_status()
 
                 response_data = response.json()
                 tickets_pdf_path = response_data['path']
-                return Response({'tickets_pdf': tickets_pdf_path}, status=status.HTTP_201_CREATED)
+                return Response({'path': tickets_pdf_path}, status=status.HTTP_201_CREATED)
 
             except Exception as e:
                 return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

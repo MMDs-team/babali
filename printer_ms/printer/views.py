@@ -5,9 +5,14 @@ from rest_framework import status
 from printer.utils import GENERATOR
 from printer.consts import TICKET_TYPES, TEMPLATE_NAMES, PLACEHOLDER_MAPS
 
+from django.http import FileResponse, Http404
+from django.conf import settings
+from urllib.parse import unquote
+import os
+
 
 @api_view(['POST'])
-def generate_tickets_pdf(request):
+def generate_ticket(request):
     data = request.data
     mandatory_fields = ['tickets_type', 'tickets_data', 'output_name']
     for field in mandatory_fields:
@@ -34,3 +39,19 @@ def generate_tickets_pdf(request):
 
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+def download_ticket(request):
+    file_param = request.GET.get("path")
+    if not file_param:
+        raise Http404("File parameter is required")
+
+    file_param = unquote(file_param)
+    BASE_DIR = settings.BASE_DIR
+    file_path = os.path.join(BASE_DIR, file_param)
+
+    if not os.path.exists(file_path):
+        raise Http404("File does not exist")
+
+    file_handle = open(file_path, "rb")
+    return FileResponse(file_handle, as_attachment=True, filename=os.path.basename(file_path))

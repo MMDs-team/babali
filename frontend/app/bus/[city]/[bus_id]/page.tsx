@@ -19,8 +19,8 @@ export type BusPassenger = {
     seatNumber: number
 }
 
-const HOST = process.env.NEXT_PUBLIC_API_HOST;
-const PORT = process.env.NEXT_PUBLIC_API_PORT;
+const HOST = process.env.NEXT_PUBLIC_BACKEND_HOST;
+const PORT = process.env.NEXT_PUBLIC_BACKEND_PORT;
 
 export default function BusTicketPage() {
 
