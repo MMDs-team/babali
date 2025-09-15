@@ -12,11 +12,16 @@ class TravelSerializer(serializers.ModelSerializer):
     arrival_time = serializers.SerializerMethodField() 
     star = serializers.SerializerMethodField() 
 
+    origin = serializers.SerializerMethodField() 
+    destination = serializers.SerializerMethodField() 
+
     class Meta:
         model = Travel
         fields = [
             'travel_id',
             'train',
+            'origin',
+            'destination',
             'route', 
             'cooperative',
             'compartment_capacity',
@@ -28,6 +33,24 @@ class TravelSerializer(serializers.ModelSerializer):
             'empty_compartment',
             'star'
         ]
+
+    def get_origin(self, obj):
+        route = self.get_route(obj)
+        origin_city = self.context.get("origin_city") 
+        print(origin_city)
+        if not origin_city:
+            origin_city = route[0]
+
+        return origin_city
+
+    def get_destination(self, obj):
+        route = self.get_route(obj)
+        dest_city = self.context.get("dest_city") 
+
+        if not dest_city:
+            dest_city = route[-1]
+
+        return dest_city
 
     def get_route(self, obj):
         cities = []
