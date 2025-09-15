@@ -29,6 +29,7 @@ export default function TrainTicketPage() {
 
     const params = useParams();
     const trainID = params.train_id;
+    const cities = params.city?.split('-');
 
     const [seats, setSeats] = useState<number[]>([1]);
     const [isLoading, setIsLoading] = useState(false);
@@ -75,8 +76,11 @@ export default function TrainTicketPage() {
 
     const sendRequest = async () => {
         try {
+            console.log('ssssss')
             setIsLoading(true);
-            const API_URL = `http://${HOST}:${PORT}/api/train/travels/?id=${trainID}`;
+            const API_URL = `http://${HOST}:${PORT}/api/train/travels/?id=${trainID}&origin=${decodeURIComponent(
+                    cities[0]
+                )}&destination=${decodeURIComponent(cities[1])}`;
 
             const res = await fetch(API_URL, {
                 method: "GET",
@@ -111,7 +115,7 @@ export default function TrainTicketPage() {
             passengers: passengers,
             fullCompartment: isPrivate
         }));
-    }, [passengers, setTravelDetails, seats, isPrivate]);
+    }, [passengers, seats, isPrivate]);
 
     useEffect(() => {
         if (trainID && !vehicleDetails) sendRequest();

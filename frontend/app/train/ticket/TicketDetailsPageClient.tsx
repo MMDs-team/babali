@@ -120,7 +120,7 @@ const TicketDetailsPage = () => {
                             <p className="text-gray-600"><strong>ساعت حرکت:</strong> {splitDateTime(vehicle.departure_time)[1]}</p>
                         </div>
                         <div className="p-4 bg-amber-50 rounded-xs shadow-sm">
-                            <p className="text-gray-600"><strong>مقصد:</strong> {vehicle.dest}</p>
+                            <p className="text-gray-600"><strong>مقصد:</strong> {vehicle.destination}</p>
                             <p className="text-gray-600"><strong>تاریخ:</strong> {splitDateTime(vehicle.departure_time)[0]}</p>
                         </div>
                     </div>
@@ -133,8 +133,8 @@ const TicketDetailsPage = () => {
                                 <TableRow>
                                     <TableHead className="text-right">نام و نام خانوادگی</TableHead>
                                     <TableHead className="text-center">شماره تخت</TableHead>
-                                    <TableHead className="text-center">شماره بلیط</TableHead>
                                     <TableHead className="text-center">شماره کوپه</TableHead>
+                                    <TableHead className="text-center">شماره بلیط</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>

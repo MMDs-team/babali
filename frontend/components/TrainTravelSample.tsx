@@ -1,3 +1,4 @@
+
 import { useTravel } from '@/contexts/TravelContext';
 import Image from 'next/image';
 import { usePathname, useRouter } from "next/navigation";
@@ -20,8 +21,8 @@ const TrainTravelSample: React.FC<TrainTravelSampleProps> = ({ travel }) => {
 
     const travelID = travel.travel_id;
     const price = travel.price || 0;
-    const origin = travel.route[0];
-    const destination = travel.route[travel.route.length - 1];
+    const origin = travel.origin;
+    const destination = travel.destination;
     const company = travel.cooperative || "ـ";
     const capacity = travel.capacity;
     const routes = travel.route;
@@ -78,7 +79,7 @@ const TrainTravelSample: React.FC<TrainTravelSampleProps> = ({ travel }) => {
                             </span>
                         </div>
                     </div>
-                    <TravelStars rating={3} size={20} />
+                    <TravelStars rating={stars?stars:0} size={20} />
                 </div>
 
 

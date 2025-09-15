@@ -41,8 +41,8 @@ export default function OrderConfirmationPage() {
     const totalPrice = () => vehicleDetails.price * travelDetails.passengers.length;
 
     const ticketInfo = () => [
-        { label: "مبدا", value: vehicleDetails.route[0] },
-        { label: "مقصد", value: vehicleDetails.route[vehicleDetails.route.length - 1] },
+        { label: "مبدا", value: vehicleDetails.origin },
+        { label: "مقصد", value: vehicleDetails.destination },
         { label: "تاریخ و ساعت حرکت", value: `${persianDate(vehicleDetails.departure_time)} ${vehicleDetails.departure_time.split("T")[1].substring(0, 5)}` },
         { label: "شرکت ریلی	", value: vehicleDetails.cooperative },
         { label: "نوع واگن", value: `${vehicleDetails.star} ستاره ${vehicleDetails.compartment_capacity?vehicleDetails.compartment_capacity:'-'} تخته` },

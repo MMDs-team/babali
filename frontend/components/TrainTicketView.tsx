@@ -12,8 +12,8 @@ const
 
         const travelID = train.travel_id;
         const price = train.price || 0;
-        const origin = train.route[0];
-        const destination = train.route[train.route.length - 1];
+        const origin = train.origin;
+        const destination = train.destination;
         const company = train.cooperative || "ـ";
         const capacity = train.capacity;
         const routes = train.route;
