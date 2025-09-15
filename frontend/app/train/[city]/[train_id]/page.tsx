@@ -18,8 +18,8 @@ export type TrainPassengers = {
     seatNumber: number
 }
 
-const HOST = process.env.NEXT_PUBLIC_BACKEND_HOST;
-const PORT = process.env.NEXT_PUBLIC_BACKEND_PORT;
+const HOST = process.env.NEXT_PUBLIC_BACKEND_HOST || 'localhost';
+const PORT = process.env.NEXT_PUBLIC_BACKEND_PORT || '8000';
 
 
 export default function TrainTicketPage() {
@@ -112,8 +112,9 @@ export default function TrainTicketPage() {
         setTravelDetails((prev: any) => ({
             ...prev,
             passengers: passengers,
+            fullCompartment: isPrivate
         }));
-    }, [passengers, setTravelDetails, seats]);
+    }, [passengers, setTravelDetails, seats, isPrivate]);
 
     useEffect(() => {
         if (trainID && !vehicleDetails) sendRequest();

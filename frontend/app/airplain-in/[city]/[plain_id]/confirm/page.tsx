@@ -11,8 +11,8 @@ import { useTravel } from '@/contexts/TravelContext';
 import PaymentModal from '@/components/PaymentModal';
 
 
-const HOST = process.env.NEXT_PUBLIC_BACKEND_HOST;;
-const PORT = process.env.NEXT_PUBLIC_BACKEND_PORT
+const HOST = process.env.NEXT_PUBLIC_BACKEND_HOST || 'localhost';
+const PORT = process.env.NEXT_PUBLIC_BACKEND_PORT || '8000';
 
 export default function OrderConfirmationPage() {
 

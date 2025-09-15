@@ -26,6 +26,7 @@ const TrainTravelSample: React.FC<TrainTravelSampleProps> = ({ travel }) => {
     const capacity = travel.capacity;
     const routes = travel.route;
     const empty_compartment = travel.empty_compartment;
+    const compartment_capacity = travel.compartment_capacity;
     const stars = travel.star;
 
     const currency = 'تومان'
@@ -73,7 +74,7 @@ const TrainTravelSample: React.FC<TrainTravelSampleProps> = ({ travel }) => {
                                 {stars} ستاره
                             </span>
                             <span className="text-sm bg-gray-100 text-gray-700 px-2 py-1 rounded-full">
-                                کوپه ۴ نفره
+                                کوپه {compartment_capacity} نفره
                             </span>
                         </div>
                     </div>
@@ -83,7 +84,7 @@ const TrainTravelSample: React.FC<TrainTravelSampleProps> = ({ travel }) => {
 
                 <div className="flex justify-between lg:px-14 py-4">
                     <p className="font-extrabold lg:px-4">{departureHM}</p>
-                    <div className="flex lg:flex-col md:flex-row md:justify-between items-center gap-2 md:gap-0">
+                    <div className="flex flex-col lg:flex-row md:justify-between items-center gap-2 md:gap-0">
 
                         <div className="text-center">
                             <p className="text-sm text-gray-600">{origin}</p>
