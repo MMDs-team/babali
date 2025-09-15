@@ -90,8 +90,6 @@ export default function TrainTicketPage() {
             }
 
             const data = await res.json();
-
-            console.log('data', data[0])
             setVehicleDetails(data[0])
 
         } catch (error) {
@@ -104,7 +102,6 @@ export default function TrainTicketPage() {
 
 
     const goToConfirm = () => {
-        console.log('pass', passengers)
         router.push(`${pathname}/confirm`);
     };
 

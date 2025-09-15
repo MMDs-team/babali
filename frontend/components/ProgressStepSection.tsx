@@ -14,7 +14,7 @@ const ProgressStepSection = ({ step }: { step: number }) => {
     const [scrollY, setScrollY] = useState(0);
     const [isScrollingUp, setIsScrollingUp] = useState(false);
     const [lastScrollY, setLastScrollY] = useState(0);
-    const [mobileSize, setMobileSize] = useState(window.innerWidth < 1024);
+    const [mobileSize, setMobileSize] = useState(false);
     const [type, setType] = useState('bus');
 
     const pathname = usePathname();

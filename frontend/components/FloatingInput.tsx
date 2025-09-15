@@ -29,9 +29,9 @@ export default function FloatingInput({ id, label, value, type='text', patern, c
             <label
                 htmlFor={id}
                 className="absolute text-sm text-gray-500 duration-300 
-                        transform -translate-y-6 scale-75 top-1 z-10 origin-[0] 
+                        transform -translate-y-3 scale-75 top-1 z-10 origin-[0] px-2
                         peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-1/2 
-                        peer-focus:scale-75 peer-focus:-translate-y-3 mr-3 bg-white peer-focus:px-4 peer-focus:mr-0
+                        peer-focus:scale-75 peer-focus:-translate-y-3 mr-1 bg-white peer-focus:px-4 peer-focus:mr-0
                         peer-placeholder-shown::scale-75 peer-placeholder-shown::-translate-y-3 peer-placeholder-shown::px-4 peer-placeholder-shown::mr-0"
 
             >
