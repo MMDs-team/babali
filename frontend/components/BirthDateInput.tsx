@@ -10,11 +10,19 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 
-const BirthDateInput = ({ onChange, className }: { onChange: (value: { day: string; month: string; year: string }) => void, className?:string }) => {
+const BirthDateInput = ({ onChange, className, values }:
+    {
+        onChange: (value: { day: string; month: string; year: string }) => void,
+        className?: string,
+        values: { day: string; month: string; year: string }
+    }
+) => {
 
     const [day, setDay] = useState<string>('');
     const [month, setMonth] = useState<string>('');
     const [year, setYear] = useState<string>('');
+
+    const removeLeadingZero = (numStr: string) => numStr &&numStr[0] === "0" ? numStr[1] : numStr;
 
     // Call onChange when all parts are selected
     useEffect(() => {
@@ -23,10 +31,16 @@ const BirthDateInput = ({ onChange, className }: { onChange: (value: { day: stri
         }
     }, [day, month, year]);
 
+    useEffect(() => {
+        setDay(values.day)
+        setMonth(values.month)
+        setYear(values.year)
+    }, [values])
+
     return (
         <div className={`flex h-full py-2 ${className}`}>
             {/* Day Select */}
-            <Select onValueChange={(val) => setDay(val)}>
+            <Select value={removeLeadingZero(day)} onValueChange={(val) => setDay(val)}>
                 <SelectTrigger className="rounded-none w-20">
                     <SelectValue placeholder="روز" />
                 </SelectTrigger>
@@ -43,7 +57,7 @@ const BirthDateInput = ({ onChange, className }: { onChange: (value: { day: stri
             </Select>
 
             {/* Month Select */}
-            <Select onValueChange={(val) => setMonth(val)}>
+            <Select value={removeLeadingZero(month)} onValueChange={(val) => setMonth(val)}>
                 <SelectTrigger className="rounded-none w-20">
                     <SelectValue placeholder="ماه" />
                 </SelectTrigger>
@@ -60,7 +74,7 @@ const BirthDateInput = ({ onChange, className }: { onChange: (value: { day: stri
             </Select>
 
             {/* Year Select */}
-            <Select onValueChange={(val) => setYear(val)}>
+            <Select value={year} onValueChange={(val) => setYear(val)}>
                 <SelectTrigger className="rounded-none w-24">
                     <SelectValue placeholder="سال" />
                 </SelectTrigger>

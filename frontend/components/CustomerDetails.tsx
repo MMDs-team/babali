@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react'
 import FloatingInput from './FloatingInput'
 import GendarSelectInput from './GendarSelectInput';
 import BirthDateInput from './BirthDateInput';
+import { Button } from './ui/button';
+import { createTestUser } from '@/lib/createTestUser';
 
 type CustomerDetailsProps = {
     isMain?: boolean;
@@ -58,6 +60,23 @@ const CustomerDetails: React.FC<CustomerDetailsProps> = ({
         return str.replace(/[۰-۹]/g, (d) => String(d.charCodeAt(0) - 1776));
     };
 
+    const handleCreatTestUser = () => {
+        const user = createTestUser();
+        setFirstName(user.firstName);
+        setLastName(user.lastName);
+        setGender(user.gender == 'male' ? 'M' : 'F');
+        setPhone(user.phone);
+        setSSR(user.ssn);
+
+        const dateParts = user.birthdate.split("-");
+        const birth = {
+            year: dateParts[0],
+            month: dateParts[1],
+            day: dateParts[2],
+        };
+        setBirthDate(birth);
+    };
+
 
     useEffect(() => {
         handler({ firstName, lastName, gender, SSR, birthDate, phone, seatNumber: seatNmb }, idx);
@@ -83,17 +102,33 @@ const CustomerDetails: React.FC<CustomerDetailsProps> = ({
                         {seatNmb}
                     </div>
                 }
-                {!isMain &&
-                    <div className="flex text-red-400 items-start cursor-pointer" onClick={() => deleteHandler(seatNmb)}>
-                        <div className='flex items-center'>
 
-                            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-                                <path d="M15.75 2.25a.75.75 0 0 1 .75.75v1.5h2.25a2.25 2.25 0 0 1 2.246 2.118L21 6.75c0 1-.652 1.848-1.555 2.14l-1.034 11.398c-.06 1.19-1.009 2.145-2.241 2.212l-8.378-.001c-1.195-.06-2.15-1.016-2.209-2.182L4.555 8.89A2.251 2.251 0 0 1 5.25 4.5H7.5V3a.75.75 0 0 1 .663-.745l.087-.005h7.5ZM17.929 9H6.069l1.01 11.212c.02.396.316.718.669.779L7.83 21l8.298.001c.425-.024.764-.364.788-.819L17.929 9Zm-3.679 2.25a.75.75 0 0 1 .745.662L15 12v6a.75.75 0 0 1-1.495.087L13.5 18v-6a.75.75 0 0 1 .75-.75Zm-4.5 0a.75.75 0 0 1 .745.662L10.5 12v6a.75.75 0 0 1-1.495.087L9 18v-6a.75.75 0 0 1 .75-.75Zm9-5.25H5.25a.75.75 0 0 0 0 1.5h13.5a.75.75 0 0 0 0-1.5ZM15 3.75H9v.75h6v-.75Z"></path>
-                            </svg>
-                            <span> حذف </span>
+
+                <div className='flex gap-x-3 items-center mb-2'>
+                    <Button
+                        onClick={handleCreatTestUser}
+                        variant="secondary"
+                        className="transition-all duration-300 ease-in-out
+                            border-2 border-blue-400 text-blue-500 rounded-sm
+                            hover:bg-blue-50 hover:text-blue-700
+                            active:bg-blue-100 active:scale-95
+                            cursor-pointer"
+                    >
+                        ساخت مسافر تست
+                    </Button>
+                    {!isMain &&
+
+                        <div className="flex text-red-400 items-start cursor-pointer border-2 rounded-sm border-red-300 hover:bg-red-50 p-1" onClick={() => deleteHandler(seatNmb)}>
+                            <div className='flex items-center'>
+
+                                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                                    <path d="M15.75 2.25a.75.75 0 0 1 .75.75v1.5h2.25a2.25 2.25 0 0 1 2.246 2.118L21 6.75c0 1-.652 1.848-1.555 2.14l-1.034 11.398c-.06 1.19-1.009 2.145-2.241 2.212l-8.378-.001c-1.195-.06-2.15-1.016-2.209-2.182L4.555 8.89A2.251 2.251 0 0 1 5.25 4.5H7.5V3a.75.75 0 0 1 .663-.745l.087-.005h7.5ZM17.929 9H6.069l1.01 11.212c.02.396.316.718.669.779L7.83 21l8.298.001c.425-.024.764-.364.788-.819L17.929 9Zm-3.679 2.25a.75.75 0 0 1 .745.662L15 12v6a.75.75 0 0 1-1.495.087L13.5 18v-6a.75.75 0 0 1 .75-.75Zm-4.5 0a.75.75 0 0 1 .745.662L10.5 12v6a.75.75 0 0 1-1.495.087L9 18v-6a.75.75 0 0 1 .75-.75Zm9-5.25H5.25a.75.75 0 0 0 0 1.5h13.5a.75.75 0 0 0 0-1.5ZM15 3.75H9v.75h6v-.75Z"></path>
+                                </svg>
+                                <span> حذف </span>
+                            </div>
                         </div>
-                    </div>
-                }
+                    }
+                </div>
             </div>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
                 <FloatingInput
@@ -123,7 +158,7 @@ const CustomerDetails: React.FC<CustomerDetailsProps> = ({
                 />
             </div>
             <div className='flex flex-col lg:flex-row pt-4 gap-2 items-center'>
-                <BirthDateInput className='w-full flex justify-center lg:w-auto' onChange={handleBirth} />
+                <BirthDateInput className='w-full flex justify-center lg:w-auto' onChange={handleBirth} values={birthDate} />
 
                 {isMain && <FloatingInput
                     id="phone"

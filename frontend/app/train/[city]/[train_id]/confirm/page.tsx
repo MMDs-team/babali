@@ -11,8 +11,8 @@ import { useTravel } from '@/contexts/TravelContext';
 import PaymentModal from '@/components/PaymentModal';
 
 
-const HOST = process.env.NEXT_PUBLIC_BACKEND_HOST;
-const PORT = process.env.NEXT_PUBLIC_BACKEND_PORT;
+const HOST = process.env.NEXT_PUBLIC_BACKEND_HOST || 'localhost';
+const PORT = process.env.NEXT_PUBLIC_BACKEND_PORT || '8000';
 
 export default function OrderConfirmationPage() {
 
@@ -41,8 +41,8 @@ export default function OrderConfirmationPage() {
     const totalPrice = () => vehicleDetails.price * travelDetails.passengers.length;
 
     const ticketInfo = () => [
-        { label: "مبدا", value: vehicleDetails.route[0] },
-        { label: "مقصد", value: vehicleDetails.route[vehicleDetails.route.length - 1] },
+        { label: "مبدا", value: vehicleDetails.origin },
+        { label: "مقصد", value: vehicleDetails.destination },
         { label: "تاریخ و ساعت حرکت", value: `${persianDate(vehicleDetails.departure_time)} ${vehicleDetails.departure_time.split("T")[1].substring(0, 5)}` },
         { label: "شرکت ریلی	", value: vehicleDetails.cooperative },
         { label: "نوع واگن", value: `${vehicleDetails.star} ستاره ${vehicleDetails.compartment_capacity?vehicleDetails.compartment_capacity:'-'} تخته` },
@@ -77,7 +77,7 @@ export default function OrderConfirmationPage() {
             }));
 
             const body = {
-                get_full_com: true,
+                get_full_com: travelDetails.fullCompartment,
                 tickets: passengers
             }
 

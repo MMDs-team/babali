@@ -5,6 +5,10 @@ import InputNav from "@/components/InputNav";
 import TravelSample from "@/components/TravelSample";
 
 
+const HOST = process.env.NEXT_PUBLIC_BACKEND_HOST || 'localhost';
+const PORT = process.env.NEXT_PUBLIC_BACKEND_PORT || '8000';
+
+
 export default function BusTicketPage() {
 
     const pathname = usePathname();
@@ -34,9 +38,6 @@ export default function BusTicketPage() {
 
         const fetchTravels = async () => {
             try {
-                const HOST = process.env.NEXT_PUBLIC_BACKEND_HOST;
-                const PORT = process.env.NEXT_PUBLIC_BACKEND_PORT;
-
                 const url = `http://${HOST}:${PORT}/api/bus/travels/?origin=${encodeURIComponent(
                     sourceCity
                 )}&dest=${encodeURIComponent(targetCity)}&date=${travelDate}`;

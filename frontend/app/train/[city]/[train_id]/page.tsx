@@ -18,8 +18,8 @@ export type TrainPassengers = {
     seatNumber: number
 }
 
-const HOST = process.env.NEXT_PUBLIC_BACKEND_HOST;
-const PORT = process.env.NEXT_PUBLIC_BACKEND_PORT;
+const HOST = process.env.NEXT_PUBLIC_BACKEND_HOST || 'localhost';
+const PORT = process.env.NEXT_PUBLIC_BACKEND_PORT || '8000';
 
 
 export default function TrainTicketPage() {
@@ -29,6 +29,7 @@ export default function TrainTicketPage() {
 
     const params = useParams();
     const trainID = params.train_id;
+    const cities = params.city?.split('-');
 
     const [seats, setSeats] = useState<number[]>([1]);
     const [isLoading, setIsLoading] = useState(false);
@@ -75,8 +76,11 @@ export default function TrainTicketPage() {
 
     const sendRequest = async () => {
         try {
+            console.log('ssssss')
             setIsLoading(true);
-            const API_URL = `http://${HOST}:${PORT}/api/train/travels/?id=${trainID}`;
+            const API_URL = `http://${HOST}:${PORT}/api/train/travels/?id=${trainID}&origin=${decodeURIComponent(
+                    cities[0]
+                )}&destination=${decodeURIComponent(cities[1])}`;
 
             const res = await fetch(API_URL, {
                 method: "GET",
@@ -90,8 +94,6 @@ export default function TrainTicketPage() {
             }
 
             const data = await res.json();
-
-            console.log('data', data[0])
             setVehicleDetails(data[0])
 
         } catch (error) {
@@ -104,7 +106,6 @@ export default function TrainTicketPage() {
 
 
     const goToConfirm = () => {
-        console.log('pass', passengers)
         router.push(`${pathname}/confirm`);
     };
 
@@ -112,8 +113,9 @@ export default function TrainTicketPage() {
         setTravelDetails((prev: any) => ({
             ...prev,
             passengers: passengers,
+            fullCompartment: isPrivate
         }));
-    }, [passengers, setTravelDetails, seats]);
+    }, [passengers, seats, isPrivate]);
 
     useEffect(() => {
         if (trainID && !vehicleDetails) sendRequest();

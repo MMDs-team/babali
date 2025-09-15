@@ -31,8 +31,8 @@ const TravelSample: React.FC<TravelSampleProps> = ({ travel }) => {
     const company = travel.cooperative || "ـ";
     const remainingSeats = countTypeE(travel.seat_stat) || 0;
     const departureTime = travel.date_time.split("T")[1].substring(0, 5) || "--:--";
-    const originTerminal = `پابانه ${travel.terminal}` || "پایانه مبدا نامشخص";
-    const destinationTerminal = travel.destinationTerminal || "پایانه مقصد نامشخص";
+    const originTerminal = `پابانه ${travel.org_terminal}` || "پایانه مبدا نامشخص";
+    const destinationTerminal = travel.dest_terminal || "پایانه مقصد نامشخص";
     const busType = travel.busType || "Standard";
     const currency = 'تومان'
 
