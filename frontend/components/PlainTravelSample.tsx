@@ -81,7 +81,7 @@ const PlainTravelSample: React.FC<PlainTravelSampleProps> = ({ travel }) => {
 
                 <div className="flex justify-between lg:px-14 py-2 lg:py-4">
                     <p className="font-extrabold px-4">{formatTime(date_time)}</p>
-                    <div className="flex lg:flex-col px-5 lg:px-0 items-center gap-2 md:gap-0">
+                    <div className="flex flex-col lg:flex-row px-5 lg:px-0 items-center gap-2 md:gap-0">
 
                         <div className="text-center">
                             <p className="text-sm text-gray-600">{origin}</p>
