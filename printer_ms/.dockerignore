@@ -4,14 +4,7 @@ __pycache__
 *.pyo
 *.pyd
 
-# Virtual environments
-venv/
-env/
-.venv/
-.env/
-
 # Django specific
-*.sqlite3
 *.log
 *.pot
 *.py[cod]

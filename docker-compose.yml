@@ -23,6 +23,8 @@ services:
       - ./printer_ms:/app
     ports:
       - "9000:9000"
+    env_file:
+      - ./printer_ms/.env
     restart: always
 
   backend:
@@ -35,6 +37,8 @@ services:
       - ./backend:/app
     ports:
       - "8000:8000"
+    env_file:
+      - ./backend/.env
     environment:
       DATABASE_NAME: 'database'
       DATABASE_USER: 'user'
