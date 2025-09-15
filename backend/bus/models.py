@@ -73,7 +73,8 @@ class Travel(models.Model):
     travel_id = models.AutoField(primary_key=True, editable=False)
 
     bus = models.ForeignKey(Bus, on_delete=models.CASCADE, related_name="travels")
-    terminal = models.ForeignKey(Terminal, on_delete=models.CASCADE, related_name="travels")
+    org_terminal = models.ForeignKey(Terminal, on_delete=models.CASCADE, related_name="org_travels")
+    dest_terminal = models.ForeignKey(Terminal, on_delete=models.CASCADE, related_name="dest_travels")
     cooperative = models.ForeignKey(Cooperative, on_delete=models.CASCADE, related_name="travels")
 
     origin = models.CharField(max_length=consts.SHORT_STR_LEN, blank=True, null=True)
