@@ -77,6 +77,8 @@ docs/_build/
 # PyBuilder
 target/
 
+# env files (can opt-in for committing if needed)
+.env*
 
 ### Django ###
 *.log

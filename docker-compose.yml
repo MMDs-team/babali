@@ -1,0 +1,61 @@
+version: "3.9"
+
+services:
+  db:
+    image: mysql/mysql-server:8.0.32-1.2.11-server
+    container_name: db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: database
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    volumes:
+      - db_data:/var/lib/mysql
+
+  printer:
+    image: printer:v1
+    build:
+      context: ./printer_ms
+      dockerfile: printer_dockerfile
+    container_name: printer
+    volumes:
+      - ./printer_ms:/app
+    ports:
+      - "9000:9000"
+    restart: always
+
+  backend:
+    image: backend:v1
+    build:
+      context: ./backend
+      dockerfile: backend_dockerfile
+    container_name: backend
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_NAME: 'database'
+      DATABASE_USER: 'user'
+      DATABASE_PASSWORD: 'password'
+      DATABASE_HOST: 'db'
+      DATABASE_PORT: '3306'
+    depends_on:
+      - db
+    restart: always
+
+  frontend:
+    image: frontend:v1
+    build:
+      context: ./frontend  
+      dockerfile: frontend_dockerfile
+    container_name: frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    restart: always
+
+volumes:
+  db_data:

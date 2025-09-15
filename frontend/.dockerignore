@@ -1,0 +1,33 @@
+# Node dependencies
+node_modules
+npm-debug.log
+yarn-error.log
+yarn.lock
+
+# Local development files
+.DS_Store
+.env
+.env.local
+.env.development
+.env.test
+.vscode
+.idea
+
+# Build output folders
+dist
+build
+out
+
+# Git files
+.git
+.gitignore
+
+# Docker files
+Dockerfile
+frontend_dockerfile
+docker-compose.yml
+
+# Other unwanted files
+*.log
+*.tmp
+*.swp

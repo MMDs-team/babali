@@ -1,0 +1,46 @@
+# Python caches
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+env/
+.venv/
+.env/
+
+# Django specific
+*.sqlite3
+*.log
+*.pot
+*.py[cod]
+local_settings.py
+media/
+staticfiles/
+
+# Node or frontend files if you have a frontend inside backend
+node_modules/
+dist/
+build/
+
+# Git and version control
+.git
+.gitignore
+
+# IDEs and editors
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Docker and local config
+Dockerfile
+docker-compose.yml
+*.env
+printer_dockerfile
+
+# Misc
+*.swp
+*.tmp
+.DS_Store

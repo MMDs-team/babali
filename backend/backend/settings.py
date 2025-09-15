@@ -10,7 +10,6 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
-import credentials
 import os
 from pathlib import Path
 
@@ -25,12 +24,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = credentials.SECRET_KEY
+SECRET_KEY = os.environ.get('SECRET_KEY'),
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -118,12 +117,12 @@ DATABASES = {
     # }
 
     'default': {
-        'ENGINE': credentials.DATABASE_ENGINE,
-        'NAME': credentials.DATABASE_NAME,
-        'USER': credentials.DATABASE_USER,
-        'PASSWORD': credentials.DATABASE_PASSWORD,
-        'HOST': credentials.DATABASE_HOST,
-        'PORT': credentials.DATABASE_PORT,
+        'ENGINE': 'django.db.backends.mysql', 
+        'NAME': os.environ.get('DATABASE_NAME'),
+        'USER': os.environ.get('DATABASE_USER'),
+        'PASSWORD': os.environ.get('DATABASE_PASSWORD'),
+        'HOST': os.environ.get('DATABASE_HOST'),
+        'PORT': os.environ.get('DATABASE_PORT'),
     }
 }
 
@@ -201,7 +200,8 @@ SIMPLE_JWT = {
 
 
 # CORS configuration
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000"
-]
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:3000",
+#     "http://127.0.0.1:3000"
+# ]
+CORS_ALLOW_ALL_ORIGINS = True

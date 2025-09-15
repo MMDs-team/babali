@@ -1,15 +1,17 @@
 # Stage 1: Build
+FROM node:20-alpine AS build
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --legacy-peer-deps
+COPY . .
+RUN npm run build
+
+# Stage 2: Production image
 FROM node:20-alpine
 WORKDIR /app
-
-# Install dependencies first (cached if package.json unchanged)
 COPY package*.json ./
-RUN npm install
-
-# Copy the rest of the code
-COPY . .
-
-WORKDIR /app
-
+RUN npm ci --omit=dev --legacy-peer-deps
+COPY --from=build /app/.next ./.next
+COPY --from=build /app/public ./public
 EXPOSE 3000
 CMD ["npm", "start"]
