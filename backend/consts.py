@@ -19,7 +19,7 @@ PENDING_TICKET_MINS = 15
 
 
 # Ticket printing constants:
-PRINT_TICKETS_URL = 'http://localhost:9000/api/generate_ticket'
+PRINT_TICKETS_URL = 'http://printer:9000/api/generate_ticket'
 BUS_TICKET_TYPE = 'bus'
 TRAIN_TICKET_TYPE = 'train'
 FLIGHT_TICKET_TYPE = 'flight'
