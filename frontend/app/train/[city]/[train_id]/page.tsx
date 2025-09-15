@@ -29,7 +29,7 @@ export default function TrainTicketPage() {
 
     const params = useParams();
     const trainID = params.train_id;
-    const cities = params.city?.split('-');
+    const cities = (params.city as string).split("-");
 
     const [seats, setSeats] = useState<number[]>([1]);
     const [isLoading, setIsLoading] = useState(false);
