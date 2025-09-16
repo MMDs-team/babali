@@ -13,7 +13,7 @@ import {
     TableRow,
 } from '@/components/ui/table';
 
-const BACKEND_HOST = process.env.NEXT_PUBLIC_BACKEND_HOST || 'localhost';
+const BACKEND_HOST = process.env.NEXT_PUBLIC_BUS_HOST || 'localhost';
 const BACKEND_PORT = process.env.NEXT_PUBLIC_BACKEND_PORT || '8000';
 
 const PRINTER_HOST = process.env.NEXT_PUBLIC_PRINTER_HOST || 'localhost';

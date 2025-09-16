@@ -17,7 +17,7 @@ export type PlainPassengers = {
     seatNumber: number
 }
 
-const HOST = process.env.NEXT_PUBLIC_BACKEND_HOST || 'localhost';
+const HOST = process.env.NEXT_PUBLIC_FLIGHT_HOST || 'localhost';
 const PORT = process.env.NEXT_PUBLIC_BACKEND_PORT || '8000';
 
 export default function PlainTicketPage() {

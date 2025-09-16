@@ -6,7 +6,7 @@ import TrainTravelSample from "@/components/TrainTravelSample";
 import { useTravel } from "@/contexts/TravelContext";
 
 
-const HOST = process.env.NEXT_PUBLIC_BACKEND_HOST || 'localhost';
+const HOST = process.env.NEXT_PUBLIC_TRAIN_HOST || 'localhost';
 const PORT = process.env.NEXT_PUBLIC_BACKEND_PORT || '8000';
 
 
