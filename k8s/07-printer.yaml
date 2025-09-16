@@ -1,3 +1,14 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: printer-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -22,14 +33,21 @@ spec:
                 name: app-config
             - secretRef:
                 name: app-secrets
+          volumeMounts:
+            - mountPath: "/app/static/tickets/"
+              name: printer-storage
+      volumes:
+        - name: printer-storage
+          persistentVolumeClaim:
+            claimName: printer-pvc
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: printer-backend-svc
+  name: printer
 spec:
   selector:
-    app: printer
+    app: printer-backend
   ports:
     - port: 8000
       targetPort: 8000

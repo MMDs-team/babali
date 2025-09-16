@@ -1,3 +1,4 @@
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -26,10 +27,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: train-backend-svc
+  name: train
 spec:
   selector:
-    app: train
+    app: train-backend
   ports:
     - port: 8000
       targetPort: 8000

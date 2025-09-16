@@ -26,10 +26,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: bus-backend-svc
+  name: bus
 spec:
   selector:
-    app: bus
+    app: bus-backend
   ports:
     - port: 8000
       targetPort: 8000
