@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: train-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: train-backend
+  template:
+    metadata:
+      labels:
+        app: train-backend
+    spec:
+      containers:
+        - name: train-backend
+          image: mkhandani13/babali-train
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: app-config
+            - secretRef:
+                name: app-secrets
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: train-backend-svc
+spec:
+  selector:
+    app: train
+  ports:
+    - port: 8000
+      targetPort: 8000
+  type: ClusterIP

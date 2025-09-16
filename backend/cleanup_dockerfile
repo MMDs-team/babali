@@ -23,7 +23,12 @@ RUN pip install --upgrade pip \
     && pip install --no-cache-dir -r cleanup_requirements.txt
 
 # Copy project
-COPY backend/ bus/ train/ flight/ babali/ *.py ./
+COPY backend/ ./backend/
+COPY bus/ ./bus/
+COPY train/ ./train/
+COPY flight/ ./flight/
+COPY babali/ ./babali/
+COPY *.py ./
 
 # Create log file and cron directories
 RUN mkdir -p /var/log /var/spool/cron/crontabs \

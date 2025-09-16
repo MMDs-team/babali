@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bus-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bus-backend
+  template:
+    metadata:
+      labels:
+        app: bus-backend
+    spec:
+      containers:
+        - name: bus-backend
+          image: mkhandani13/babali-bus
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: app-config
+            - secretRef:
+                name: app-secrets
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bus-backend-svc
+spec:
+  selector:
+    app: bus
+  ports:
+    - port: 8000
+      targetPort: 8000
+  type: ClusterIP
