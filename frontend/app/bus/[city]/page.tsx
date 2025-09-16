@@ -40,7 +40,7 @@ export default function BusTicketPage() {
             try {
                 const url = `http://${HOST}:${PORT}/api/bus/travels/?origin=${encodeURIComponent(
                     sourceCity
-                )}&dest=${encodeURIComponent(targetCity)}&date=${travelDate}`;
+                )}&destination=${encodeURIComponent(targetCity)}&date=${travelDate}`;
 
                 const res = await fetch(url);
                 if (!res.ok) throw new Error("Failed to fetch travels");
