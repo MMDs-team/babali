@@ -28,7 +28,7 @@ BUS_PLACEHOLDER_MAP = {
     '<6>': 'origin',
     '<7>': 'dest',
     '<8>': 'seat_no',
-    '<9>': 'terminal__name',
+    '<9>': 'org_terminal__name',
     '<10>': 'cooperative__name',
     '<11>': 'serial'
 }

@@ -128,11 +128,11 @@ class TicketViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
         tickets = list(tickets)
         if len(tickets):
             travel_id = tickets[0]['travel_id']
-            travel = Travel.objects.filter(pk=travel_id).select_related('terminal', 'cooperative') \
+            travel = Travel.objects.filter(pk=travel_id).select_related('org_terminal', 'cooperative') \
                                                         .values('date_time',
                                                                 'origin',
                                                                 'dest',
-                                                                'terminal__name',
+                                                                'org_terminal__name',
                                                                 'cooperative__name',
                                                                 'price',
                                                                 'description')[0]

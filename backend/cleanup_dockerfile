@@ -1,0 +1,38 @@
+# Use Python 3.12 alpine image
+FROM python:3.12-alpine
+
+# Set working directory
+WORKDIR /app
+
+# Set environment variables
+ENV APP_MODE=none \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
+# Install system packages
+RUN apk add --no-cache \
+    gcc \
+    musl-dev \
+    mariadb-dev \
+    linux-headers \
+    cronie
+
+# Install Python dependencies
+COPY cleanup_requirements.txt .
+RUN pip install --upgrade pip \
+    && pip install --no-cache-dir -r cleanup_requirements.txt
+
+# Copy project
+COPY backend/ bus/ train/ flight/ babali/ *.py ./
+
+# Create log file and cron directories
+RUN mkdir -p /var/log /var/spool/cron/crontabs \
+    && touch /var/log/cron.log
+
+# Write crontab directly (every 5 minutes)
+RUN echo '*/1 * * * * cd /app && python manage.py cleanup_ticket_pdfs >> /var/log/cron.log 2>&1' > /var/spool/cron/crontabs/root \
+    && echo '*/1 * * * * cd /app && python manage.py cleanup_ticket_tables >> /var/log/cron.log 2>&1' >> /var/spool/cron/crontabs/root \
+    && chmod 600 /var/spool/cron/crontabs/root
+
+# Run as root (default)
+CMD ["sh", "-c", "python3 manage.py migrate --noinput && crond 2 && sleep infinity"]

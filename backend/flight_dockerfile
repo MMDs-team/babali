@@ -1,0 +1,36 @@
+# Use Python 3.10 alpine image (MUCH smaller)
+FROM python:3.12-alpine
+
+# Set working directory
+WORKDIR /app
+
+# Set environment variables
+ENV APP_MODE=flight \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
+# Install system packages (Alpine uses 'apk')
+RUN apk add --no-cache \
+    gcc \
+    musl-dev \
+    mariadb-dev \
+    linux-headers
+
+# Install Python dependencies
+COPY requirements.txt .
+RUN pip install --upgrade pip \
+    && pip install --no-cache-dir -r requirements.txt
+
+# Copy project
+COPY backend/ flight/ babali/ *.py ./
+
+# Create non-root user
+RUN adduser -D appuser \
+    && chown -R appuser:appuser /app
+USER appuser
+
+# Expose port
+EXPOSE 8000
+
+# Start server
+CMD ["sh", "-c", "python manage.py migrate --noinput && gunicorn backend.wsgi:application --bind 0.0.0.0:8000"]

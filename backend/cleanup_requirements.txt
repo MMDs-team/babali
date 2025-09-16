@@ -1,14 +1,10 @@
 asgiref==3.9.1
 Django==5.2.6
 django-cors-headers==4.8.0
+django-debug-toolbar==6.0.0
+django-filter==25.1
 djangorestframework==3.16.1
 dotenv==0.9.9
-greenlet==3.2.4
-gunicorn==23.0.0
-packaging==25.0
-playwright==1.55.0
-pyee==13.0.0
+mysqlclient==2.2.7
 python-dotenv==1.1.1
 sqlparse==0.5.3
-typing_extensions==4.15.0
-urllib3==2.5.0
