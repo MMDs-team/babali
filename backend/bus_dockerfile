@@ -22,7 +22,10 @@ RUN pip install --upgrade pip \
     && pip install --no-cache-dir -r requirements.txt
 
 # Copy project
-COPY backend/ bus/ babali/ *.py ./
+COPY backend/ ./backend/
+COPY bus/ ./bus/
+COPY babali/ ./babali/
+COPY *.py ./
 
 # Create non-root user
 RUN adduser -D appuser \

@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flight-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flight-backend
+  template:
+    metadata:
+      labels:
+        app: flight-backend
+    spec:
+      containers:
+        - name: flight-backend
+          image: mkhandani13/babali-flight
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: app-config
+            - secretRef:
+                name: app-secrets
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flight-backend-svc
+spec:
+  selector:
+    app: flight
+  ports:
+    - port: 8000
+      targetPort: 8000
+  type: ClusterIP

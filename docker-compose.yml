@@ -2,14 +2,15 @@ version: "3.9"
 
 services:
   db:
-    image: mysql/mysql-server:8.0.32-1.2.11-server
+    image: mariadb:latest # Changed from mysql to mariadb
     container_name: db
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: database
-      MYSQL_USER: user
-      MYSQL_PASSWORD: password
+      # Renamed variables for MariaDB
+      MARIADB_ROOT_PASSWORD: password
+      MARIADB_DATABASE: database
+      MARIADB_USER: user
+      MARIADB_PASSWORD: password
     volumes:
       - db_data:/var/lib/mysql
 
@@ -20,31 +21,49 @@ services:
       dockerfile: printer_dockerfile
     container_name: printer
     volumes:
-      - ./printer_ms:/app
+      - ticket_pdfs:/app/static/tickets
     ports:
       - "9000:9000"
     env_file:
       - ./printer_ms/.env
     restart: always
 
-  backend:
-    image: backend:v1
+  # cleanup:
+  #   image: cleanup:v1
+  #   build:
+  #     context: ./backend
+  #     dockerfile: cleanup_dockerfile
+  #   container_name: cleanup
+  #   volumes:
+  #     - ticket_pdfs:/app/static/tickets
+  #   env_file:
+  #     - ./backend/.env
+  #   environment:
+  #     DATABASE_NAME: database
+  #     DATABASE_USER: user
+  #     DATABASE_PASSWORD: password
+  #     DATABASE_HOST: db
+  #     DATABASE_PORT: 3306
+  #   depends_on:
+  #     - db
+  #   restart: always
+
+  bus:
+    image: bus:v1
     build:
       context: ./backend
-      dockerfile: backend_dockerfile
-    container_name: backend
-    volumes:
-      - ./backend:/app
+      dockerfile: bus_dockerfile
+    container_name: bus
     ports:
       - "8000:8000"
     env_file:
       - ./backend/.env
     environment:
-      DATABASE_NAME: 'database'
-      DATABASE_USER: 'user'
-      DATABASE_PASSWORD: 'password'
-      DATABASE_HOST: 'db'
-      DATABASE_PORT: '3306'
+      DATABASE_NAME: database
+      DATABASE_USER: user
+      DATABASE_PASSWORD: password
+      DATABASE_HOST: db
+      DATABASE_PORT: 3306
     depends_on:
       - db
     restart: always
@@ -63,3 +82,4 @@ services:
 
 volumes:
   db_data:
+  ticket_pdfs:

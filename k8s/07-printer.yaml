@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: backend
+  name: printer-backend
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: backend
+      app: printer-backend
   template:
     metadata:
       labels:
-        app: backend
+        app: printer-backend
     spec:
       containers:
-        - name: backend
-          image: mkhandani13/babali-backend:v1
+        - name: printer-backend
+          image: mkhandani13/babali-printer
           ports:
             - containerPort: 8000
           envFrom:
@@ -26,10 +26,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: backend
+  name: printer-backend-svc
 spec:
   selector:
-    app: backend
+    app: printer
   ports:
     - port: 8000
       targetPort: 8000
