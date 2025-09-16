@@ -42,7 +42,7 @@ const TicketDetailsPage = () => {
         const fetchTicket = async () => {
             try {
                 const res = await fetch(`${API_URL_BACKEND}/train/tickets/?serial=${serial}`);
-                const vehicleRes = await fetch(`${API_URL_PRINTER}/train/travels/?serial=${serial}`);
+                const vehicleRes = await fetch(`${API_URL_BACKEND}/train/travels/?serial=${serial}`);
                 if (!res.ok || !vehicleRes.ok) throw new Error(`HTTP error!`);
 
                 const ticketSummary = await res.json();
@@ -67,7 +67,7 @@ const TicketDetailsPage = () => {
             const formData = new FormData();
             formData.append('serial', serial);
 
-            const pdfPath = await fetch(`http://${BACKEND_HOST}:${BACKEND_PORT}/api/train/tickets/print/`, {
+            const pdfPath = await fetch(`${API_URL_BACKEND}/train/tickets/print/`, {
                 method: 'POST',
                 body: formData,
             });
@@ -77,7 +77,7 @@ const TicketDetailsPage = () => {
             const data = await pdfPath.json(); 
             const filePath = data.path;
             
-            const fileResponse = await fetch(`http://${PRINTER_HOST}:${PRINTER_PORT}/api/download_ticket?path=${encodeURIComponent(filePath)}`);
+            const fileResponse = await fetch(`${API_URL_PRINTER}/download_ticket?path=${encodeURIComponent(filePath)}`);
             if (!fileResponse.ok) throw new Error('Failed to fetch the ticket file');
 
             const blob = await fileResponse.blob(); 
