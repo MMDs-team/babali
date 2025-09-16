@@ -1,0 +1,40 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: api-gateway
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    # nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+    - host: frontend-a711a1a19d-babali.apps.ir-central1.arvancaas.ir
+      http:
+        paths:
+          - path: /api/bus(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: bus
+                port:
+                  number: 8000
+          - path: /train(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: train
+                port:
+                  number: 8000
+          - path: /api/flight(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: flight
+                port:
+                  number: 8000
+          - path: /(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 3000
