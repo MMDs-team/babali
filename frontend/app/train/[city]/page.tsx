@@ -5,9 +5,7 @@ import InputNav from "@/components/InputNav";
 import TrainTravelSample from "@/components/TrainTravelSample";
 import { useTravel } from "@/contexts/TravelContext";
 
-
-const HOST = process.env.NEXT_PUBLIC_TRAIN_HOST || 'localhost';
-const PORT = process.env.NEXT_PUBLIC_BACKEND_PORT || '8000';
+const API_URL_BACKEND = process.env.NEXT_PUBLIC_API_URL;
 
 
 export default function TrainTicketPage() {
@@ -45,7 +43,7 @@ export default function TrainTicketPage() {
 
         const fetchTravels = async () => {
             try {
-                const url = `http://${HOST}:${PORT}/api/train/travels/?origin=${encodeURIComponent(
+                const url = `${API_URL_BACKEND}/api/train/travels/?origin=${encodeURIComponent(
                     sourceCity
                 )}&destination=${encodeURIComponent(targetCity)}&date=${travelDate}`;
 

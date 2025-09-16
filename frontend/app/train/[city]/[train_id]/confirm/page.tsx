@@ -10,9 +10,8 @@ import { Loader2, PencilIcon } from 'lucide-react';
 import { useTravel } from '@/contexts/TravelContext';
 import PaymentModal from '@/components/PaymentModal';
 
+const API_URL_BACKEND = process.env.NEXT_PUBLIC_API_URL;
 
-const HOST = process.env.NEXT_PUBLIC_TRAIN_HOST || 'localhost';
-const PORT = process.env.NEXT_PUBLIC_BACKEND_PORT || '8000';
 
 export default function OrderConfirmationPage() {
 
@@ -63,7 +62,7 @@ export default function OrderConfirmationPage() {
     const sendRequest = async () => {
         try {
             setIsLoading(true);
-            const API_URL = `http://${HOST}:${PORT}/api/train/tickets/bulk_create/`;
+            const API_URL = `${API_URL_BACKEND}/train/tickets/bulk_create/`;
 
 
             const passengers: any = travelDetails.passengers.map((p: any) => ({
@@ -113,7 +112,7 @@ export default function OrderConfirmationPage() {
 
     const handlePay = async () => {
         try {
-            const API_URL = `http://${HOST}:${PORT}/api/train/tickets/verify/?serial=${ReserveData[0].serial}&status=OK`;
+            const API_URL = `${API_URL_BACKEND}/tickets/verify/?serial=${ReserveData[0].serial}&status=OK`;
 
             const response = await fetch(API_URL, {
                 method: "PATCH",

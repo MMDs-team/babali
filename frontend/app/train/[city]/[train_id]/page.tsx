@@ -17,9 +17,7 @@ export type TrainPassengers = {
     phone: string | null
     seatNumber: number
 }
-
-const HOST = process.env.NEXT_PUBLIC_TRAIN_HOST || 'localhost';
-const PORT = process.env.NEXT_PUBLIC_BACKEND_PORT || '8000';
+const API_URL_BACKEND = process.env.NEXT_PUBLIC_API_URL;
 
 
 export default function TrainTicketPage() {
@@ -78,7 +76,7 @@ export default function TrainTicketPage() {
         try {
             console.log('ssssss')
             setIsLoading(true);
-            const API_URL = `http://${HOST}:${PORT}/api/train/travels/?id=${trainID}&origin=${decodeURIComponent(
+            const API_URL = `${API_URL_BACKEND}/api/train/travels/?id=${trainID}&origin=${decodeURIComponent(
                     cities[0]
                 )}&destination=${decodeURIComponent(cities[1])}`;
 

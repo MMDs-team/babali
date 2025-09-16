@@ -16,9 +16,7 @@ export type PlainPassengers = {
     phone: string | null
     seatNumber: number
 }
-
-const HOST = process.env.NEXT_PUBLIC_FLIGHT_HOST || 'localhost';
-const PORT = process.env.NEXT_PUBLIC_BACKEND_PORT || '8000';
+const API_URL_BACKEND = process.env.NEXT_PUBLIC_API_URL;
 
 export default function PlainTicketPage() {
 
@@ -74,7 +72,7 @@ export default function PlainTicketPage() {
     const sendRequest = async () => {
         try {
             setIsLoading(true);
-            const API_URL = `http://${HOST}:${PORT}/api/flight/travels/?id=${flightID}`;
+            const API_URL = `${API_URL_BACKEND}/flight/travels/?id=${flightID}`;
 
             const res = await fetch(API_URL, {
                 method: "GET",

@@ -13,11 +13,8 @@ import {
     TableRow,
 } from '@/components/ui/table';
 
-const BACKEND_HOST = process.env.NEXT_PUBLIC_BUS_HOST || 'localhost';
-const BACKEND_PORT = process.env.NEXT_PUBLIC_BACKEND_PORT || '8000';
-
-const PRINTER_HOST = process.env.NEXT_PUBLIC_PRINTER_HOST || 'localhost';
-const PRINTER_PORT = process.env.NEXT_PUBLIC_PRINTER_PORT || '9000';
+const API_URL_BACKEND = process.env.NEXT_PUBLIC_API_URL;
+const API_URL_PRINTER = process.env.NEXT_PUBLIC_API_PRINTER;
 
 export default function TicketDetailsPage() {
     const searchParams = useSearchParams();
@@ -42,8 +39,8 @@ export default function TicketDetailsPage() {
 
         const fetchTicket = async () => {
             try {
-                const res = await fetch(`http://${BACKEND_HOST}:${BACKEND_PORT}/api/bus/tickets/?serial=${serial}`);
-                const vehicleRes = await fetch(`http://${BACKEND_HOST}:${BACKEND_PORT}/api/bus/travels/?serial=${serial}`);
+                const res = await fetch(`${API_URL_BACKEND}/bus/tickets/?serial=${serial}`);
+                const vehicleRes = await fetch(`${API_URL_PRINTER}/bus/travels/?serial=${serial}`);
                 if (!res.ok || !vehicleRes.ok) throw new Error(`HTTP error!`);
 
                 const ticketSummary = await res.json();

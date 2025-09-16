@@ -5,8 +5,7 @@ import InputNav from "@/components/InputNav";
 import TravelSample from "@/components/TravelSample";
 
 
-const HOST = process.env.NEXT_PUBLIC_BUS_HOST || 'localhost';
-const PORT = process.env.NEXT_PUBLIC_BACKEND_PORT || '8000';
+const API_URL_BACKEND = process.env.NEXT_PUBLIC_API_URL;
 
 
 export default function BusTicketPage() {
@@ -38,9 +37,11 @@ export default function BusTicketPage() {
 
         const fetchTravels = async () => {
             try {
-                const url = `http://${HOST}:${PORT}/api/bus/travels/?origin=${encodeURIComponent(
+                const url = `${API_URL_BACKEND}/bus/travels/?origin=${encodeURIComponent(
                     sourceCity
                 )}&destination=${encodeURIComponent(targetCity)}&date=${travelDate}`;
+
+                console.log(url)
 
                 const res = await fetch(url);
                 if (!res.ok) throw new Error("Failed to fetch travels");

@@ -10,9 +10,7 @@ import { Loader2, PencilIcon } from 'lucide-react';
 import { useTravel } from '@/contexts/TravelContext';
 import PaymentModal from '@/components/PaymentModal';
 
-
-const HOST = process.env.NEXT_PUBLIC_FLIGHT_HOST || 'localhost';
-const PORT = process.env.NEXT_PUBLIC_BACKEND_PORT || '8000';
+const API_URL_BACKEND = process.env.NEXT_PUBLIC_API_URL;
 
 export default function OrderConfirmationPage() {
 
@@ -64,7 +62,7 @@ export default function OrderConfirmationPage() {
     const sendRequest = async () => {
         try {
             setIsLoading(true);
-            const API_URL = `http://${HOST}:${PORT}/api/flight/tickets/bulk_create/`;
+            const API_URL = `${API_URL_BACKEND}/api/flight/tickets/bulk_create/`;
 
             const passengers: any = travelDetails.passengers.map((p: any) => ({
                 user: travelDetails.passengers[0].phone,

@@ -5,9 +5,7 @@ import InputNav from "@/components/InputNav";
 import { useTravel } from "@/contexts/TravelContext";
 import PlainTravelSample from "@/components/PlainTravelSample";
 
-
-const HOST = process.env.NEXT_PUBLIC_FLIGHT_HOST || 'localhost';
-const PORT = process.env.NEXT_PUBLIC_BACKEND_PORT || '8000';
+const API_URL_BACKEND = process.env.NEXT_PUBLIC_API_URL;
 
 
 export default function AirplainTicketPage() {
@@ -45,7 +43,7 @@ export default function AirplainTicketPage() {
 
         const fetchTravels = async () => {
             try {
-                const url = `http://${HOST}:${PORT}/api/flight/travels/?origin=${encodeURIComponent(
+                const url = `${API_URL_BACKEND}/flight/travels/?origin=${encodeURIComponent(
                     sourceCity
                 )}&destination=${encodeURIComponent(targetCity)}&date=${travelDate}`;
 

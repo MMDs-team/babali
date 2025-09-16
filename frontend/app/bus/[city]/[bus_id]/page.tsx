@@ -19,8 +19,7 @@ export type BusPassenger = {
     seatNumber: number
 }
 
-const HOST = process.env.NEXT_PUBLIC_BUS_HOST || 'localhost';
-const PORT = process.env.NEXT_PUBLIC_BACKEND_PORT || '8000';
+const API_URL_BACKEND = process.env.NEXT_PUBLIC_API_URL;
 
 export default function BusTicketPage() {
 
@@ -79,7 +78,7 @@ export default function BusTicketPage() {
     const sendRequest = async () => {
         try {
             setIsLoading(true);
-            const API_URL = `http://${HOST}:${PORT}/api/bus/travels/?id=${busID}`;
+            const API_URL = `${API_URL_BACKEND}/bus/travels/?id=${busID}`;
 
             const res = await fetch(API_URL, {
                 method: "GET",
