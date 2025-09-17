@@ -16,6 +16,8 @@ const PlainTravelSample: React.FC<PlainTravelSampleProps> = ({ travel }) => {
     const router = useRouter();
     const pathname = usePathname();
 
+    console.log('p', travel)
+
     const travelID = travel.travel_id;
     const price = travel.price || 0;
     const origin = travel.origin;

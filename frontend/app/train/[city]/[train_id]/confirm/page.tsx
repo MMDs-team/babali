@@ -112,7 +112,7 @@ export default function OrderConfirmationPage() {
 
     const handlePay = async () => {
         try {
-            const API_URL = `${API_URL_BACKEND}/tickets/verify/?serial=${ReserveData[0].serial}&status=OK`;
+            const API_URL = `${API_URL_BACKEND}/train/tickets/verify/?serial=${ReserveData[0].serial}&status=OK`;
 
             const response = await fetch(API_URL, {
                 method: "PATCH",
