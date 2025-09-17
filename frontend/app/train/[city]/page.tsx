@@ -43,7 +43,7 @@ export default function TrainTicketPage() {
 
         const fetchTravels = async () => {
             try {
-                const url = `${API_URL_BACKEND}/api/train/travels/?origin=${encodeURIComponent(
+                const url = `${API_URL_BACKEND}/train/travels/?origin=${encodeURIComponent(
                     sourceCity
                 )}&destination=${encodeURIComponent(targetCity)}&date=${travelDate}`;
 

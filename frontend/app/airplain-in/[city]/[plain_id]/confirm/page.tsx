@@ -62,7 +62,7 @@ export default function OrderConfirmationPage() {
     const sendRequest = async () => {
         try {
             setIsLoading(true);
-            const API_URL = `${API_URL_BACKEND}/api/flight/tickets/bulk_create/`;
+            const API_URL = `${API_URL_BACKEND}/flight/tickets/bulk_create/`;
 
             const passengers: any = travelDetails.passengers.map((p: any) => ({
                 user: travelDetails.passengers[0].phone,

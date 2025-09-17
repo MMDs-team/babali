@@ -76,7 +76,7 @@ export default function TrainTicketPage() {
         try {
             console.log('ssssss')
             setIsLoading(true);
-            const API_URL = `${API_URL_BACKEND}/api/train/travels/?id=${trainID}&origin=${decodeURIComponent(
+            const API_URL = `${API_URL_BACKEND}/train/travels/?id=${trainID}&origin=${decodeURIComponent(
                     cities[0]
                 )}&destination=${decodeURIComponent(cities[1])}`;
 
